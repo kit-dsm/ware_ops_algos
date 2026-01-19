@@ -21,11 +21,3 @@ class RoundRobinAssigner(Assigner):
             for i, pick_list in enumerate(pick_lists)
         ]
         return AssignmentSolution(assignments=assignments)
-
-
-class PickZoneAssigner(Assigner):
-    pass
-
-
-class WorkloadBalanceAssigner(Assigner):
-    pass
