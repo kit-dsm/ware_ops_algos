@@ -16,12 +16,14 @@ jobs:
           pip install sphinx furo myst-nb
       - name: Sphinx build
         run: |
-          sphinx-build doc _build
+          sphinx-build docs/source docs/_build/html
+      - name: Add .nojekyll
+        run: touch docs/_build/html/.nojekyll
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/
+          publish_dir: docs/_build/html
           force_orphan: true
