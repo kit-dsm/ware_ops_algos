@@ -1,0 +1,36 @@
+model_name: DueDate
+problem_type: batching
+description: >
+  First-In-First-Out batching based on due date
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      -
+  resources:
+    type:
+      - any
+    features:
+      - capacity
+  orders:
+    type:
+      - any
+    features:
+    constraints:
+      due_date:
+        equals: True
+  storage:
+    type:
+      - any
+    features:
+      -
+
+objective: Distance
+
+implementation:
+  class_name: DueDate
+  component_name:
+  solver:
+  type: heuristic

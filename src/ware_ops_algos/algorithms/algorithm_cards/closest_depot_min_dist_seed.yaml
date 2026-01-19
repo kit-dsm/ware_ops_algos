@@ -1,0 +1,35 @@
+model_name: ClosestDepotMinDistanceSeedBatching
+problem_type: batching
+description: >
+  Seed batching based on aisle similarity
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      - distance_matrix
+      - start_node
+  resources:
+    type:
+      - any
+    features:
+      - capacity
+  orders:
+    type:
+      - any
+    features:
+  storage:
+    type:
+      - any
+    features:
+      - x
+      - y
+
+objective: Distance
+
+implementation:
+  class_name: ClosestDepotMinDistanceSeedBatching
+  component_name:
+  solver:
+  type: heuristic

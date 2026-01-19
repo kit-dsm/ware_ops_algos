@@ -1,0 +1,39 @@
+model_name: NNItemAssignment
+problem_type: item_assignment
+description: >
+  ...
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      - distance_matrix
+      - start_node
+      - closest_node_to_start
+  resources:
+    type:
+      - any
+    features:
+  orders:
+    type:
+      - standard
+    features:
+      - amount
+      - article_id
+  storage:
+    type:
+      - scattered
+    features:
+      - x
+      - y
+      - amount
+      - article_id
+
+objective: Distance
+
+implementation:
+  class_name: NNItemAssignment
+  component_name:
+  solver:
+  type: heuristic

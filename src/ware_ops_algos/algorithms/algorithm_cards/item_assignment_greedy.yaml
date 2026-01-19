@@ -1,0 +1,36 @@
+model_name: GreedyIA
+problem_type: item_assignment
+description: >
+  ...
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+  resources:
+    type:
+      - any
+    features:
+  orders:
+    type:
+      - standard
+    features:
+      - amount
+      - article_id
+  storage:
+    type:
+      - any
+    features:
+      - x
+      - y
+      - amount
+      - article_id
+
+objective: Distance
+
+implementation:
+  class_name: GreedyIA
+  component_name:
+  solver:
+  type: heuristic

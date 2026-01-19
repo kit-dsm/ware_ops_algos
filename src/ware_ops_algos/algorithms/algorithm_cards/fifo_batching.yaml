@@ -1,0 +1,36 @@
+model_name: FiFo
+problem_type: batching
+description: >
+  First-In-First-Out batching based on Order arrival time
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      -
+  resources:
+    type:
+      - any
+    features:
+      - capacity
+  orders:
+    type:
+      - any
+    features:
+    constraints:
+      order_date:
+        equals: True
+  storage:
+    type:
+      - any
+    features:
+      -
+
+objective: Distance
+
+implementation:
+  class_name: FifoBatching
+  component_name: FiFo
+  solver:
+  type: heuristic

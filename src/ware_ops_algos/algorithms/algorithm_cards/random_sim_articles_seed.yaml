@@ -1,0 +1,32 @@
+model_name: RandomSimArticlesSeedBatching
+problem_type: batching
+description: >
+  Seed batching based on aisle similarity
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+  resources:
+    type:
+      - any
+    features:
+      - capacity
+  orders:
+    type:
+      - any
+    features:
+      - id
+  storage:
+    type:
+      - any
+    features:
+
+objective: Distance
+
+implementation:
+  class_name: RandomSimArticlesSeedBatching
+  component_name:
+  solver:
+  type: heuristic

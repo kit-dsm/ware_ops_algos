@@ -1,0 +1,38 @@
+model_name: SShape
+problem_type: routing
+description: >
+  Implementation of SShape heuristic
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - distance_matrix
+      - graph
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+  resources:
+    type:
+      - human
+    features:
+  orders:
+    type:
+      - standard
+    features:
+  storage:
+    type:
+      - any
+    features:
+      - x
+      - y
+
+objective: Distance
+
+implementation:
+  class_name: SShapeRouting
+  solver:
+  type: heuristic

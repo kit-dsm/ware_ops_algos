@@ -1,0 +1,39 @@
+model_name: Return
+problem_type: routing
+description: >
+  Implementation of Return heuristic
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - distance_matrix
+      - graph
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+  resources:
+    type:
+      - human
+    features:
+  orders:
+    type:
+      - standard
+    features:
+  storage:
+    type:
+      - any
+    features:
+      - x
+      - y
+
+objective: Distance
+
+implementation:
+  class_name: ReturnRouting
+  component_name: Return
+  solver:
+  type: heuristic

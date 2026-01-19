@@ -1,0 +1,33 @@
+model_name: EDDSequencing
+problem_type: sequencing
+description: >
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      -
+  resources:
+    type:
+      - any
+    features:
+      -
+  orders:
+    type:
+      - standard
+    features:
+      - due_date
+
+  storage:
+    type:
+      - any
+    features:
+      -
+
+objective: Distance
+
+implementation:
+  class_name: EDDSequencing
+  solver:
+  type: heuristic

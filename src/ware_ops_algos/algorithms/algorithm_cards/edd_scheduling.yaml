@@ -1,0 +1,36 @@
+model_name: EDDScheduling
+problem_type: sequencing
+description: >
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      -
+  resources:
+    type:
+      - any
+    features:
+      - capacity
+      - speed
+      - time_per_pick
+  orders:
+    type:
+      - standard
+    features:
+      - due_date
+      - order_date
+
+  storage:
+    type:
+      - any
+    features:
+      -
+
+objective: Distance
+
+implementation:
+  class_name: EDDScheduling
+  solver:
+  type: heuristic

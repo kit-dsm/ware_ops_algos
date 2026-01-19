@@ -1,0 +1,44 @@
+model_name: ClarkAndWrightRR
+problem_type: batching
+description: >
+  Batching based on the clark and wright savings heuristic with RatliffRosenthal routing
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+      - n_pick_locations
+      - dist_pick_locations
+      - dist_bottom_to_pick_location
+    constraints:
+      n_blocks:
+        equals: 1
+  resources:
+    type:
+      - human
+    features:
+      - capacity
+  orders:
+    type:
+      - standard
+    features:
+  storage:
+    type:
+      - dedicated
+    features:
+      - x
+      - y
+
+objective: Distance
+
+implementation:
+  class_name: ClarkAndWrightBatchingRR
+  component_name:
+  solver:
+  type: heuristic

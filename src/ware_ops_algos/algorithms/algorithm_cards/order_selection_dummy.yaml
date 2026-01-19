@@ -1,0 +1,33 @@
+model_name: DummyOS
+problem_type: order_selection
+description: >
+  ...
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+  resources:
+    type:
+      - any
+    features:
+  orders:
+    type:
+      - any
+    features:
+  storage:
+    type:
+      - any
+    features:
+  warehouse_info:
+    type:
+      - offline
+    features:
+objective: Distance
+
+implementation:
+  class_name: DummyOS
+  component_name:
+  solver:
+  type: heuristic

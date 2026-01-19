@@ -1,0 +1,34 @@
+model_name: SPRPNF
+problem_type: routing
+description: >
+  Implementation of DP for SPRP with scattered storage
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - state_graph
+      - graph
+  resources:
+    type:
+      - human
+    features:
+  orders:
+    type:
+      - standard
+    features:
+      - aisle
+      - node
+  storage:
+    type:
+      - any
+    features:
+      -
+
+objective: Distance
+
+implementation:
+  class_name: SSPRNetworkFlow
+  solver: Gurobi
+  type: exact

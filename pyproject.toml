@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ware_ops_algos"
+version = "0.1.0"
+description = "Warehouse optimization algorithms and utilities"
+requires-python = ">=3.11"
+dependencies = [
+    "gurobipy==12.0.0",
+    "matplotlib==3.8.4",
+    "networkx>=3.6.1",
+    "numpy>=2.3.1",
+    "pandas>=2.3.1",
+    "scipy>=1.16.3",
+    "seaborn>=0.13.2",
+    "PyYAML>=6.0.2",
+    "scipy>=1.17.0",
+    "sphinx",
+    "sphinx_design",
+    "sphinx-autoapi",
+    "sphinx_copybutton",
+    "furo",
+    "myst-nb",
+    "nbsphinx"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

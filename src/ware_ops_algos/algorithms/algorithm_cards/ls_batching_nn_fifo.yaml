@@ -1,0 +1,38 @@
+model_name: LSBatchingNNFiFo
+problem_type: batching
+description: >
+  Local search batching metaheuristic with Nearest Neighbourhood routing and due date initial batch construction
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - distance_matrix
+      - graph
+  resources:
+    type:
+      - human
+    features:
+      - capacity
+  orders:
+    type:
+      - any
+    features:
+    constraints:
+      order_date:
+        equals: True
+  storage:
+    type:
+      - dedicated
+    features:
+      - x
+      - y
+
+objective: Distance
+
+implementation:
+  class_name: LSBatchingNNFiFo
+  component_name:
+  solver:
+  type: metaheuristic
