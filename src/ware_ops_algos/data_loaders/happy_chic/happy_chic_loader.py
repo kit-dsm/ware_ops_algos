@@ -200,7 +200,6 @@ class HappyChicLoader(DataLoader):
             order_entries.append(
                 Order.from_dict(order_number, {
                     "order_positions": positions,
-                    # TODO: Add max_boxes to Order class if needed
                 })
             )
 
