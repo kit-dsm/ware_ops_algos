@@ -3,7 +3,7 @@ ware_ops_algos
 
 What is it?
 -----------
-A modular Python library of algorithms for warehouse order fulfillment operations, covering item assignment, order batching, picker routing, and scheduling problems.
+A modular Python library of algorithms for problems in warehouse operations, covering item assignment, order batching, picker routing, and scheduling.
 
 
 
