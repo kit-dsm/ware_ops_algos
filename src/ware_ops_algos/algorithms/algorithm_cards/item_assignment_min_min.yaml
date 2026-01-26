@@ -1,4 +1,4 @@
-model_name: NNIA
+model_name: MinMinIA
 problem_type: item_assignment
 description: >
   ...
@@ -11,6 +11,11 @@ requirements:
       - distance_matrix
       - start_node
       - closest_node_to_start
+      - distance_matrix
+      - graph
+    constraints:
+      n_blocks:
+        equals: 1
   resources:
     type:
       - any
@@ -33,7 +38,7 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: NNItemAssignment
+  class_name: MinMinItemAssignment
   component_name:
   solver:
   type: heuristic
