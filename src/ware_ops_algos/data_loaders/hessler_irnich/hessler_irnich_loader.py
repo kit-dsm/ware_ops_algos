@@ -396,8 +396,8 @@ class HesslerIrnichLoader(DataLoader):
             return 0
         return (C + 1) - y
 
-    @staticmethod
     def _mirror_storage_locations(
+            self,
             storage: StorageLocations,
             C: int
     ) -> StorageLocations:
@@ -416,7 +416,7 @@ class HesslerIrnichLoader(DataLoader):
             locations=[
                 Location(
                     x=loc.x,
-                    y=HesslerIrnichLoader._mirror_y(loc.y, C),
+                    y=self._mirror_y(loc.y, C),
                     article_id=loc.article_id,
                     amount=loc.amount
                 )
