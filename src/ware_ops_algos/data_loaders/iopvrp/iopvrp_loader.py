@@ -354,8 +354,8 @@ class IOPVRPLoader(DataLoader):
 
             # Get order attributes
             attrs = order_attrs.get(oid, {})
-            order_date = attrs.get("ReleaseTimeOPP")
-            # order_date = 0
+            # order_date = attrs.get("ReleaseTimeOPP")
+            order_date = 0
             due_date = attrs.get("DueTimeOPP")
 
             # Build order positions
