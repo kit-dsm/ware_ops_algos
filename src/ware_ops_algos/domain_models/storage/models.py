@@ -54,6 +54,7 @@ class Location:
 class StorageLocations(BaseDomainObject):
     tpe: StorageType
     locations: Optional[list[Location]] = None
+    storage_slots: Optional[list[StorageLocation]] = None
     article_location_mapping: Optional[dict[int, list[Location]]] = field(init=False, repr=False)
     location_article_mapping: Optional[dict[tuple[int | float, int | float], int]] = field(init=False, repr=False)
 
