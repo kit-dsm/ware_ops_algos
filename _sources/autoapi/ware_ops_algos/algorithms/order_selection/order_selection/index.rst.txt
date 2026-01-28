@@ -1,0 +1,119 @@
+ware_ops_algos.algorithms.order_selection.order_selection
+=========================================================
+
+.. py:module:: ware_ops_algos.algorithms.order_selection.order_selection
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.order_selection.order_selection.OrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.DummyOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.GreedyOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinDistOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinAisleOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinMaxArticlesCobotSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinMaxAisleOrderSelection
+
+
+Module Contents
+---------------
+
+.. py:class:: OrderSelection(**kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.WarehouseOrder`\ ]\ , :py:obj:`ware_ops_algos.algorithms.OrderSelectionSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: DummyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: GreedyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: MinDistOrderSelection(picker_position: tuple[float, float], dima: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: picker_position
+
+
+   .. py:attribute:: dima
+
+
+.. py:class:: MinAisleOrderSelection(congestion_info: dict, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxArticlesCobotSelection(resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxAisleOrderSelection(congestion_info: dict, resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
