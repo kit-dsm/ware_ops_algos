@@ -1,4 +1,6 @@
-from ware_ops_algos.algorithms import Algorithm, WarehouseOrder, OrderSelectionSolution
+import pandas as pd
+
+from ware_ops_algos.algorithms import Algorithm, WarehouseOrder, OrderSelectionSolution, RouteNode
 from ware_ops_algos.domain_models import Resource, ResourceType
 
 
@@ -27,6 +29,30 @@ class GreedyOrderSelection(OrderSelection):
     def _run(self, input_data: list[WarehouseOrder]) -> OrderSelectionSolution:
         selected_orders = [input_data[0]]
         solution = OrderSelectionSolution(selected_orders=selected_orders)
+        return solution
+
+
+class MinDistOrderSelection(OrderSelection):
+    def __init__(self,
+                 picker_position: tuple[float, float],
+                 dima: pd.DataFrame,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.picker_position = picker_position.position if isinstance(picker_position, RouteNode) else picker_position
+        self.dima = dima
+
+    def _select_order(self, pending_orders: list[WarehouseOrder]) -> WarehouseOrder:
+        return min(
+            pending_orders,
+            key=lambda o: min(
+                self.dima.at[self.picker_position, pos.pick_node]
+                for pos in o.pick_positions
+            ),
+        )
+
+    def _run(self, input_data: list[WarehouseOrder]) -> OrderSelectionSolution:
+        selected_order = self._select_order(input_data)
+        solution = OrderSelectionSolution(selected_orders=[selected_order])
         return solution
 
 
@@ -77,7 +103,6 @@ class MinMaxArticlesCobotSelection(OrderSelection):
             raise ValueError(f"Unknown resource type: {self.resource.tpe}")
         solution = OrderSelectionSolution(selected_orders=[selected_order])
         return solution
-
 
 
 class MinMaxAisleOrderSelection(OrderSelection):
