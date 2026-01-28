@@ -64,4 +64,5 @@ class Resources(BaseDomainObject):
         features["capacity"] = any(r.capacity is not None for r in self.resources)
         features["speed"] = any(r.speed is not None for r in self.resources)
         features["time_per_pick"] = any(r.time_per_pick is not None for r in self.resources)
+        features["current_location"] = any(r.current_location is not None for r in self.resources)
         return features
