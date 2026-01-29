@@ -8,9 +8,10 @@ import numpy as np
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing, \
-    RatliffRosenthalRouting
+    RatliffRosenthalRouting, NearestNeighbourhoodRouting
 from ware_ops_algos.data_loaders import HesslerIrnichLoader
 from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, StorageLocations, Location
+from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
 class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
@@ -448,7 +449,7 @@ if __name__ == "__main__":
 
     instance_set = "SPRP-SS"
     il = HesslerIrnichLoader(instances_dir=instances_base / instance_set)
-    domain = il.load(filepath="varying_F10_m50_C180_a30_49.txt",
+    domain = il.load(filepath="unit_F2_m5_C30_a3_3.txt",
                      use_cache=False)
 
     orders = domain.orders
@@ -479,6 +480,24 @@ if __name__ == "__main__":
                  "dist_end": graph_params.dist_end,
                  "gen_tour": False,
                  "gen_item_sequence": False
+                 }
+
+    nn_kwargs = {"start_node": layout_network.start_node,
+                 "end_node": layout_network.end_node,
+                 "closest_node_to_start": layout_network.closest_node_to_start,
+                 "min_aisle_position": layout_network.min_aisle_position,
+                 "max_aisle_position": layout_network.max_aisle_position,
+                 "distance_matrix": layout_network.distance_matrix,
+                 "predecessor_matrix": layout_network.predecessor_matrix,
+                 "picker": resources.resources,
+                 "gen_tour": True,
+                 "gen_item_sequence": True,
+                 "fixed_depot": True,
+                 "node_list": layout_network.node_list,
+                 "node_to_idx": {node: idx for idx, node in enumerate(
+                     list(layout_network.graph.nodes))},
+                 "idx_to_node": {idx: node for idx, node in enumerate(
+                     list(layout_network.graph.nodes))}
                  }
 
     gia = GreedyItemAssignment(
@@ -523,12 +542,16 @@ if __name__ == "__main__":
     rr_routing = RatliffRosenthalRouting(
         **rr_kwargs
     )
-
+    nn_routing = NearestNeighbourhoodRouting(
+        **nn_kwargs
+    )
     for sol in [gia_sol, nnia_sol, single_pos_sol, minmax_sol, minmin_sol]:
         pick_list = []
         for o in sol.resolved_orders:
             for pp in o.pick_positions:
                 pick_list.append(pp)
 
-        routing_sol = rr_routing.solve(pick_list)
+        routing_sol = nn_routing.solve(pick_list)
+        nn_routing.reset_parameters()
         print(routing_sol.route.distance)
+        plot_route_with_directions(network_graph=layout_network.graph, route=routing_sol.route.route)
