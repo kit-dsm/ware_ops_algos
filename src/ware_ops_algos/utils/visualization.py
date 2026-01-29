@@ -20,7 +20,7 @@ def render_graph(G, plot: bool = True, out_name=False, draw_edge_labels=False, w
 
 
 def plot_route(network_graph: nx.Graph, route: list[tuple[int, int]]):
-    """Visualizes a picker route - enhanced version"""
+    """Visualizes a picker route"""
     pos = nx.get_node_attributes(network_graph, 'pos')
     plt.figure(figsize=(10, 8))
     plt.title("Route Visualization")
@@ -59,7 +59,7 @@ def plot_route_with_directions(network_graph: nx.Graph, route: list[tuple[int, i
 
         dx = x2 - x1
         dy = y2 - y1
-        offset = 0.05 * (edge_counts[(start, end)] - 1)
+        offset = 0.05 * (edge_counts[(start, end)] - 1) + 0.1
         norm = (dx ** 2 + dy ** 2) ** 0.5
         offset_x = -dy / norm * offset
         offset_y = dx / norm * offset

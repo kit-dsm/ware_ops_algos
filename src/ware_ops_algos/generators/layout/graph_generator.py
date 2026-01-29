@@ -322,17 +322,13 @@ class MultiBlockShelfStorageGraphGenerator(GraphGeneratorBase):
         self.end_connection_point = end_connection_point
         self.reverse_pick_nodes = reverse_pick_nodes
 
-        # --- NEW: multi-block config ---
         self.n_blocks = max(1, int(n_blocks))
-        # if not specified, use same as dist_aisle_location (works fine as a default)
         self.dist_between_blocks = dist_between_blocks if dist_between_blocks is not None else dist_aisle_location
         self.block_gap_rows = int(block_gap_rows)
 
-        # one block spans rows [0 .. n_pick_locations+1]; we add optional empty rows for plotting
         self._block_span_rows = self.n_pick_locations + 2 + self.block_gap_rows
         self._offsets = [b * self._block_span_rows for b in range(self.n_blocks)]
 
-    # helper: translate (aisle, y) to block b by adding y-offset
     def _p(self, aisle: int, y: int, b: int) -> tuple[int, int]:
         return (aisle, y + self._offsets[b])
 
@@ -340,7 +336,6 @@ class MultiBlockShelfStorageGraphGenerator(GraphGeneratorBase):
         for b in range(self.n_blocks):
             for i in range(1, self.n_aisles + 1):
                 for j in range(1, self.n_pick_locations + 1):
-                    # keep your reverse option exactly as before
                     y_draw = self.n_pick_locations - j + 1 if self.reverse_pick_nodes else j
                     node = self._p(i, j, b)
                     self.G.add_node(node, pos=(i, y_draw + self._offsets[b]), type='pick_node')
@@ -358,7 +353,6 @@ class MultiBlockShelfStorageGraphGenerator(GraphGeneratorBase):
                                 pos=(i, self.n_pick_locations + 1 + self._offsets[b]), type='change_aisle_node')
 
     def _add_edges(self) -> None:
-        # intra-block edges (identical logic as your single-block version)
         for b in range(self.n_blocks):
             for aisle in range(1, self.n_aisles + 1):
                 # vertical edges along an aisle
@@ -380,7 +374,6 @@ class MultiBlockShelfStorageGraphGenerator(GraphGeneratorBase):
                                     self._p(aisle + 1, self.n_pick_locations + 1, b),
                                     weight=self.dist_aisle)
 
-        # inter-block edges: top of block b -> bottom of block b+1 (per aisle)
         for b in range(self.n_blocks - 1):
             top_y = self.n_pick_locations + 1
             for aisle in range(1, self.n_aisles + 1):

@@ -39,7 +39,6 @@ class EDDSequencer(PickListSequencer):
         return sorted(pick_lists, key=lambda j: j.earliest_due_date)
 
     def _run(self, input_data: list[PickList]) -> SequencingSolution:
-        print("CheckInput", input_data[0])
         sorted_pick_lists = self._sort_pick_lists(input_data)
 
         return SequencingSolution(sequencing=sorted_pick_lists)
