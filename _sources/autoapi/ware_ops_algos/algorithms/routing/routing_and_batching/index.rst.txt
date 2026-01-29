@@ -1,0 +1,125 @@
+ware_ops_algos.algorithms.routing.routing_and_batching
+======================================================
+
+.. py:module:: ware_ops_algos.algorithms.routing.routing_and_batching
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.routing.routing_and_batching.P
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.routing.routing_and_batching.ExactBatchingAndRoutingBase
+   ware_ops_algos.algorithms.routing.routing_and_batching.ExactBatchingAndRouting
+
+
+Module Contents
+---------------
+
+.. py:class:: ExactBatchingAndRoutingBase
+
+.. py:class:: ExactBatchingAndRouting(network_graph, orders, distance_matrix, tour_matrix, picker_list, big_m, objective: str, **kwargs)
+
+   Bases: :py:obj:`ExactBatchingAndRoutingBase`
+
+
+   .. py:attribute:: network_graph
+
+
+   .. py:attribute:: orders
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: tour_matrix
+
+
+   .. py:attribute:: picker_list
+
+
+   .. py:attribute:: M
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: set_of_pickers
+      :value: None
+
+
+
+   .. py:attribute:: set_of_orders
+      :value: None
+
+
+
+   .. py:attribute:: set_of_items_with_location
+      :value: None
+
+
+
+   .. py:attribute:: number_of_orders
+      :value: None
+
+
+
+   .. py:attribute:: number_of_pickers
+      :value: None
+
+
+
+   .. py:attribute:: number_of_batches
+      :value: None
+
+
+
+   .. py:attribute:: number_of_pick_locations
+      :value: None
+
+
+
+   .. py:attribute:: number_of_items_in_order
+
+
+   .. py:attribute:: capa_of_picker_p
+      :value: None
+
+
+
+   .. py:attribute:: speed_of_picker_p
+      :value: None
+
+
+
+   .. py:attribute:: travel_time_matrix_of_picker_p
+
+
+   .. py:attribute:: item_is_in_order_i
+      :value: None
+
+
+
+   .. py:method:: routing_algorithm()
+
+
+   .. py:method:: print_solution(model_)
+      :staticmethod:
+
+
+
+   .. py:method:: generate_routing()
+
+
+.. py:data:: P
+   :value: [1, 2, 3, 4]
+
+
