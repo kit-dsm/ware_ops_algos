@@ -135,11 +135,13 @@ class SavingsBatching(Batching, ABC):
                  pick_cart: PickCart,
                  articles: Articles,
                  routing_class: Type[Routing],
-                 routing_class_kwargs):
+                 routing_class_kwargs,
+                 time_limit: float | None = None):
         super().__init__(pick_cart, articles)
         self.routing_class = routing_class
         self.routing_class_kwargs = routing_class_kwargs
         self._route_cache = {}
+        self.time_limit = time_limit
         self.algo_name = f"{self.routing_class.algo_name}_SavingsBatching"
 
     def _calc_dist_with_routing_algo(self, orders: list[WarehouseOrder]) -> float:
@@ -183,15 +185,18 @@ class SavingsBatching(Batching, ABC):
 
 class ClarkAndWrightBatching(SavingsBatching):
     """
-    C&W(ii) batching algorithm using dataclasses.
+    C&W(ii) batching algorithm.
     """
     def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
         self.order_list = input_data
         # Start: each order is its own batch
         batches = [BatchObject(batch_id=i, orders=[order]) for i, order in enumerate(self.order_list)]
         batch_counter = len(batches)
+        start_time = time.time()
 
         while True:
+            if self.time_limit and (time.time() - start_time) > self.time_limit:
+                break
             # Compute savings for all pairs
             savings = {}
             for batch_a, batch_b in combinations(batches, 2):
