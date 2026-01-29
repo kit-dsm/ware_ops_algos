@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 import gurobipy as gp
 
 from ware_ops_algos.algorithms.algorithm import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType
-from ware_ops_algos.domain_models import Resource, OrderPosition
+from ware_ops_algos.domain_models import Resource, OrderPosition, Article
 from ware_ops_algos.utils.dynamic_programming_helpers import (
     equivalence_classes,
     cross_aisle_mapping,
@@ -75,6 +75,13 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         self.route = []
         self.item_sequence = []
 
+    def _get_aisle_entry_points(self) -> dict:
+        """Find the entry point (min y) for each aisle."""
+        aisles = defaultdict(list)
+        for x, y in self.node_list:
+            aisles[x].append(y)
+        return {aisle: (aisle, min(ys)) for aisle, ys in aisles.items()}
+
     def _get_route_for_tour(self, source, target, with_last_element: bool = False):
         source_idx = self.node_to_idx[source]
         target_idx = self.node_to_idx[target]
@@ -112,10 +119,12 @@ class HeuristicRouting(Routing, ABC):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
 
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
                          distance_matrix, predecessor_matrix, picker, **kwargs)
+        self.fixed_depot = fixed_depot
 
     def _determine_walking_direction(self, current_source: tuple) -> bool:
         if current_source[1] == self.min_aisle_position:
@@ -193,6 +202,17 @@ class HeuristicRouting(Routing, ABC):
         aisle_y_values = [pos.pick_node[1] for pos in self.current_order if pos.pick_node[0] == current_source[0]]
         return sorted(aisle_y_values) if walking_up else sorted(aisle_y_values, reverse=True)
 
+    def _go_to_end_node(self, current_source: tuple):
+        if self.fixed_depot:
+            end_node = self.end_node
+        else:
+            entry_points = self._get_aisle_entry_points()
+            current_aisle_x = current_source[0]
+            current_aisle_y = entry_points[current_aisle_x][1]
+            end_node = (current_aisle_x, current_aisle_y)
+            node_idx = self.node_to_idx[end_node]
+        self._walk_to_target(current_source, end_node, target_is_end_node=True)
+
 
 class SShapeRouting(HeuristicRouting):
     """Implements S-shape routing."""
@@ -207,9 +227,10 @@ class SShapeRouting(HeuristicRouting):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+                         distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
     def _process_aisle(self, current_source: tuple, aisle_to_visit: int, walking_up: bool = None) -> tuple:
         if current_source[0] == aisle_to_visit:
@@ -241,7 +262,7 @@ class SShapeRouting(HeuristicRouting):
 
             current_source = self._process_aisle(current_source, aisle_min, walking_up)
 
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
+        self._go_to_end_node(current_source)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -262,9 +283,10 @@ class ReturnRouting(HeuristicRouting):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+                         distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         self.pick_list = list(pick_list)
@@ -277,7 +299,8 @@ class ReturnRouting(HeuristicRouting):
             aisle_min = self._get_min_aisle()
             current_source = self._process_aisle(current_source, aisle_min, walking_up)
 
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
+        self._go_to_end_node(current_source)
+
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -300,9 +323,10 @@ class MidpointRouting(HeuristicRouting):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+                         distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         """
@@ -350,7 +374,7 @@ class MidpointRouting(HeuristicRouting):
             current_source = self._process_upper_half(current_source, -99)
 
         # Walk to the end node after completing all orders
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
+        self._go_to_end_node(current_source)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -469,10 +493,11 @@ class LargestGapRouting(HeuristicRouting):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
 
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+                         distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         """
@@ -523,7 +548,7 @@ class LargestGapRouting(HeuristicRouting):
             current_source = self._process_aisle(current_source, next_aisle, True)
 
         # walk to the end node
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
+        self._go_to_end_node(current_source)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -562,9 +587,10 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
                  distance_matrix,
                  predecessor_matrix,
                  picker,
+                 fixed_depot=True,
                  **kwargs):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+                         distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         self.pick_list = list(pick_list)
@@ -577,7 +603,7 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
             current_source = self._walk_to_target(current_source, nearest_pick_node, target_is_pick_node=True)
 
         # walk to the end node
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
+        self._go_to_end_node(current_source)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -615,32 +641,32 @@ class PickListRouting(HeuristicRouting):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
                          distance_matrix, predecessor_matrix, picker, **kwargs)
 
-    def _get_aisle_entry_points(self) -> dict:
-        """Find the entry point (min y) for each aisle."""
-        aisles = defaultdict(list)
-        for x, y in self.node_list:
-            aisles[x].append(y)
-        return {aisle: (aisle, min(ys)) for aisle, ys in aisles.items()}
-
     def _run(self, input_data: list[PickPosition]) -> RoutingSolution:
         self.reset_parameters()
         self.current_order = list(input_data)  # needed for _walk_to_target bookkeeping
 
         entry_points = self._get_aisle_entry_points()
 
+        if self.fixed_depot == True:
+            start_node = self.start_node
+        else:
+            picker_location = self.picker[0].current_location
+            if isinstance(picker_location, RouteNode):
+                start_node = picker_location.position
+            else:
+                start_node = picker_location
         # Start from start_node, go to first aisle entry
         first_aisle = input_data[0].pick_node[0]
         aisle_entry = entry_points[first_aisle]
 
-        current_source = self._walk_to_target(self.start_node, aisle_entry)
+        current_source = self._walk_to_target(start_node, aisle_entry)
 
         # Walk through picks in list order
         for pp in input_data:
             current_source = self._walk_to_target(current_source, pp.pick_node, target_is_pick_node=True)
 
         # Return to end node
-        self._walk_to_target(current_source, self.end_node, target_is_end_node=True)
-
+        self._go_to_end_node(current_source)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
@@ -850,6 +876,75 @@ class ExactTSPRoutingDistance(ExactTSPRouting):
         self._add_constraint_each_node_is_visited_exactly_once()
         self._add_constraint_start_and_end_node_are_visited_once()
         self._add_subtour_eliminiation_without_time()
+
+
+class ExactTSPRoutingDistanceWithWeightPrecedence(ExactTSPRouting):
+    """
+    Implements the exact routing algorithm for TSP with weight-based precedence constraints.
+    Heavy items must be picked before lighter items.
+    """
+    algo_name = "ExactTSPRoutingDistanceWithWeightPrecedence"
+
+    def __init__(self,
+                 start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pd.DataFrame,
+                 predecessor_matrix: np.array, picker: list[Resource], gen_tour, gen_item_sequence,
+                 articles: list[Article],
+                 big_m=1000,
+                 set_time_limit=300, **kwargs):
+        super().__init__(start_node, end_node, distance_matrix=distance_matrix, predecessor_matrix=predecessor_matrix,
+                         picker=picker, gen_tour=gen_tour, gen_item_sequence=gen_item_sequence, big_m=big_m,
+                         set_time_limit=set_time_limit, **kwargs)
+        self.articles = articles
+        self.weights = []
+
+    def _set_exact_routing_parameters(self):
+        """Sets the parameters for the exact routing algorithm."""
+        self.length = len(self.current_order)
+        self.pick_nodes = [pos.pick_node for pos in self.pick_list]
+
+        article_weight_map = {article.article_id: article.weight for article in self.articles}
+
+        self.weights = [article_weight_map[pos.article_id] for pos in self.pick_list]
+
+    def _set_decision_variables(self):
+        """Set the decision variables for the exact routing model."""
+        self.x = self.mdl.addVars(self.length, self.length, vtype=GRB.BINARY, name="x")
+        self.x_start = self.mdl.addVars(self.length, vtype=GRB.BINARY, name="x0j")
+        self.x_end = self.mdl.addVars(self.length, vtype=GRB.BINARY, name="xj0")
+        self.T = self.mdl.addVars(self.length, vtype=GRB.CONTINUOUS, lb=0, ub=self.length - 1, name="T")
+
+    def _set_objective(self):
+        """Set the objective function for the exact routing model."""
+        dist_x_i_x_j = gp.quicksum(self.distance_matrix.at[self.pick_nodes[i], self.pick_nodes[j]] * self.x[i, j]
+                                   for i in range(self.length) for j in range(self.length) if i != j)
+        dist_start_i = gp.quicksum(self.distance_matrix.at[self.start_node, self.pick_nodes[j]] * self.x_start[j]
+                                   for j in range(self.length))
+        dist_end_j = gp.quicksum(self.distance_matrix.at[self.pick_nodes[j], self.end_node] * self.x_end[j]
+                                 for j in range(self.length))
+        self.mdl.setObjective(dist_x_i_x_j + dist_start_i + dist_end_j, GRB.MINIMIZE)
+
+    def _set_constraints(self):
+        self._add_constraint_each_node_is_visited_exactly_once()
+        self._add_constraint_start_and_end_node_are_visited_once()
+        self._add_subtour_eliminiation_without_time()
+        self._add_weight_precedence_constraints()
+
+    def _add_weight_precedence_constraints(self):
+        """
+        Add constraints ensuring that heavier items are picked before lighter items.
+        For all pairs (i, j) where weight[i] > weight[j], ensure T[i] < T[j].
+        """
+        epsilon = 0.01  # Small value to ensure strict inequality
+
+        for i in range(self.length):
+            for j in range(self.length):
+                if i != j and self.weights[i] > self.weights[j]:
+                    # If item i is heavier than item j, then i must be visited before j
+                    # T[i] + epsilon <= T[j]
+                    self.mdl.addConstr(
+                        self.T[i] + epsilon <= self.T[j],
+                        name=f"weight_precedence_{i}_{j}"
+                    )
 
 
 class ExactTSPRoutingTime(ExactTSPRouting):
