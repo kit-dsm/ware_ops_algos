@@ -1,9 +1,10 @@
 from collections import defaultdict
+from typing import Type
 
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, WarehouseOrder, OrderSelectionSolution, RouteNode, TourPlanningState, \
-    TourStates
+    TourStates, Routing
 from ware_ops_algos.domain_models import Resource, ResourceType
 
 
@@ -147,7 +148,7 @@ class TimeIndexedMinConflictSelection(OrderSelection):
     def __init__(self,
                  active_tours: list[TourPlanningState],  # Tours from state transformer
                  resource: Resource,
-                 resources: List[Resource],
+                 resources: list[Resource],
                  picker_position: RouteNode,
                  distance_matrix: pd.DataFrame,
                  routing_class: Type[Routing],
@@ -244,15 +245,9 @@ class TimeIndexedMinConflictSelection(OrderSelection):
 
         # Get resource info (speed, pick_time)
         tour_picker = self.resources[tour.assigned_resource]
-        if hasattr(tour, 'resource'):
-            resource_speed = tour_picker.speed
-            resource_pick_time = tour_picker.time_per_pick
-            print(f"    Resource speed: {resource_speed}, pick_time: {resource_pick_time}")
-        else:
-            resource_speed = 1.0
-            resource_pick_time = 10.0
-            print(f"    WARNING: Using default speed/pick_time")
-
+        resource_speed = tour_picker.speed
+        resource_pick_time = tour_picker.time_per_pick
+        print(f"    Resource speed: {resource_speed}, pick_time: {resource_pick_time}")
         current_time = self.current_time
 
         # Process remaining route from cursor onwards
