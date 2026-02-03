@@ -1,3 +1,4 @@
+import heapq
 import random
 import time
 from copy import deepcopy
@@ -140,6 +141,7 @@ class SavingsBatching(Batching, ABC):
         super().__init__(pick_cart, articles)
         self.routing_class = routing_class
         self.routing_class_kwargs = routing_class_kwargs
+        self._router = routing_class(**routing_class_kwargs)
         self._route_cache = {}
         self.time_limit = time_limit
         self.algo_name = f"{self.routing_class.algo_name}_SavingsBatching"
@@ -148,9 +150,10 @@ class SavingsBatching(Batching, ABC):
         """Compute route distance for a list of orders, with caching."""
         key = tuple(sorted(o.order_id for o in orders))
         if key not in self._route_cache:
-            router = self.routing_class(
-                **self.routing_class_kwargs
-            )
+            # router = self.routing_class(
+            #     **self.routing_class_kwargs
+            # )
+            self._router.reset_parameters()
             batches = [BatchObject(batch_id=0, orders=orders)]
             pick_lists = []
             for batch in batches:
@@ -159,7 +162,7 @@ class SavingsBatching(Batching, ABC):
                     for pos in order.pick_positions:
                         pick_list.append(pos)
                 pick_lists.append(pick_list)
-            routing_sol = router.solve(pick_lists[0])
+            routing_sol = self._router.solve(pick_lists[0])
             self._route_cache[key] = routing_sol.route.distance
         return self._route_cache[key]
 
@@ -221,6 +224,53 @@ class ClarkAndWrightBatching(SavingsBatching):
             batches.append(merged_batch)
 
         return BatchingSolution(batches=batches)
+
+
+class ClarkAndWrightBatchingIncremental(SavingsBatching):
+    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
+        self.order_list = input_data
+        start_time = time.time()
+
+
+        batches = {i: BatchObject(batch_id=i, orders=[order])
+                   for i, order in enumerate(self.order_list)}
+        batch_counter = len(batches)
+
+        savings_heap = []
+        for id_a, id_b in combinations(batches.keys(), 2):
+            saving = self._calculate_saving(batches[id_a], batches[id_b])
+            if saving > 0:
+                pair = (min(id_a, id_b), max(id_a, id_b))
+                heapq.heappush(savings_heap, (-saving, pair[0], pair[1]))
+
+        while savings_heap:
+            if self.time_limit and (time.time() - start_time) > self.time_limit:
+                break
+
+            neg_saving, id_a, id_b = heapq.heappop(savings_heap)
+
+            if id_a not in batches or id_b not in batches:
+                continue
+
+            if -neg_saving <= 0:
+                break
+
+            batch_a = batches.pop(id_a)
+            batch_b = batches.pop(id_b)
+            merged_batch = BatchObject(batch_id=batch_counter, orders=batch_a.orders + batch_b.orders)
+            batches[batch_counter] = merged_batch
+
+            for other_id in batches:
+                if other_id == batch_counter:
+                    continue
+                saving = self._calculate_saving(merged_batch, batches[other_id])
+                if saving > 0:
+                    pair = (min(batch_counter, other_id), max(batch_counter, other_id))
+                    heapq.heappush(savings_heap, (-saving, pair[0], pair[1]))
+
+            batch_counter += 1
+
+        return BatchingSolution(batches=list(batches.values()))
 
 
 class SeedCriteria(str, Enum):
@@ -364,6 +414,7 @@ class LocalSearchBatching(Batching):
         self.start_batching_kwargs = start_batching_kwargs or {}
         self.time_limit = time_limit
         self._route_cache = {}
+        self._router = routing_class(**self.routing_class_kwargs)
         self._start_time = None
         self.algo_name = f"{self.routing_class.algo_name}_{self.start_batching_class.algo_name}_LocalSearchBatching"
 
@@ -387,7 +438,6 @@ class LocalSearchBatching(Batching):
         return time.time() - self._start_time > self.time_limit
 
     def _local_search(self, batches: list[BatchObject]) -> list[BatchObject]:
-        """Main local search loop with proper efficiency and time limit checking."""
         self._start_time = time.time()
 
         initial_cost = sum(self._batch_cost_from_orders(b.orders) for b in batches)
@@ -470,23 +520,20 @@ class LocalSearchBatching(Batching):
         return batches
 
     def _swap(self, batches: list[BatchObject]) -> tuple[list[BatchObject], bool]:
-        """
-        Try to exchange two orders from different batches.
-        NO DEEPCOPY - modify in place when improvement found.
-        """
         for i in range(len(batches)):
             for j in range(i + 1, len(batches)):
-                # Check time limit periodically
                 if self._time_limit_exceeded():
                     return batches, False
 
                 batch_i = batches[i]
                 batch_j = batches[j]
 
+                old_cost_i = self._batch_cost_from_orders(batch_i.orders)
+                old_cost_j = self._batch_cost_from_orders(batch_j.orders)
+                old_total = old_cost_i + old_cost_j
+
                 for i_idx, order_i in enumerate(batch_i.orders):
                     for j_idx, order_j in enumerate(batch_j.orders):
-                        # Check capacity BEFORE computing costs
-                        # Create temporary order lists without copying entire batches
                         temp_orders_i = batch_i.orders[:i_idx] + [order_j] + batch_i.orders[i_idx + 1:]
                         temp_orders_j = batch_j.orders[:j_idx] + [order_i] + batch_j.orders[j_idx + 1:]
 
@@ -494,18 +541,12 @@ class LocalSearchBatching(Batching):
                                 not self.capacity_checker.orders_fit(temp_orders_j):
                             continue
 
-                        # Compute old costs (cached)
-                        old_cost_i = self._batch_cost_from_orders(batch_i.orders)
-                        old_cost_j = self._batch_cost_from_orders(batch_j.orders)
-                        old_total = old_cost_i + old_cost_j
-
                         # Compute new costs
                         new_cost_i = self._batch_cost_from_orders(temp_orders_i)
                         new_cost_j = self._batch_cost_from_orders(temp_orders_j)
                         new_total = new_cost_i + new_cost_j
 
-                        if new_total < old_total - 1e-6:  # Small epsilon for float comparison
-                            # Apply improvement IN PLACE
+                        if new_total < old_total - 1e-6:
                             batch_i.orders[i_idx] = order_j
                             batch_j.orders[j_idx] = order_i
                             return batches, True
@@ -513,16 +554,11 @@ class LocalSearchBatching(Batching):
         return batches, False
 
     def _shift(self, batches: list[BatchObject]) -> tuple[list[BatchObject], bool]:
-        """
-        Try to move an order from one batch to another.
-        NO DEEPCOPY - modify in place when improvement found.
-        """
         for i in range(len(batches)):
             batch_i = batches[i]
 
             for order_idx, order in enumerate(batch_i.orders):
                 for j in range(len(batches)):
-                    # Check time limit periodically
                     if self._time_limit_exceeded():
                         return batches, False
 
@@ -572,449 +608,12 @@ class LocalSearchBatching(Batching):
 
         key = tuple(sorted(o.order_id for o in orders))
         if key not in self._route_cache:
-            routing_instance = self.routing_class(**self.routing_class_kwargs)
+            self._router.reset_parameters()
             pick_list = [pos for order in orders for pos in order.pick_positions]
-            routing_instance._run(pick_list)
-            self._route_cache[key] = routing_instance.distance
+            sol = self._router.solve(pick_list)
+            self._route_cache[key] = sol.route.distance
         return self._route_cache[key]
 
     def _batch_cost(self, batch: BatchObject) -> float:
         """Calculate routing cost for a batch with caching."""
         return self._batch_cost_from_orders(batch.orders)
-
-
-class LocalSearchBatchingFast(Batching):
-
-    def __init__(self,
-                 pick_cart: PickCart,
-                 articles: Articles,
-                 routing_class: type[Routing],
-                 routing_class_kwargs: dict,
-                 start_batching_class: type[Batching],
-                 start_batching_kwargs: dict = None,
-                 time_limit: float = 120.0):
-        super().__init__(pick_cart, articles)
-        self.routing_class = routing_class
-        self.routing_class_kwargs = routing_class_kwargs
-        self.start_batching_class = start_batching_class
-        self.start_batching_kwargs = start_batching_kwargs or {}
-        self.time_limit = time_limit
-        self._route_cache = {}
-        self._start_time = None
-        self.algo_name = (
-            f"{self.routing_class.algo_name}_"
-            f"{self.start_batching_class.algo_name}_LocalSearchBatching"
-        )
-
-    # ------------------------------------------------------------------
-    # Main entry
-    # ------------------------------------------------------------------
-
-    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
-        self.order_list = input_data
-        batches = self._create_start_batches()
-
-        # 🔹 PRECOMPUTE order consumption ONCE
-        self._order_consumption = {
-            o.order_id: self.capacity_checker._compute_order_consumption(o)
-            for o in self.order_list
-        }
-
-        batches = self._local_search(batches)
-        return BatchingSolution(batches=batches)
-
-    def _create_start_batches(self) -> list[BatchObject]:
-        batching_instance: Batching = self.start_batching_class(
-            pick_cart=self.pick_cart,
-            articles=self.articles,
-            **self.start_batching_kwargs
-        )
-        return batching_instance.solve(self.order_list).batches
-
-    def _time_limit_exceeded(self) -> bool:
-        return time.time() - self._start_time > self.time_limit
-
-    # ------------------------------------------------------------------
-    # Local search
-    # ------------------------------------------------------------------
-
-    def _local_search(self, batches: list[BatchObject]) -> list[BatchObject]:
-        self._start_time = time.time()
-
-        n_dim = self.pick_cart.n_dimension
-        max_capacity = [
-            cap * self.pick_cart.n_boxes
-            for cap in self.pick_cart.capacities
-        ]
-
-        # 🔹 INITIAL batch consumptions
-        batch_consumption = [
-            self.capacity_checker._compute_consumption(b.orders)
-            for b in batches
-        ]
-
-        # 🔹 INITIAL batch routing costs
-        batch_cost = [
-            self._batch_cost_from_orders(b.orders)
-            for b in batches
-        ]
-
-        initial_cost = batch_cost
-        print(f"Initial cost: {sum(initial_cost)}")
-        while not self._time_limit_exceeded():
-            improved = False
-
-            # ---------------- SWAP ----------------
-            for i in range(len(batches)):
-                bi = batches[i]
-                for j in range(i + 1, len(batches)):
-                    bj = batches[j]
-
-                    for oi_idx, oi in enumerate(bi.orders):
-                        cons_i = self._order_consumption[oi.order_id]
-
-                        for oj_idx, oj in enumerate(bj.orders):
-                            cons_j = self._order_consumption[oi.order_id]
-
-                            # Incremental capacity check
-                            feasible = True
-                            for d in range(n_dim):
-                                if (batch_consumption[i][d] - cons_i[d] + cons_j[d] > max_capacity[d] or
-                                    batch_consumption[j][d] - cons_j[d] + cons_i[d] > max_capacity[d]):
-                                    feasible = False
-                                    break
-                            if not feasible:
-                                continue
-
-                            # Apply swap
-                            bi.orders[oi_idx], bj.orders[oj_idx] = oj, oi
-
-                            new_ci = self._batch_cost_from_orders(bi.orders)
-                            new_cj = self._batch_cost_from_orders(bj.orders)
-                            delta = (new_ci + new_cj) - (batch_cost[i] + batch_cost[j])
-
-                            if delta < -1e-6:
-                                # Accept
-                                for d in range(n_dim):
-                                    batch_consumption[i][d] += cons_j[d] - cons_i[d]
-                                    batch_consumption[j][d] += cons_i[d] - cons_j[d]
-                                batch_cost[i] = new_ci
-                                batch_cost[j] = new_cj
-                                improved = True
-                                break
-                            else:
-                                # Revert
-                                bi.orders[oi_idx], bj.orders[oj_idx] = oi, oj
-
-                        if improved:
-                            break
-                    if improved:
-                        break
-                if improved:
-                    break
-
-            if improved:
-                continue
-
-            # ---------------- SHIFT ----------------
-            for i in range(len(batches)):
-                bi = batches[i]
-                if len(bi.orders) <= 1:
-                    continue
-
-                for idx, o in enumerate(bi.orders):
-                    cons_o = self._order_consumption[o.order_id]
-
-                    for j in range(len(batches)):
-                        if i == j:
-                            continue
-
-                        bj = batches[j]
-
-                        feasible = True
-                        for d in range(n_dim):
-                            if (batch_consumption[i][d] - cons_o[d] > max_capacity[d] or
-                                batch_consumption[j][d] + cons_o[d] > max_capacity[d]):
-                                feasible = False
-                                break
-                        if not feasible:
-                            continue
-
-                        # Apply shift
-                        bi.orders.pop(idx)
-                        bj.orders.append(o)
-
-                        new_ci = self._batch_cost_from_orders(bi.orders)
-                        new_cj = self._batch_cost_from_orders(bj.orders)
-                        delta = (new_ci + new_cj) - (batch_cost[i] + batch_cost[j])
-
-                        if delta < -1e-6:
-                            for d in range(n_dim):
-                                batch_consumption[i][d] -= cons_o[d]
-                                batch_consumption[j][d] += cons_o[d]
-                            batch_cost[i] = new_ci
-                            batch_cost[j] = new_cj
-
-                            if not bi.orders:
-                                del batches[i]
-                                del batch_consumption[i]
-                                del batch_cost[i]
-
-                            improved = True
-                            break
-                        else:
-                            # Revert
-                            bj.orders.pop()
-                            bi.orders.insert(idx, o)
-
-                    if improved:
-                        break
-                if improved:
-                    break
-
-            if not improved:
-                break
-        print(f"\n{'=' * 60}")
-        print(f"Local Search Completed")
-        print(f"{'=' * 60}")
-        print(f"Final cost: {sum(batch_cost)}")
-        print(f"Final batches: {len(batches)}")
-        print(f"Route cache size: {len(self._route_cache)}")
-        print(f"{'=' * 60}\n")
-
-        return batches
-
-    # ------------------------------------------------------------------
-    # Routing cost
-    # ------------------------------------------------------------------
-
-    def _batch_cost_from_orders(self, orders: list[WarehouseOrder]) -> float:
-        if not orders:
-            return 0.0
-
-        key = tuple(sorted(o.order_id for o in orders))
-        if key not in self._route_cache:
-            routing_instance = self.routing_class(**self.routing_class_kwargs)
-            pick_list = [pos for o in orders for pos in o.pick_positions]
-            routing_instance._run(pick_list)
-            self._route_cache[key] = routing_instance.distance
-        return self._route_cache[key]
-
-
-class IteratedLocalSearchBatching(Batching):
-    def __init__(self,
-                 capacity: int,
-                 routing_class: type[Routing],
-                 routing_class_kwargs: dict,
-                 start_batching_class: type[Batching],
-                 start_batching_kwargs: dict = None,
-                 rearrangement_parameter: float = 0.3,
-                 threshold_parameter: float = 0.01,
-                 time_limit: float = 30.0):
-        super().__init__(capacity)
-        self.routing_class = routing_class
-        self.routing_class_kwargs = routing_class_kwargs
-        self.start_batching_class = start_batching_class
-        self.start_batching_kwargs = start_batching_kwargs or {}
-        self.rearrangement_parameter = rearrangement_parameter
-        self.threshold_parameter = threshold_parameter
-        self.time_limit = time_limit
-        self._route_cache = {}
-
-    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
-        self.order_list = input_data
-        start_batches = self._create_start_batches()
-        batches = self._iterated_local_search(start_batches)
-        return BatchingSolution(batches=batches)
-
-    def _create_start_batches(self) -> list[BatchObject]:
-        batching_instance = self.start_batching_class(
-            capacity=self.picker_capa,
-            **self.start_batching_kwargs
-        )
-        batching_sol = batching_instance.solve(self.order_list)
-        return batching_sol.batches
-
-    def _iterated_local_search(self, s_start: list[BatchObject]) -> list[BatchObject]:
-        s_initial = deepcopy(s_start)
-        s_asterisk = self._local_search_phase(s_initial)
-        s_incumbent = deepcopy(s_asterisk)
-        improvement_found = False
-
-        start_time = time.time()
-        while True:
-            s = self._perturbation_phase(deepcopy(s_incumbent))
-            s = self._local_search_phase(s)
-
-            d_s = self._total_distance(s)
-            d_star = self._total_distance(s_asterisk)
-
-            if d_s < d_star:
-                s_asterisk = deepcopy(s)
-                s_incumbent = deepcopy(s)
-                improvement_found = True
-
-            if time.time() - start_time > self.time_limit:
-                if improvement_found:
-                    improvement_found = False
-                    start_time = time.time()
-                elif d_s - d_star < self.threshold_parameter * d_star:
-                    return s
-                else:
-                    return s_asterisk
-
-    def _local_search_phase(self, batches: list[BatchObject]) -> list[BatchObject]:
-        improved = True
-        while improved:
-            improved = False
-            new_batches = self._local_search_swap(deepcopy(batches))
-            assert all(batch.orders for batch in new_batches), "Found empty batch after swap"
-
-            if self._total_distance(new_batches) < self._total_distance(batches):
-                batches = new_batches
-                improved = True
-
-            new_batches = self._local_search_shift(deepcopy(batches))
-            assert all(batch.orders for batch in new_batches), "Found empty batch after shift"
-
-            if self._total_distance(new_batches) < self._total_distance(batches):
-                batches = new_batches
-                improved = True
-        # try:
-        #     assert all(batch.orders for batch in batches), "Found empty batch after phase local_search"
-        # except AssertionError:
-        #     print(batches)
-        return batches
-
-    def _local_search_swap(self, batches: list[BatchObject]) -> list[BatchObject]:
-        is_optimal = False
-        while not is_optimal:
-            improvement_found = False
-            for i, batch_i in enumerate(batches):
-                for j, batch_j in enumerate(batches):
-                    if i == j:
-                        continue
-
-                    for i_idx, order_i in enumerate(batch_i.orders):
-                        for j_idx, order_j in enumerate(batch_j.orders):
-                            temp_i = deepcopy(batch_i)
-                            temp_j = deepcopy(batch_j)
-
-                            temp_i.orders[i_idx] = order_j
-                            temp_j.orders[j_idx] = order_i
-
-                            if not self._batch_within_capacity(temp_i) or not self._batch_within_capacity(temp_j):
-                                continue
-
-                            if self._batch_cost(temp_i) + self._batch_cost(temp_j) < \
-                               self._batch_cost(batch_i) + self._batch_cost(batch_j):
-                                batches[i] = temp_i
-                                batches[j] = temp_j
-                                improvement_found = True
-                                break
-                        if improvement_found:
-                            break
-                    if improvement_found:
-                        break
-                if improvement_found:
-                    break
-            if not improvement_found:
-                is_optimal = True
-        batches = self._remove_empty_batches(batches)
-        assert all(batch.orders for batch in batches), "Found empty batch after swap"
-        return batches
-
-    def _local_search_shift(self, batches: list[BatchObject]) -> list[BatchObject]:
-        is_optimal = False
-        while not is_optimal:
-            improvement_found = False
-            for i, batch_i in enumerate(batches):
-                for j, batch_j in enumerate(batches):
-                    if i == j:
-                        continue
-
-                    for order in list(batch_i.orders):
-                        temp_i = deepcopy(batch_i)
-                        temp_j = deepcopy(batch_j)
-
-                        temp_i.orders.remove(order)
-                        temp_j.orders.append(order)
-
-                        if not temp_i.orders or not temp_j.orders:
-                            continue
-
-                        if not self._batch_within_capacity(temp_i) or not self._batch_within_capacity(temp_j):
-                            continue
-                        if self._batch_cost(temp_i) + self._batch_cost(temp_j) < \
-                           self._batch_cost(batch_i) + self._batch_cost(batch_j):
-                            batches[i] = temp_i
-                            batches[j] = temp_j
-                            batches = self._remove_empty_batches(batches)
-                            improvement_found = True
-                            break
-                    if improvement_found:
-                        break
-                if improvement_found:
-                    break
-            if not improvement_found:
-                is_optimal = True
-        batches = self._remove_empty_batches(batches)
-        assert all(batch.orders for batch in batches), "Found empty batch after shift"
-        return batches
-
-    def _perturbation_phase(self, batches: list[BatchObject]) -> list[BatchObject]:
-        iterations = int(len(batches) * self.rearrangement_parameter + 1)
-        batches = deepcopy(batches)
-
-        for _ in range(iterations):
-            if len(batches) < 2:
-                break
-            b1, b2 = random.sample(batches, 2)
-            q = random.randint(1, min(len(b1.orders), len(b2.orders)))
-
-            selected_1 = b1.orders[:q]
-            selected_2 = b2.orders[:q]
-
-            b1.orders = b1.orders[q:]
-            b2.orders = b2.orders[q:]
-
-            new_orders = []
-
-            if self._orders_fit(b2.orders + selected_1):
-                b2.orders += selected_1
-            else:
-                new_orders += selected_1
-
-            if self._orders_fit(b1.orders + selected_2):
-                b1.orders += selected_2
-            else:
-                new_orders += selected_2
-
-            if new_orders:
-                new_batch_id = max(b.batch_id for b in batches) + 1
-                batches.append(BatchObject(batch_id=new_batch_id, orders=new_orders))
-        batches = self._remove_empty_batches(batches)
-        assert all(batch.orders for batch in batches), "Found empty batch after pertubation"
-        return batches
-
-    def _batch_cost(self, batch: BatchObject) -> float:
-        key = tuple(sorted(o.order_id for o in batch.orders))
-        if key not in self._route_cache:
-            routing_instance = self.routing_class(**self.routing_class_kwargs)
-            pick_list = [pos for order in batch.orders for pos in order.pick_positions]
-            routing_instance._run(pick_list)
-            self._route_cache[key] = routing_instance.distance
-        return self._route_cache[key]
-
-    def _total_distance(self, batches: list[BatchObject]) -> float:
-        return sum(self._batch_cost(batch) for batch in batches)
-
-    def _batch_within_capacity(self, batch: BatchObject) -> bool:
-        return self._orders_fit(batch.orders)
-
-    def _orders_fit(self, orders: list[WarehouseOrder]) -> bool:
-        return sum(pos.in_store for order in orders for pos in order.pick_positions) <= self.picker_capa
-
-    @staticmethod
-    def _remove_empty_batches(batches: list[BatchObject]) -> list[BatchObject]:
-        return [batch for batch in batches if batch.orders]
