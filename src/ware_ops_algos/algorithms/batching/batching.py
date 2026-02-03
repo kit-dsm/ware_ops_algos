@@ -187,46 +187,6 @@ class SavingsBatching(Batching, ABC):
 
 
 class ClarkAndWrightBatching(SavingsBatching):
-    """
-    C&W(ii) batching algorithm.
-    """
-    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
-        self.order_list = input_data
-        # Start: each order is its own batch
-        batches = [BatchObject(batch_id=i, orders=[order]) for i, order in enumerate(self.order_list)]
-        batch_counter = len(batches)
-        start_time = time.time()
-
-        while True:
-            if self.time_limit and (time.time() - start_time) > self.time_limit:
-                break
-            # Compute savings for all pairs
-            savings = {}
-            for batch_a, batch_b in combinations(batches, 2):
-                savings[(batch_a.batch_id, batch_b.batch_id)] = self._calculate_saving(batch_a, batch_b)
-
-            # Stop if no positive savings
-            if not savings or max(savings.values()) <= 0:
-                break
-
-            # Pick best pair
-            best_key = max(savings, key=savings.get)
-            id_a, id_b = best_key
-            a = next(b for b in batches if b.batch_id == id_a)
-            b = next(b for b in batches if b.batch_id == id_b)
-
-            # Merge batches
-            merged_batch = BatchObject(batch_id=batch_counter, orders=a.orders + b.orders)
-            batch_counter += 1
-
-            # Remove old, add new
-            batches = [batch for batch in batches if batch.batch_id not in best_key]
-            batches.append(merged_batch)
-
-        return BatchingSolution(batches=batches)
-
-
-class ClarkAndWrightBatchingIncremental(SavingsBatching):
     def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
         self.order_list = input_data
         start_time = time.time()
