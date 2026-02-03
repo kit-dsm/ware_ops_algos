@@ -48,6 +48,8 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
 
         self.pick_list: Optional[list[PickPosition]] = None
         self.distance_matrix = distance_matrix
+        self._dist_array = distance_matrix.values
+        self._node_to_idx = {node: idx for idx, node in enumerate(distance_matrix.index)}
         self.predecessor_matrix = predecessor_matrix
         self.node_list: list[tuple[float, float]] = node_list
         self.node_to_idx = node_to_idx
@@ -69,6 +71,10 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
     def _run(self, input_data: list[PickPosition]) -> RoutingSolution:
         """Concrete routing algorithms implement this and return a Route result."""
         ...
+
+    def _get_distance(self, source, target) -> float:
+        """Fast distance lookup."""
+        return self._dist_array[self._node_to_idx[source], self._node_to_idx[target]]
 
     def reset_parameters(self):
         self.distance = 0
@@ -139,7 +145,8 @@ class HeuristicRouting(Routing, ABC):
             self._get_route_for_tour(source, target, target_is_end_node)
             if target_is_pick_node:
                 self.annotated_route.append(RouteNode(target, NodeType.PICK))
-        self.distance += self.distance_matrix.at[source, target]
+        # self.distance += self.distance_matrix.at[source, target]
+        self.distance += self._get_distance(source, target)
         if target_is_pick_node:
             remaining = []
             for pos in self.current_order:
@@ -610,18 +617,30 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
+    # def _get_next_nearest_node_by_dijkstra(self, current_source: tuple) -> tuple:
+    #     """
+    #     Determines the next nearest pick node using Dijkstra's algorithm.
+    #
+    #     :param current_source: the current source node
+    #
+    #     Returns the next nearest pick node.
+    #     """
+    #     return min(
+    #         [pos.pick_node for pos in self.current_order],
+    #         key=lambda item: self.distance_matrix.at[current_source, item]
+    #     )
+
     def _get_next_nearest_node_by_dijkstra(self, current_source: tuple) -> tuple:
-        """
-        Determines the next nearest pick node using Dijkstra's algorithm.
+        """Vectorized nearest neighbor selection."""
+        source_idx = self._node_to_idx[current_source]
 
-        :param current_source: the current source node
+        pick_nodes = [pos.pick_node for pos in self.current_order]
+        pick_indices = [self._node_to_idx[node] for node in pick_nodes]
 
-        Returns the next nearest pick node.
-        """
-        return min(
-            [pos.pick_node for pos in self.current_order],
-            key=lambda item: self.distance_matrix.at[current_source, item]
-        )
+        # Single NumPy operation instead of repeated lookups
+        distances = self._dist_array[source_idx, pick_indices]
+
+        return pick_nodes[distances.argmin()]
 
 
 class PickListRouting(HeuristicRouting):
