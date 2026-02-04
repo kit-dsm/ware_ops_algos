@@ -255,7 +255,7 @@ class TimeIndexedMinConflictSelection(OrderSelection):
 
             dist = self.distance_matrix.at[current_node.position, next_node.position]
             if dist < 6 * 800 and tour_picker.tpe == ResourceType.COBOT:
-                travel_time = dist / tour_picker.speed_follow
+                travel_time = dist / tour_picker.speed_follow_mode
             else:
                 travel_time = dist / resource_speed
             pick_time = resource_pick_time if hasattr(next_node, 'node_type') and next_node.node_type == 'PICK' else 0
