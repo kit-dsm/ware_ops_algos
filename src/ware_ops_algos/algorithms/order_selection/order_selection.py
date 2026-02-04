@@ -178,7 +178,6 @@ class TimeIndexedMinConflictSelection(OrderSelection):
 
         tours_processed = 0
         tours_skipped = 0
-
         for tour in self.active_tours:
             print(f"\nProcessing tour {tour.tour_id}:")
             print(f"  Status: {tour.status}")
@@ -192,7 +191,6 @@ class TimeIndexedMinConflictSelection(OrderSelection):
             tour_resource_id = tour.assigned_resource
             tour_resource = self.resources[tour_resource_id]
             print(f"  Assigned resource: {tour_resource}")
-
             # Exclude self for cobots, include all for humans
             if self.resource.tpe == ResourceType.COBOT and tour_resource.id == self.resource.id:
                 print(f"  -> Skipped (self-exclusion for cobot)")
@@ -250,14 +248,16 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         print(f"    Resource speed: {resource_speed}, pick_time: {resource_pick_time}")
         current_time = self.current_time
 
-        # Process remaining route from cursor onwards
         for i in range(cursor, len(route) - 1):
             current_node = route[i]
             next_node = route[i + 1]
             aisle = current_node.position[0]
 
             dist = self.distance_matrix.at[current_node.position, next_node.position]
-            travel_time = dist / resource_speed
+            if dist < 6 * 800 and tour_picker.tpe == ResourceType.COBOT:
+                travel_time = dist / tour_picker.speed_follow
+            else:
+                travel_time = dist / resource_speed
             pick_time = resource_pick_time if hasattr(next_node, 'node_type') and next_node.node_type == 'PICK' else 0
 
             segment_end = current_time + travel_time + pick_time
@@ -265,14 +265,14 @@ class TimeIndexedMinConflictSelection(OrderSelection):
 
             current_time = segment_end
 
-        print(f"    Created {len(segments)} segments from cursor {cursor} to end")
-        if segments:
-            print(f"    First segment: aisle {segments[0][0]}, t={segments[0][1]:.1f}-{segments[0][2]:.1f}")
-            print(f"    Last segment: aisle {segments[-1][0]}, t={segments[-1][1]:.1f}-{segments[-1][2]:.1f}")
+        # print(f"    Created {len(segments)} segments from cursor {cursor} to end")
+        # if segments:
+        #     print(f"    First segment: aisle {segments[0][0]}, t={segments[0][1]:.1f}-{segments[0][2]:.1f}")
+        #     print(f"    Last segment: aisle {segments[-1][0]}, t={segments[-1][1]:.1f}-{segments[-1][2]:.1f}")
 
         return segments
 
-    def _calculate_conflicts(self, order: WarehouseOrder, occupancy: dict) -> tuple[float, float]:
+    def _calculate_conflicts(self, order: WarehouseOrder, occupancy: dict) -> float:
         """Calculate conflict score using actual routing"""
         print(f"\n--- Calculating conflicts for order {order.order_id} ---")
 
@@ -316,7 +316,7 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         print(f"  Total conflict score: {conflict_score}")
         print(f"  Segments with conflicts: {segments_with_conflicts}/{len(annotated_route) - 1}")
 
-        return (conflict_score, route_solution.route.distance)
+        return conflict_score
 
     def _run(self, input_data: list[WarehouseOrder]) -> OrderSelectionSolution:
         print(f"\n{'=' * 60}")
