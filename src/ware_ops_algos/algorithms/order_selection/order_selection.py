@@ -272,7 +272,7 @@ class TimeIndexedMinConflictSelection(OrderSelection):
 
         return segments
 
-    def _calculate_conflicts(self, order: WarehouseOrder, occupancy: dict) -> float:
+    def _calculate_conflicts(self, order: WarehouseOrder, occupancy: dict) -> tuple[float, float]:
         """Calculate conflict score using actual routing"""
         print(f"\n--- Calculating conflicts for order {order.order_id} ---")
 
@@ -316,7 +316,7 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         print(f"  Total conflict score: {conflict_score}")
         print(f"  Segments with conflicts: {segments_with_conflicts}/{len(annotated_route) - 1}")
 
-        return conflict_score
+        return (conflict_score, route_solution.route.distance)
 
     def _run(self, input_data: list[WarehouseOrder]) -> OrderSelectionSolution:
         print(f"\n{'=' * 60}")
