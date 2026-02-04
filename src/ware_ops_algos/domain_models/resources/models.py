@@ -51,6 +51,20 @@ class Resource:
 
 
 @dataclass
+class CobotPicker(Resource):
+    mode: str = "driving"
+    speed_follow_mode: float = None
+    aisle_congestion_rate: float = None
+    tour_setup_time: float = None
+
+
+@dataclass
+class ManualPicker(Resource):
+    aisle_congestion_rate: float = None
+    tour_setup_time: float = None
+
+
+@dataclass
 class Resources(BaseDomainObject):
     tpe: ResourceType
     resources: Optional[list[Resource]] = None
