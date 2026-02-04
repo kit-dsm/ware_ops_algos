@@ -1,0 +1,277 @@
+ware_ops_algos.algorithms.item_assignment
+=========================================
+
+.. py:module:: ware_ops_algos.algorithms.item_assignment
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/algorithms/item_assignment/item_assignment/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.item_assignment.PROJECT_ROOT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.item_assignment.Order
+   ware_ops_algos.algorithms.item_assignment.ResolvedOrderPosition
+   ware_ops_algos.algorithms.item_assignment.StorageLocations
+   ware_ops_algos.algorithms.item_assignment.Location
+   ware_ops_algos.algorithms.item_assignment.ItemAssignment
+   ware_ops_algos.algorithms.item_assignment.GreedyItemAssignment
+   ware_ops_algos.algorithms.item_assignment.NearestNeighborItemAssignment
+   ware_ops_algos.algorithms.item_assignment.PriorityItemAssignment
+   ware_ops_algos.algorithms.item_assignment.SinglePositionItemAssignment
+   ware_ops_algos.algorithms.item_assignment.MinMaxItemAssignment
+   ware_ops_algos.algorithms.item_assignment.MinMinItemAssignment
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.item_assignment.plot_route
+   ware_ops_algos.algorithms.item_assignment.plot_route_with_directions
+
+
+Package Contents
+----------------
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: ResolvedOrderPosition
+
+   .. py:attribute:: position
+      :type:  OrderPosition
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: StorageLocations
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  StorageType
+
+
+   .. py:attribute:: locations
+      :type:  Optional[list[Location]]
+      :value: None
+
+
+
+   .. py:attribute:: storage_slots
+      :type:  Optional[list[StorageLocation]]
+      :value: None
+
+
+
+   .. py:attribute:: article_location_mapping
+      :type:  Optional[dict[int, list[Location]]]
+
+
+   .. py:attribute:: location_article_mapping
+      :type:  Optional[dict[tuple[int | float, int | float], int]]
+
+
+   .. py:method:: build_article_location_mapping()
+
+
+   .. py:method:: get_locations_by_article_id(article_id: int) -> list[Location]
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:class:: Location
+
+   .. py:attribute:: x
+      :type:  int | float
+
+
+   .. py:attribute:: y
+      :type:  int | float
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int | float
+
+
+.. py:function:: plot_route(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route
+
+
+.. py:function:: plot_route_with_directions(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route with direction arrows, including repeated edges.
+
+
+.. py:class:: ItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.domain_models.Order`\ ]\ , :py:obj:`ware_ops_algos.algorithms.ItemAssignmentSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: storage_locations
+
+
+.. py:class:: GreedyItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: NearestNeighborItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[int, int] = (0, 0), **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: start_node
+      :value: (0, 0)
+
+
+
+.. py:class:: PriorityItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Base class for Weidinger selection algorithms.
+
+
+   .. py:attribute:: storage_locations
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: q_max
+
+
+.. py:class:: SinglePositionItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, routing_class: Type[ware_ops_algos.algorithms.Routing], routing_class_kwargs: dict, **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 2
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMaxItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMax
+
+   Process SKUs by fewest locations first.
+   Priority = MAX distance to any already-selected position.
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMinItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMin
+
+   Process SKUs by fewest locations first.
+   Priority = MIN distance to any already-selected position.
+   Creates tight clusters.
+
+
+   .. py:attribute:: start_node
+
+
+.. py:data:: PROJECT_ROOT
+
