@@ -20,6 +20,10 @@ SUBPROBLEMS = {
         "objectives": ["tardiness", "picking_time", "cost", "completion_time"],
         "variables": ["item_assignment", "order_selection", "batching", "routing"]
     },
+    "ORP": {
+            "objectives": ["tardiness", "picking_time", "cost", "completion_time"],
+            "variables": ["item_assignment", "order_selection", "routing"]
+        },
     "OBSRP": {
         "objectives": ["tardiness", "picking_time", "cost", "completion_time"],
         "variables": ["item_assignment", "order_selection", "batching", "sequencing", "routing"]
