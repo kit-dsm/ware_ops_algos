@@ -1,0 +1,82 @@
+ware_ops_algos.domain_models.datacards
+======================================
+
+.. py:module:: ware_ops_algos.domain_models.datacards
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.datacards.DomainCard
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.datacards.datacard_from_instance
+   ware_ops_algos.domain_models.datacards.validate_against_card
+   ware_ops_algos.domain_models.datacards.save_card_yaml
+   ware_ops_algos.domain_models.datacards.build_domain_from_card_path
+
+
+Module Contents
+---------------
+
+.. py:class:: DomainCard
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: problem_class
+      :type:  str
+
+
+   .. py:attribute:: objective
+      :type:  str
+
+
+   .. py:attribute:: layout
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: articles
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: orders
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: resources
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: storage
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: sources
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: provenance
+      :type:  Dict[str, Any] | None
+      :value: None
+
+
+
+.. py:function:: datacard_from_instance(domain: ware_ops_algos.domain_models.base_domain.BaseWarehouseDomain, name: str, file_path: str | pathlib.Path | None = None, parser: str | None = None) -> DomainCard
+
+.. py:function:: validate_against_card(domain: ware_ops_algos.domain_models.base_domain.BaseWarehouseDomain, card: DomainCard) -> Tuple[bool, List[str]]
+
+.. py:function:: save_card_yaml(card: DomainCard, path: str | pathlib.Path) -> None
+
+.. py:function:: build_domain_from_card_path(card_path: str | pathlib.Path) -> DomainCard
+
