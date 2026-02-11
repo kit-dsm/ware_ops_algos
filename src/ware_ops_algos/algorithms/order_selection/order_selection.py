@@ -245,8 +245,12 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         tour_picker = self.resources[tour.assigned_resource]
         resource_speed = tour_picker.speed
         resource_pick_time = tour_picker.time_per_pick
+        setup_time = 0
+        if not tour.status == TourStates.STARTED:
+            setup_time = self.resource.tour_setup_time
+
         print(f"    Resource speed: {resource_speed}, pick_time: {resource_pick_time}")
-        current_time = self.current_time
+        current_time = self.current_time + setup_time
 
         for i in range(cursor, len(route) - 1):
             current_node = route[i]
@@ -279,10 +283,11 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         router = self.routing_class(**self.routing_class_kwargs)
         route_solution = router.solve(order.pick_positions)
         annotated_route = route_solution.route.annotated_route
+        setup_time = self.resource.tour_setup_time
 
         print(f"  Route length: {len(annotated_route)}")
 
-        current_time = self.current_time
+        current_time = self.current_time + setup_time
         conflict_score = 0
         segments_with_conflicts = 0
 
@@ -334,5 +339,4 @@ class TimeIndexedMinConflictSelection(OrderSelection):
         print(f"\n{'=' * 60}")
         print(f"SELECTED ORDER: {selected_order.order_id}")
         print(f"{'=' * 60}\n")
-
         return OrderSelectionSolution(selected_orders=[selected_order])
