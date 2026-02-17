@@ -117,7 +117,7 @@ class HesslerIrnichLoader(DataLoader):
         while idx < len(lines) and not lines[idx].startswith("SKU_SECTION"):
             if lines[idx].startswith("ID"):
                 parts = lines[idx].split()
-                articles.append({"article_id": int(parts[1])})
+                articles.append({"article_id": int(parts[1]), "weight": int(parts[3])})
             idx += 1
 
         idx += 1  # skip SKU_SECTION line
@@ -292,7 +292,7 @@ class HesslerIrnichLoader(DataLoader):
         )
 
         # Articles
-        article_list = [Article(a["article_id"]) for a in parsed["articles"]]
+        article_list = [Article(article_id=a["article_id"], weight=a["weight"]) for a in parsed["articles"]]
         articles = Articles(tpe=ArticleType.STANDARD, articles=article_list)
 
         # Storage (cell inversion already done in parser; apply global mirror if enabled)
@@ -344,7 +344,7 @@ class HesslerIrnichLoader(DataLoader):
             pick_cart = PickCart(n_dimension=1,
                                  n_boxes=1,
                                  capacities=[int(header["PICKER_CAPACITY"])],
-                                 dimensions=[DimensionType.ITEMS],
+                                 dimensions=[DimensionType.WEIGHT],
                                  box_can_mix_orders=True)
             resources_list = [
                 Resource(id=0, capacity=int(header["PICKER_CAPACITY"],
