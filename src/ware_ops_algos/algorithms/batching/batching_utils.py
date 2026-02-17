@@ -107,6 +107,13 @@ class CapacityChecker:
             elif dim_type == DimensionType.ORDERS:
                 # Count orders
                 consumption[d] = 1
+            elif dim_type == DimensionType.WEIGHT:
+                for pos in order.pick_positions:
+                    article_id = pos.article_id
+                    quantity = pos.amount
+                    article_dims = self.article_dimensions[article_id]
+                    dim_idx = self._get_article_dim_index(d)
+                    consumption[d] += quantity * article_dims[dim_idx]
             else:
                 # Sum (quantity × article_dimension)
                 for pos in order.pick_positions:
