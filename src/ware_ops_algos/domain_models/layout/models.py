@@ -57,40 +57,31 @@ class LayoutData(BaseDomainObject):
     graph_data: Optional[LayoutParameters] = None
     layout_network: Optional[LayoutNetwork] = None
 
-    # def get_features(self) -> list[str]:
-    #     feats: set[str] = set()
-    #
-    #     def add_features(obj) -> None:
-    #         for f in fields(obj):
-    #             val = getattr(obj, f.name)
-    #             if val is None:
-    #                 continue
-    #             # treat empty containers as "absent"
-    #             if isinstance(val, (list, tuple, dict, set)) and not val:
-    #                 continue
-    #             feats.add(f.name)
-    #
-    #     if self.graph_data is not None:
-    #         add_features(self.graph_data)
-    #
-    #     if self.layout_network is not None:
-    #         add_features(self.layout_network)
-    #
-    #     return sorted(feats)
     def get_features(self) -> dict[str, any]:
+        check_types = (nx.Graph, pd.DataFrame, np.ndarray, dict)
         features = {}
 
         if self.graph_data:
             for f in fields(self.graph_data):
                 value = getattr(self.graph_data, f.name)
                 if value is not None:
-                    features[f.name] = value
+                    if isinstance(value, check_types):
+                        features[f"{f.name}"] = True
+                    elif isinstance(value, tuple):
+                        features[f.name] = list(value)
+                    else:
+                        features[f.name] = value
 
         if self.layout_network:
             for f in fields(self.layout_network):
                 value = getattr(self.layout_network, f.name)
                 if value is not None:
-                    features[f.name] = value
+                    if isinstance(value, check_types):
+                        features[f"{f.name}"] = True
+                    elif isinstance(value, tuple):
+                        features[f.name] = list(value)
+                    else:
+                        features[f.name] = value
 
         return features
 

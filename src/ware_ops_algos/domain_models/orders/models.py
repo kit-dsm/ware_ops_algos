@@ -67,6 +67,7 @@ class OrdersDomain(BaseDomainObject):
         features["n_orders"] = len(self.orders)
 
         if self.orders:
+            features["order_number"] = any(o.order_id is not None for o in self.orders)
             features["due_date"] = any(o.due_date is not None for o in self.orders)
             features["order_date"] = any(o.order_date is not None for o in self.orders)
             features["article_id"] = any(o.order_positions[0].article_id is not None for o in self.orders)
