@@ -223,11 +223,11 @@ class AlgorithmFilter:
         try:
             domain_type = domain.get_type_value()
         except:
-            print(domain)
+            domain_type = domain["type"]
         try:
             domain_features = domain.get_features()
         except:
-            domain_features = {}
+            domain_features = domain["features"]
 
         # Get algorithm requirements
         required_types = requirements.get("type", [])
