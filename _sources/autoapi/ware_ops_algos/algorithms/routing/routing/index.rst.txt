@@ -1,0 +1,452 @@
+ware_ops_algos.algorithms.routing.routing
+=========================================
+
+.. py:module:: ware_ops_algos.algorithms.routing.routing
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.routing.routing.Routing
+   ware_ops_algos.algorithms.routing.routing.HeuristicRouting
+   ware_ops_algos.algorithms.routing.routing.SShapeRouting
+   ware_ops_algos.algorithms.routing.routing.ReturnRouting
+   ware_ops_algos.algorithms.routing.routing.MidpointRouting
+   ware_ops_algos.algorithms.routing.routing.LargestGapRouting
+   ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting
+   ware_ops_algos.algorithms.routing.routing.PickListRouting
+   ware_ops_algos.algorithms.routing.routing.ExactRouting
+   ware_ops_algos.algorithms.routing.routing.ExactTSPRouting
+   ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance
+   ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence
+   ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime
+   ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime
+   ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting
+
+
+Module Contents
+---------------
+
+.. py:class:: Routing(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, node_list: list[tuple[float, float]] = None, node_to_idx: dict = None, idx_to_node: dict = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm.PickPosition`\ ]\ :py:obj:`| list`\ [\ :py:obj:`ware_ops_algos.domain_models.OrderPosition`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm.RoutingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: start_node
+
+
+   .. py:attribute:: end_node
+
+
+   .. py:attribute:: closest_node_to_start
+
+
+   .. py:attribute:: min_aisle_position
+
+
+   .. py:attribute:: max_aisle_position
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: predecessor_matrix
+
+
+   .. py:attribute:: node_list
+      :type:  list[tuple[float, float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_to_idx
+      :value: None
+
+
+
+   .. py:attribute:: idx_to_node
+      :value: None
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[ware_ops_algos.algorithms.algorithm.RouteNode]
+      :value: []
+
+
+
+   .. py:attribute:: distance
+      :value: 0
+
+
+
+   .. py:attribute:: current_order
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: picker
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:method:: reset_parameters()
+
+
+.. py:class:: HeuristicRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for heuristic routing algorithms.
+
+
+   .. py:attribute:: fixed_depot
+      :value: True
+
+
+
+.. py:class:: SShapeRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements S-shape routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'SShapeRouting'
+
+
+
+.. py:class:: ReturnRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Return routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ReturnRouting'
+
+
+
+.. py:class:: MidpointRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Midpoint routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MidpointRouting'
+
+
+
+   .. py:method:: split_orders_by_pickzone(resolved_positions, mid_point: int) -> tuple[list[ware_ops_algos.algorithms.algorithm.PickPosition], list[ware_ops_algos.algorithms.algorithm.PickPosition]]
+      :staticmethod:
+
+
+
+.. py:class:: LargestGapRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Largest Gap Routing for order picking in a warehouse.
+
+
+   .. py:attribute:: algo_name
+      :value: 'LargestGapRouting'
+
+
+
+.. py:class:: NearestNeighbourhoodRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   A class to perform nearest neighbourhood routing for order picking in a warehouse using Dijkstra's algorithm.
+
+
+   .. py:attribute:: algo_name
+      :value: 'NearestNeighbourhoodRouting'
+
+
+
+.. py:class:: PickListRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Base class for heuristic routing algorithms.
+
+
+   .. py:attribute:: algo_name
+      :value: 'PickListRouting'
+
+
+
+.. py:class:: ExactRouting(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for exact routing algorithms.
+
+
+   .. py:attribute:: big_m
+
+
+   .. py:attribute:: time_limit
+
+
+   .. py:attribute:: length
+      :value: None
+
+
+
+   .. py:attribute:: pick_nodes
+      :value: None
+
+
+
+   .. py:attribute:: mdl
+      :value: None
+
+
+
+   .. py:attribute:: amount_at_pick_nodes
+      :value: None
+
+
+
+.. py:class:: ExactTSPRouting(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`ExactRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP).
+
+
+   .. py:attribute:: T
+      :value: None
+
+
+
+   .. py:attribute:: C_max
+      :value: None
+
+
+
+   .. py:attribute:: x
+      :value: None
+
+
+
+   .. py:attribute:: x_start
+      :value: None
+
+
+
+   .. py:attribute:: x_end
+      :value: None
+
+
+
+   .. py:method:: construct_route_and_item_sequence()
+
+      Generates the route for the exact routing algorithm from solution variables.
+
+
+
+.. py:class:: ExactTSPRoutingDistance(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, big_m=1000, set_time_limit=300, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using distance as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingDistance'
+
+
+
+.. py:class:: ExactTSPRoutingDistanceWithWeightPrecedence(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, articles: list[ware_ops_algos.domain_models.Article], big_m=1000, set_time_limit=300, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for TSP with weight-based precedence constraints.
+   Heavy items must be picked before lighter items.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingDistanceWithWeightPrecedence'
+
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: weights
+      :value: []
+
+
+
+.. py:class:: ExactTSPRoutingTime(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using time as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRouting'
+
+
+
+   .. py:attribute:: travel_time_matrix
+
+
+.. py:class:: ExactTSPRoutingMaxCompletionTime(batched_list, distance_matrix, tour_matrix, picker, big_m, objective, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using maximum completion time as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingMaxCompletionTime'
+
+
+
+.. py:class:: RatliffRosenthalRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], n_aisles: int, n_pick_locations: int, dist_aisle: float, dist_pick_locations: float, dist_aisle_location: float, dist_start: float, dist_end: float, gen_tour: bool = False, gen_item_sequence: bool = False, **kwargs)
+
+   Bases: :py:obj:`Routing`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'RatliffRosenthalRouting'
+
+
+
+   .. py:attribute:: state_graph
+
+
+   .. py:attribute:: n_aisles
+
+
+   .. py:attribute:: n_pick_locations
+
+
+   .. py:attribute:: dist_aisle
+
+
+   .. py:attribute:: dist_pick_locations
+
+
+   .. py:attribute:: dist_aisle_location
+
+
+   .. py:attribute:: dist_start
+
+
+   .. py:attribute:: dist_end
+
+
+   .. py:attribute:: depot
+
+
+   .. py:method:: build_state_space()
+
+
+   .. py:method:: largest_gap(order_list: list[ware_ops_algos.algorithms.algorithm.PickPosition])
+      :staticmethod:
+
+
+
+   .. py:method:: one_pass()
+
+
+   .. py:method:: two_pass()
+
+
+   .. py:method:: top(pick_node_y: int)
+
+
+   .. py:method:: bottom(pick_node_y: int)
+
+
+   .. py:method:: gap(gap_size: int)
+
+
+   .. py:method:: void()
+
+
+   .. py:method:: cross_aisle_cost(cross_aisle_action: tuple[int, int])
+
+
+   .. py:method:: cost_fn_wrapper(order_subset: list[ware_ops_algos.algorithms.algorithm.PickPosition], transition: str, node=None)
+
+
+   .. py:method:: get_item_sequence_from_path() -> list[ware_ops_algos.algorithms.algorithm.PickPosition]
+
+      Extracts the ordered pick sequence from the dynamic programming path (self.path).
+      :returns: ordered item sequence along the optimal tour.
+      :rtype: list[PickPosition]
+
+
+
+   .. py:method:: plot_picker_tour(T: networkx.MultiGraph)
+
+      Visualizes the picker tour graph T as a 2D warehouse layout.
+      Nodes are (aisle, pick_y) positions.
+
+
+

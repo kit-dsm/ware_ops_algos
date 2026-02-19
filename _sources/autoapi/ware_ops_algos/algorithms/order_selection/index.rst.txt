@@ -1,0 +1,253 @@
+ware_ops_algos.algorithms.order_selection
+=========================================
+
+.. py:module:: ware_ops_algos.algorithms.order_selection
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/algorithms/order_selection/order_selection/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.order_selection.Resource
+   ware_ops_algos.algorithms.order_selection.ResourceType
+   ware_ops_algos.algorithms.order_selection.OrderSelection
+   ware_ops_algos.algorithms.order_selection.DummyOrderSelection
+   ware_ops_algos.algorithms.order_selection.GreedyOrderSelection
+   ware_ops_algos.algorithms.order_selection.MinDistOrderSelection
+   ware_ops_algos.algorithms.order_selection.MinAisleOrderSelection
+   ware_ops_algos.algorithms.order_selection.MinMaxArticlesCobotSelection
+   ware_ops_algos.algorithms.order_selection.MinMaxAisleOrderSelection
+   ware_ops_algos.algorithms.order_selection.TimeIndexedMinConflictSelection
+
+
+Package Contents
+----------------
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: ResourceType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: HUMAN
+      :value: 'human'
+
+
+
+   .. py:attribute:: ROBOT
+      :value: 'robot'
+
+
+
+   .. py:attribute:: COBOT
+      :value: 'cobot'
+
+
+
+   .. py:attribute:: MIXED
+      :value: 'mixed'
+
+
+
+.. py:class:: OrderSelection(**kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.WarehouseOrder`\ ]\ , :py:obj:`ware_ops_algos.algorithms.OrderSelectionSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: DummyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: GreedyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: MinDistOrderSelection(picker_position: tuple[float, float], dima: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: picker_position
+
+
+   .. py:attribute:: dima
+
+
+.. py:class:: MinAisleOrderSelection(congestion_info: dict, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxArticlesCobotSelection(resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxAisleOrderSelection(congestion_info: dict, resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: TimeIndexedMinConflictSelection(active_tours: list[ware_ops_algos.algorithms.TourPlanningState], resource: ware_ops_algos.domain_models.Resource, resources: list[ware_ops_algos.domain_models.Resource], picker_position: ware_ops_algos.algorithms.RouteNode, distance_matrix: pandas.DataFrame, routing_class: Type[ware_ops_algos.algorithms.Routing], routing_class_kwargs: dict, current_time: float = 0.0, slot_duration: float = 1.0, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Select order that minimizes predicted time-indexed aisle conflicts
+
+
+   .. py:attribute:: active_tours
+
+
+   .. py:attribute:: resource
+
+
+   .. py:attribute:: resources
+
+
+   .. py:attribute:: picker_position
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: current_time
+      :value: 0.0
+
+
+
+   .. py:attribute:: slot_duration
+      :value: 1.0
+
+
+

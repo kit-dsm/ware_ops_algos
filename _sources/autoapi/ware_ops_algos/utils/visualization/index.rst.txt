@@ -1,0 +1,41 @@
+ware_ops_algos.utils.visualization
+==================================
+
+.. py:module:: ware_ops_algos.utils.visualization
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.utils.visualization.render_graph
+   ware_ops_algos.utils.visualization.plot_route
+   ware_ops_algos.utils.visualization.plot_route_with_directions
+   ware_ops_algos.utils.visualization.plot_picker_gantt
+
+
+Module Contents
+---------------
+
+.. py:function:: render_graph(G, plot: bool = True, out_name=False, draw_edge_labels=False, with_labels=False, dpi=700, font_size=5, node_size=50, node_color='lightblue') -> None
+
+.. py:function:: plot_route(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route
+
+
+.. py:function:: plot_route_with_directions(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route with direction arrows, including repeated edges.
+
+
+.. py:function:: plot_picker_gantt(assignments, use_datetime=False, tz=timezone.utc, figsize=(12, 6))
+
+   Visualize batch assignments per picker as a Gantt chart.
+   - assignments: list of dicts (output from schedule_routing_batches) or a DataFrame
+                  required keys/cols: picker_id, batch_idx, start_time, end_time
+   - use_datetime: if True, convert epoch seconds to datetimes for the x-axis
+   - tz: timezone for datetime display when use_datetime=True
+
+
