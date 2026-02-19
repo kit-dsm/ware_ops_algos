@@ -117,7 +117,10 @@ class HesslerIrnichLoader(DataLoader):
         while idx < len(lines) and not lines[idx].startswith("SKU_SECTION"):
             if lines[idx].startswith("ID"):
                 parts = lines[idx].split()
-                articles.append({"article_id": int(parts[1]), "weight": int(parts[3])})
+                if len(parts) == 2:
+                    articles.append({"article_id": int(parts[1])})
+                else:
+                    articles.append({"article_id": int(parts[1]), "weight": int(parts[3])})
             idx += 1
 
         idx += 1  # skip SKU_SECTION line
@@ -292,7 +295,10 @@ class HesslerIrnichLoader(DataLoader):
         )
 
         # Articles
-        article_list = [Article(article_id=a["article_id"], weight=a["weight"]) for a in parsed["articles"]]
+        if "weight" in parsed["articles"][0].keys():
+            article_list = [Article(article_id=a["article_id"], weight=a["weight"]) for a in parsed["articles"]]
+        else:
+            article_list = [Article(article_id=a["article_id"]) for a in parsed["articles"]]
         articles = Articles(tpe=ArticleType.STANDARD, articles=article_list)
 
         # Storage (cell inversion already done in parser; apply global mirror if enabled)
