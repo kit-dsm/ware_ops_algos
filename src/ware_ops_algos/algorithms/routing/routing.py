@@ -273,6 +273,7 @@ class SShapeRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
@@ -311,6 +312,7 @@ class ReturnRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route
                       # pick_positions=self.pick_list,
                       # order_numbers=list({pp.order_number for pp in self.pick_list})
                       )
@@ -385,6 +387,7 @@ class MidpointRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
@@ -559,6 +562,7 @@ class LargestGapRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
@@ -614,6 +618,7 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
