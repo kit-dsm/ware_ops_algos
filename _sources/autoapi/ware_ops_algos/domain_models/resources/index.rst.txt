@@ -1,0 +1,280 @@
+ware_ops_algos.domain_models.resources
+======================================
+
+.. py:module:: ware_ops_algos.domain_models.resources
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/domain_models/resources/models/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.resources.ResourceType
+   ware_ops_algos.domain_models.resources.DimensionType
+   ware_ops_algos.domain_models.resources.Box
+   ware_ops_algos.domain_models.resources.PickCart
+   ware_ops_algos.domain_models.resources.Resource
+   ware_ops_algos.domain_models.resources.CobotPicker
+   ware_ops_algos.domain_models.resources.ManualPicker
+   ware_ops_algos.domain_models.resources.Resources
+
+
+Package Contents
+----------------
+
+.. py:class:: ResourceType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: HUMAN
+      :value: 'human'
+
+
+
+   .. py:attribute:: ROBOT
+      :value: 'robot'
+
+
+
+   .. py:attribute:: COBOT
+      :value: 'cobot'
+
+
+
+   .. py:attribute:: MIXED
+      :value: 'mixed'
+
+
+
+.. py:class:: DimensionType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: WEIGHT
+      :value: 'weight'
+
+
+
+   .. py:attribute:: ITEMS
+      :value: 'items'
+
+
+
+   .. py:attribute:: VOLUME
+      :value: 'volume'
+
+
+
+   .. py:attribute:: ORDERS
+      :value: 'orders'
+
+
+
+   .. py:attribute:: ORDERLINES
+      :value: 'orderline'
+
+
+
+.. py:class:: Box
+
+   .. py:attribute:: box_id
+      :type:  int
+
+
+   .. py:attribute:: order_ids
+      :type:  set[int]
+
+
+   .. py:attribute:: items
+      :type:  list[tuple[int, int]]
+      :value: []
+
+
+
+   .. py:attribute:: consumption
+      :type:  list[float]
+      :value: []
+
+
+
+.. py:class:: PickCart
+
+   .. py:attribute:: n_dimension
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: capacities
+      :type:  Optional[list[float]]
+      :value: None
+
+
+
+   .. py:attribute:: dimensions
+      :type:  Optional[list[DimensionType]]
+      :value: None
+
+
+
+   .. py:attribute:: n_boxes
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: box_can_mix_orders
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: CobotPicker
+
+   Bases: :py:obj:`Resource`
+
+
+   .. py:attribute:: mode
+      :type:  str
+      :value: 'driving'
+
+
+
+   .. py:attribute:: speed_follow_mode
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: aisle_congestion_rate
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+.. py:class:: ManualPicker
+
+   Bases: :py:obj:`Resource`
+
+
+   .. py:attribute:: aisle_congestion_rate
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+.. py:class:: Resources
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: resources
+      :type:  Optional[list[Resource]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+

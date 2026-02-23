@@ -1,0 +1,159 @@
+ware_ops_algos.algorithms.order_selection.order_selection
+=========================================================
+
+.. py:module:: ware_ops_algos.algorithms.order_selection.order_selection
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.order_selection.order_selection.OrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.DummyOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.GreedyOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinDistOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinAisleOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinMaxArticlesCobotSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.MinMaxAisleOrderSelection
+   ware_ops_algos.algorithms.order_selection.order_selection.TimeIndexedMinConflictSelection
+
+
+Module Contents
+---------------
+
+.. py:class:: OrderSelection(**kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.WarehouseOrder`\ ]\ , :py:obj:`ware_ops_algos.algorithms.OrderSelectionSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: DummyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: GreedyOrderSelection(**kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: MinDistOrderSelection(picker_position: tuple[float, float], dima: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: picker_position
+
+
+   .. py:attribute:: dima
+
+
+.. py:class:: MinAisleOrderSelection(congestion_info: dict, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxArticlesCobotSelection(resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: MinMaxAisleOrderSelection(congestion_info: dict, resource: ware_ops_algos.domain_models.Resource, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: congestion_info
+
+
+   .. py:attribute:: resource
+
+
+   .. py:method:: get_order_aisles(order: ware_ops_algos.algorithms.WarehouseOrder) -> set
+      :staticmethod:
+
+
+
+.. py:class:: TimeIndexedMinConflictSelection(active_tours: list[ware_ops_algos.algorithms.TourPlanningState], resource: ware_ops_algos.domain_models.Resource, resources: list[ware_ops_algos.domain_models.Resource], picker_position: ware_ops_algos.algorithms.RouteNode, distance_matrix: pandas.DataFrame, routing_class: Type[ware_ops_algos.algorithms.Routing], routing_class_kwargs: dict, current_time: float = 0.0, slot_duration: float = 1.0, **kwargs)
+
+   Bases: :py:obj:`OrderSelection`
+
+
+   Select order that minimizes predicted time-indexed aisle conflicts
+
+
+   .. py:attribute:: active_tours
+
+
+   .. py:attribute:: resource
+
+
+   .. py:attribute:: resources
+
+
+   .. py:attribute:: picker_position
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: current_time
+      :value: 0.0
+
+
+
+   .. py:attribute:: slot_duration
+      :value: 1.0
+
+
+

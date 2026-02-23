@@ -1,0 +1,213 @@
+ware_ops_algos.algorithms.routing_and_batching.batching_routing_assigning
+=========================================================================
+
+.. py:module:: ware_ops_algos.algorithms.routing_and_batching.batching_routing_assigning
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.routing_and_batching.batching_routing_assigning.RoutingBatchingAssigning
+   ware_ops_algos.algorithms.routing_and_batching.batching_routing_assigning.ExactTSPBatchingAndRoutingDistance
+   ware_ops_algos.algorithms.routing_and_batching.batching_routing_assigning.ExactTSPBatchingAndRoutingMaxCompletionTime
+
+
+Module Contents
+---------------
+
+.. py:class:: RoutingBatchingAssigning(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, time_limit: int | None = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.routing.Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for routing algorithms.
+   :param network_graph: the network graph
+   :param order_list: list of orders or just one order, each order is a dictionary with at least keys 'batch_number' or 'order_number'
+   :param distance_matrix: the distance matrix
+   :param picker_list: list[{'id': int, 'speed': m/sec, 'time_to_pick': sec, 'capacity': int}], can be a list of pickers or a single picker
+   :param kwargs: additional keyword arguments
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: distance_per_batch
+      :value: None
+
+
+
+   .. py:attribute:: solution
+      :value: None
+
+
+
+   .. py:attribute:: current_order
+      :value: None
+
+
+
+   .. py:attribute:: pick_list
+      :value: None
+
+
+
+   .. py:attribute:: routing_algo
+      :value: None
+
+
+
+   .. py:attribute:: list_item_pick_locations
+      :value: None
+
+
+
+   .. py:attribute:: list_item_numbers
+      :value: None
+
+
+
+   .. py:attribute:: list_item_amounts
+      :value: None
+
+
+
+   .. py:attribute:: list_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: x_start
+      :value: None
+
+
+
+   .. py:attribute:: x_end
+      :value: None
+
+
+
+   .. py:attribute:: x
+      :value: None
+
+
+
+   .. py:attribute:: w
+      :value: None
+
+
+
+   .. py:attribute:: T
+      :value: None
+
+
+
+   .. py:attribute:: y
+      :value: None
+
+
+
+   .. py:attribute:: z
+      :value: None
+
+
+
+   .. py:attribute:: C_bp
+      :value: None
+
+
+
+   .. py:attribute:: C_max
+      :value: None
+
+
+
+   .. py:attribute:: C_max_p
+      :value: None
+
+
+
+   .. py:attribute:: range_item_number
+      :value: None
+
+
+
+   .. py:attribute:: set_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: set_batch_numbers
+      :value: None
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: time_limit
+      :value: None
+
+
+
+   .. py:method:: construct_route_and_sequence(b)
+
+      Generates the route and/or item sequence from solution variables.
+
+
+
+.. py:class:: ExactTSPBatchingAndRoutingDistance(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`, :py:obj:`abc.ABC`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: big_m
+
+
+   .. py:attribute:: routing_algo
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+.. py:class:: ExactTSPBatchingAndRoutingMaxCompletionTime(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m: int, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: routing_algo
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+   .. py:attribute:: big_m
+
+

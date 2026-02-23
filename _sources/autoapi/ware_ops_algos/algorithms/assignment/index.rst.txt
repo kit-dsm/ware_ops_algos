@@ -1,0 +1,95 @@
+ware_ops_algos.algorithms.assignment
+====================================
+
+.. py:module:: ware_ops_algos.algorithms.assignment
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/algorithms/assignment/assignment/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.assignment.Resource
+   ware_ops_algos.algorithms.assignment.Assigner
+   ware_ops_algos.algorithms.assignment.RoundRobinAssigner
+
+
+Package Contents
+----------------
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Assigner(resources: list[ware_ops_algos.domain_models.Resource])
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.PickList`\ ]\ , :py:obj:`ware_ops_algos.algorithms.AssignmentSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resources
+
+
+.. py:class:: RoundRobinAssigner(resources: list[ware_ops_algos.domain_models.Resource])
+
+   Bases: :py:obj:`Assigner`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+

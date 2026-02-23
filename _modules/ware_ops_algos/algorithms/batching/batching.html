@@ -1,0 +1,1009 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="prefetch" href="../../../../_static/favicon.png" as="image">
+
+    <link rel="shortcut icon" href="../../../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>ware_ops_algos.algorithms.batching.batching - ware_ops_algos: Algorithms for warehouse operations</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #0080c0;
+  --color-brand-content: #0080c0;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">ware_ops_algos: Algorithms for warehouse operations</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/favicon.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for ware_ops_algos.algorithms.batching.batching</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">heapq</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">ware_ops_algos.algorithms</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">ware_ops_algos.algorithms.batching.batching_utils</span> <span class="kn">import</span> <span class="n">CapacityChecker</span>
+<span class="kn">from</span> <span class="nn">ware_ops_algos.algorithms.routing.routing</span> <span class="kn">import</span> <span class="n">Routing</span>
+<span class="kn">from</span> <span class="nn">ware_ops_algos.algorithms.algorithm</span> <span class="kn">import</span> <span class="n">BatchingSolution</span><span class="p">,</span> <span class="n">BatchObject</span><span class="p">,</span> <span class="n">WarehouseOrder</span>
+<span class="kn">from</span> <span class="nn">ware_ops_algos.domain_models</span> <span class="kn">import</span> <span class="n">Order</span><span class="p">,</span> <span class="n">PickCart</span><span class="p">,</span> <span class="n">Articles</span><span class="p">,</span> <span class="n">DimensionType</span><span class="p">,</span> <span class="n">Box</span>
+
+
+<div class="viewcode-block" id="Batching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.Batching">[docs]</a>
+<span class="k">class</span> <span class="nc">Batching</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">],</span> <span class="n">BatchingSolution</span><span class="p">],</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Batching class to batch orders&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span> <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># instance attributes</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># self.picker = picker</span>
+        <span class="c1"># self.picker_capa = pick_cart.</span>
+<div class="viewcode-block" id="Batching.execution_time">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.Batching.execution_time">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Batching.pick_cart">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.Batching.pick_cart">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pick_cart</span> <span class="o">=</span> <span class="n">pick_cart</span></div>
+
+<div class="viewcode-block" id="Batching.articles">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.Batching.articles">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">articles</span> <span class="o">=</span> <span class="n">articles</span></div>
+
+<div class="viewcode-block" id="Batching.capacity_checker">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.Batching.capacity_checker">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span> <span class="o">=</span> <span class="n">CapacityChecker</span><span class="p">(</span><span class="n">pick_cart</span><span class="o">=</span><span class="n">pick_cart</span><span class="p">,</span>
+                                                <span class="n">articles</span><span class="o">=</span><span class="n">articles</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BatchingSolution</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="PriorityBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.PriorityBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">PriorityBatching</span><span class="p">(</span><span class="n">Batching</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Priority batching class to batch orders based on sorting criterion.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_sorted_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BatchingSolution</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span> <span class="o">=</span> <span class="n">input_data</span>
+        <span class="n">sorted_orders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sorted_orders</span><span class="p">()</span>
+        <span class="n">batched_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">batch_number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">current_batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">sorted_orders</span><span class="p">:</span>
+            <span class="c1"># Check if we can add this order to current batch</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">can_add_order</span><span class="p">(</span><span class="n">current_batch</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+                <span class="n">current_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Current batch is full - start new batch</span>
+                <span class="k">if</span> <span class="n">current_batch</span><span class="p">:</span>
+                    <span class="n">batched_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="n">batch_number</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="n">current_batch</span><span class="p">))</span>
+                    <span class="n">batch_number</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Check if order fits alone</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">can_add_order</span><span class="p">([],</span> <span class="n">order</span><span class="p">):</span>
+                    <span class="n">current_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">order</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Order </span><span class="si">{</span><span class="n">order</span><span class="o">.</span><span class="n">order_id</span><span class="si">}</span><span class="s2"> exceeds capacity, excluded&quot;</span><span class="p">)</span>
+                    <span class="n">current_batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">current_batch</span><span class="p">:</span>
+            <span class="n">batched_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="n">batch_number</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="n">current_batch</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">BatchingSolution</span><span class="p">(</span><span class="n">batches</span><span class="o">=</span><span class="n">batched_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OrderNrFifoBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.OrderNrFifoBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">OrderNrFifoBatching</span><span class="p">(</span><span class="n">PriorityBatching</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;First in First out batching based on order number.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="OrderNrFifoBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.OrderNrFifoBatching.algo_name">[docs]</a>
+    <span class="n">algo_name</span> <span class="o">=</span> <span class="s2">&quot;OrderNrFiFoBatching&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_sorted_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">order_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FifoBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.FifoBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">FifoBatching</span><span class="p">(</span><span class="n">PriorityBatching</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    First in First out batching class to batch orders</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FifoBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.FifoBatching.algo_name">[docs]</a>
+    <span class="n">algo_name</span> <span class="o">=</span> <span class="s2">&quot;FiFoBatching&quot;</span></div>
+
+
+    <span class="c1"># def __init__(self, capacity):</span>
+    <span class="c1">#     super().__init__(capacity)</span>
+
+    <span class="k">def</span> <span class="nf">_sorted_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">order_date</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RandomBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.RandomBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">RandomBatching</span><span class="p">(</span><span class="n">PriorityBatching</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    First in First out batching class to batch orders</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RandomBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.RandomBatching.algo_name">[docs]</a>
+    <span class="n">algo_name</span> <span class="o">=</span> <span class="s2">&quot;RandomBatching&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span> <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">44</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pick_cart</span><span class="p">,</span> <span class="n">articles</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RandomBatching.seed">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.RandomBatching.seed">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span></div>
+
+<div class="viewcode-block" id="RandomBatching.batch_number">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.RandomBatching.batch_number">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_number</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_sorted_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sorting the batching list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shuffled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">shuffled</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">shuffled</span></div>
+
+
+
+<div class="viewcode-block" id="DueDateBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.DueDateBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">DueDateBatching</span><span class="p">(</span><span class="n">PriorityBatching</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    First in First out batching class to batch orders</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DueDateBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.DueDateBatching.algo_name">[docs]</a>
+    <span class="n">algo_name</span> <span class="o">=</span> <span class="s2">&quot;DueDateBatching&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span> <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pick_cart</span><span class="p">,</span> <span class="n">articles</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_sorted_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">due_date</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SavingsBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SavingsBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">SavingsBatching</span><span class="p">(</span><span class="n">Batching</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for savings-based batching algorithms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span>
+                 <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">,</span>
+                 <span class="n">routing_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Routing</span><span class="p">],</span>
+                 <span class="n">routing_class_kwargs</span><span class="p">,</span>
+                 <span class="n">time_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pick_cart</span><span class="p">,</span> <span class="n">articles</span><span class="p">)</span>
+<div class="viewcode-block" id="SavingsBatching.routing_class">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SavingsBatching.routing_class">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">routing_class</span> <span class="o">=</span> <span class="n">routing_class</span></div>
+
+<div class="viewcode-block" id="SavingsBatching.routing_class_kwargs">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SavingsBatching.routing_class_kwargs">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">routing_class_kwargs</span> <span class="o">=</span> <span class="n">routing_class_kwargs</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_router</span> <span class="o">=</span> <span class="n">routing_class</span><span class="p">(</span><span class="o">**</span><span class="n">routing_class_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="SavingsBatching.time_limit">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SavingsBatching.time_limit">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span> <span class="o">=</span> <span class="n">time_limit</span></div>
+
+<div class="viewcode-block" id="SavingsBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SavingsBatching.algo_name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">routing_class</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">_SavingsBatching&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_calc_dist_with_routing_algo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute route distance for a list of orders, with caching.&quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">order_id</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">orders</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">:</span>
+            <span class="c1"># router = self.routing_class(</span>
+            <span class="c1">#     **self.routing_class_kwargs</span>
+            <span class="c1"># )</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_router</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+            <span class="n">batches</span> <span class="o">=</span> <span class="p">[</span><span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="n">orders</span><span class="p">)]</span>
+            <span class="n">pick_lists</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                <span class="n">pick_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">order</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">:</span>
+                        <span class="n">pick_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                <span class="n">pick_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pick_list</span><span class="p">)</span>
+            <span class="n">routing_sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_router</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">pick_lists</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">routing_sol</span><span class="o">.</span><span class="n">route</span><span class="o">.</span><span class="n">distance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_saving</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_a</span><span class="p">:</span> <span class="n">BatchObject</span><span class="p">,</span> <span class="n">batch_b</span><span class="p">:</span> <span class="n">BatchObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate saving from merging two batches.&quot;&quot;&quot;</span>
+        <span class="n">orders_a</span> <span class="o">=</span> <span class="n">batch_a</span><span class="o">.</span><span class="n">orders</span>
+        <span class="n">orders_b</span> <span class="o">=</span> <span class="n">batch_b</span><span class="o">.</span><span class="n">orders</span>
+        <span class="n">merged_orders</span> <span class="o">=</span> <span class="n">orders_a</span> <span class="o">+</span> <span class="n">orders_b</span>
+
+        <span class="c1"># Capacity check</span>
+        <span class="c1"># total_amount = sum(pos.in_store for o in merged_orders for pos in o.pick_positions)</span>
+        <span class="c1"># if total_amount &gt; self.picker_capa:</span>
+        <span class="c1">#     return 0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">orders_fit</span><span class="p">(</span><span class="n">merged_orders</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">dist_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_dist_with_routing_algo</span><span class="p">(</span><span class="n">orders_a</span><span class="p">)</span>
+        <span class="n">dist_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_dist_with_routing_algo</span><span class="p">(</span><span class="n">orders_b</span><span class="p">)</span>
+        <span class="n">dist_comb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_dist_with_routing_algo</span><span class="p">(</span><span class="n">merged_orders</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dist_a</span> <span class="o">+</span> <span class="n">dist_b</span> <span class="o">-</span> <span class="n">dist_comb</span></div>
+
+
+
+<div class="viewcode-block" id="ClarkAndWrightBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.ClarkAndWrightBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">ClarkAndWrightBatching</span><span class="p">(</span><span class="n">SavingsBatching</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BatchingSolution</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span> <span class="o">=</span> <span class="n">input_data</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+
+        <span class="n">batches</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="p">[</span><span class="n">order</span><span class="p">])</span>
+                   <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">order</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="p">)}</span>
+        <span class="n">batch_counter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span>
+
+        <span class="n">savings_heap</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">id_a</span><span class="p">,</span> <span class="n">id_b</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">batches</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">saving</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_saving</span><span class="p">(</span><span class="n">batches</span><span class="p">[</span><span class="n">id_a</span><span class="p">],</span> <span class="n">batches</span><span class="p">[</span><span class="n">id_b</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">saving</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">id_a</span><span class="p">,</span> <span class="n">id_b</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">id_a</span><span class="p">,</span> <span class="n">id_b</span><span class="p">))</span>
+                <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">savings_heap</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">saving</span><span class="p">,</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">while</span> <span class="n">savings_heap</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">neg_saving</span><span class="p">,</span> <span class="n">id_a</span><span class="p">,</span> <span class="n">id_b</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">savings_heap</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">id_a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">batches</span> <span class="ow">or</span> <span class="n">id_b</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="o">-</span><span class="n">neg_saving</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">batch_a</span> <span class="o">=</span> <span class="n">batches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_a</span><span class="p">)</span>
+            <span class="n">batch_b</span> <span class="o">=</span> <span class="n">batches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_b</span><span class="p">)</span>
+            <span class="n">merged_batch</span> <span class="o">=</span> <span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="n">batch_counter</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="n">batch_a</span><span class="o">.</span><span class="n">orders</span> <span class="o">+</span> <span class="n">batch_b</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+            <span class="n">batches</span><span class="p">[</span><span class="n">batch_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged_batch</span>
+
+            <span class="k">for</span> <span class="n">other_id</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">other_id</span> <span class="o">==</span> <span class="n">batch_counter</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">saving</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_saving</span><span class="p">(</span><span class="n">merged_batch</span><span class="p">,</span> <span class="n">batches</span><span class="p">[</span><span class="n">other_id</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">saving</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">pair</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">batch_counter</span><span class="p">,</span> <span class="n">other_id</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">batch_counter</span><span class="p">,</span> <span class="n">other_id</span><span class="p">))</span>
+                    <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">savings_heap</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">saving</span><span class="p">,</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="n">batch_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">BatchingSolution</span><span class="p">(</span><span class="n">batches</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">batches</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
+
+
+
+<div class="viewcode-block" id="SeedCriteria">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">SeedCriteria</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="SeedCriteria.RANDOM">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedCriteria.RANDOM">[docs]</a>
+    <span class="n">RANDOM</span> <span class="o">=</span> <span class="s2">&quot;random&quot;</span></div>
+
+<div class="viewcode-block" id="SeedCriteria.FEWEST_POSITIONS">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedCriteria.FEWEST_POSITIONS">[docs]</a>
+    <span class="n">FEWEST_POSITIONS</span> <span class="o">=</span> <span class="s2">&quot;fewest_positions&quot;</span></div>
+
+<div class="viewcode-block" id="SeedCriteria.MOST_POSITIONS">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedCriteria.MOST_POSITIONS">[docs]</a>
+    <span class="n">MOST_POSITIONS</span> <span class="o">=</span> <span class="s2">&quot;most_positions&quot;</span></div>
+
+<div class="viewcode-block" id="SeedCriteria.CLOSEST_TO_DEPOT">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedCriteria.CLOSEST_TO_DEPOT">[docs]</a>
+    <span class="n">CLOSEST_TO_DEPOT</span> <span class="o">=</span> <span class="s2">&quot;closest_to_depot&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SimilarityMeasure">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SimilarityMeasure">[docs]</a>
+<span class="k">class</span> <span class="nc">SimilarityMeasure</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="SimilarityMeasure.SHARED_ARTICLES">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SimilarityMeasure.SHARED_ARTICLES">[docs]</a>
+    <span class="n">SHARED_ARTICLES</span> <span class="o">=</span> <span class="s2">&quot;shared_articles&quot;</span></div>
+
+<div class="viewcode-block" id="SimilarityMeasure.MIN_DISTANCE">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SimilarityMeasure.MIN_DISTANCE">[docs]</a>
+    <span class="n">MIN_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;min_distance&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SeedBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">SeedBatching</span><span class="p">(</span><span class="n">Batching</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span>
+        <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">,</span>
+        <span class="n">distance_matrix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed_criterion</span><span class="p">:</span> <span class="n">SeedCriteria</span> <span class="o">=</span> <span class="n">SeedCriteria</span><span class="o">.</span><span class="n">RANDOM</span><span class="p">,</span>
+        <span class="n">similarity_measure</span><span class="p">:</span> <span class="n">SimilarityMeasure</span> <span class="o">=</span> <span class="n">SimilarityMeasure</span><span class="o">.</span><span class="n">SHARED_ARTICLES</span><span class="p">,</span>
+        <span class="n">start_node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pick_cart</span><span class="p">,</span> <span class="n">articles</span><span class="p">)</span>
+<div class="viewcode-block" id="SeedBatching.distance_matrix">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.distance_matrix">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">distance_matrix</span></div>
+
+<div class="viewcode-block" id="SeedBatching.similarity_measure">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.similarity_measure">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span> <span class="o">=</span> <span class="n">similarity_measure</span></div>
+
+<div class="viewcode-block" id="SeedBatching.seed_criterion">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.seed_criterion">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_criterion</span> <span class="o">=</span> <span class="n">seed_criterion</span></div>
+
+<div class="viewcode-block" id="SeedBatching.start_node">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.start_node">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_node</span> <span class="o">=</span> <span class="n">start_node</span></div>
+
+<div class="viewcode-block" id="SeedBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.algo_name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_criterion</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">_SeedBatching&quot;</span></div>
+
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SeedBatching.shared_article_similarity">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.shared_article_similarity">[docs]</a>
+    <span class="k">def</span> <span class="nf">shared_article_similarity</span><span class="p">(</span><span class="n">seed_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">,</span> <span class="n">other_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">):</span>
+        <span class="n">seed_articles</span> <span class="o">=</span> <span class="p">{</span><span class="n">pos</span><span class="o">.</span><span class="n">article_id</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">seed_order</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">}</span>
+        <span class="n">other_articles</span> <span class="o">=</span> <span class="p">{</span><span class="n">pos</span><span class="o">.</span><span class="n">article_id</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">other_order</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">}</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">seed_articles</span> <span class="o">&amp;</span> <span class="n">other_articles</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SeedBatching.min_distance_similarity">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.min_distance_similarity">[docs]</a>
+    <span class="k">def</span> <span class="nf">min_distance_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">,</span> <span class="n">other_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">pos_a</span><span class="o">.</span><span class="n">pick_node</span><span class="p">,</span> <span class="n">pos_b</span><span class="o">.</span><span class="n">pick_node</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pos_a</span> <span class="ow">in</span> <span class="n">seed_order</span><span class="o">.</span><span class="n">pick_positions</span>
+            <span class="k">for</span> <span class="n">pos_b</span> <span class="ow">in</span> <span class="n">other_order</span><span class="o">.</span><span class="n">pick_positions</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SeedBatching.rand_seed_order">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.rand_seed_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">rand_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WarehouseOrder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SeedBatching.most_positions_seed_order">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.most_positions_seed_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">most_positions_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WarehouseOrder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">))</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SeedBatching.fewest_positions_seed_order">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.fewest_positions_seed_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">fewest_positions_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WarehouseOrder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SeedBatching.closest_to_depot_seed_order">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.closest_to_depot_seed_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">closest_to_depot_seed_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidate_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WarehouseOrder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="n">candidate_orders</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start_node</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">pick_node</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">pick_positions</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SeedBatching.similarity">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.similarity">[docs]</a>
+    <span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">,</span> <span class="n">other_order</span><span class="p">:</span> <span class="n">WarehouseOrder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span> <span class="o">==</span> <span class="n">SimilarityMeasure</span><span class="o">.</span><span class="n">SHARED_ARTICLES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_article_similarity</span><span class="p">(</span><span class="n">seed_order</span><span class="p">,</span> <span class="n">other_order</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span> <span class="o">==</span> <span class="n">SimilarityMeasure</span><span class="o">.</span><span class="n">MIN_DISTANCE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_distance_similarity</span><span class="p">(</span><span class="n">seed_order</span><span class="p">,</span> <span class="n">other_order</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid similarity measure.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SeedBatching.get_seed_order">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.SeedBatching.get_seed_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_seed_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">seed_criterion</span><span class="p">:</span> <span class="n">SeedCriteria</span><span class="p">,</span>
+                       <span class="n">candidate_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">seed_criterion</span> <span class="o">==</span> <span class="n">SeedCriteria</span><span class="o">.</span><span class="n">RANDOM</span><span class="p">:</span>
+            <span class="n">seed_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rand_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">seed_criterion</span> <span class="o">==</span> <span class="n">SeedCriteria</span><span class="o">.</span><span class="n">MOST_POSITIONS</span><span class="p">:</span>
+            <span class="n">seed_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_positions_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">seed_criterion</span> <span class="o">==</span> <span class="n">SeedCriteria</span><span class="o">.</span><span class="n">FEWEST_POSITIONS</span><span class="p">:</span>
+            <span class="n">seed_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fewest_positions_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">seed_criterion</span> <span class="o">==</span> <span class="n">SeedCriteria</span><span class="o">.</span><span class="n">CLOSEST_TO_DEPOT</span><span class="p">:</span>
+            <span class="n">seed_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">closest_to_depot_seed_order</span><span class="p">(</span><span class="n">candidate_orders</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid seed criterion.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">seed_order</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BatchingSolution</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span> <span class="o">=</span> <span class="n">input_data</span>
+        <span class="n">remaining_orders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">batched_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="n">remaining_orders</span><span class="p">:</span>
+            <span class="n">seed_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_seed_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_criterion</span><span class="p">,</span> <span class="n">remaining_orders</span><span class="p">)</span>
+
+            <span class="n">current_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed_order</span><span class="p">]</span>
+            <span class="n">current_capa</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">in_store</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">seed_order</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">)</span>
+            <span class="n">remaining_orders</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">seed_order</span><span class="p">)</span>
+            <span class="n">sorted_remaining</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">remaining_orders</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">seed_order</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">sorted_remaining</span><span class="p">:</span>
+                <span class="c1"># demand = sum(pos.in_store for pos in candidate.pick_positions)</span>
+                <span class="c1"># if current_capa + demand &lt;= self.picker_capa:</span>
+                <span class="c1">#     current_batch.append(candidate)</span>
+                <span class="c1">#     current_capa += demand</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">can_add_order</span><span class="p">(</span><span class="n">current_batch</span><span class="p">,</span> <span class="n">candidate</span><span class="p">):</span>
+                    <span class="n">current_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">current_batch</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">remaining_orders</span><span class="p">:</span>
+                    <span class="n">remaining_orders</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+            <span class="n">batched_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BatchObject</span><span class="p">(</span><span class="n">batch_id</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batched_list</span><span class="p">),</span> <span class="n">orders</span><span class="o">=</span><span class="n">current_batch</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">BatchingSolution</span><span class="p">(</span><span class="n">batches</span><span class="o">=</span><span class="n">batched_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LocalSearchBatching">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching">[docs]</a>
+<span class="k">class</span> <span class="nc">LocalSearchBatching</span><span class="p">(</span><span class="n">Batching</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">pick_cart</span><span class="p">:</span> <span class="n">PickCart</span><span class="p">,</span>
+                 <span class="n">articles</span><span class="p">:</span> <span class="n">Articles</span><span class="p">,</span>
+                 <span class="n">routing_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Routing</span><span class="p">],</span>
+                 <span class="n">routing_class_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">start_batching_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Batching</span><span class="p">],</span>
+                 <span class="n">start_batching_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">time_limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">120.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pick_cart</span><span class="p">,</span> <span class="n">articles</span><span class="p">)</span>
+<div class="viewcode-block" id="LocalSearchBatching.routing_class">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.routing_class">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">routing_class</span> <span class="o">=</span> <span class="n">routing_class</span></div>
+
+<div class="viewcode-block" id="LocalSearchBatching.routing_class_kwargs">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.routing_class_kwargs">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">routing_class_kwargs</span> <span class="o">=</span> <span class="n">routing_class_kwargs</span></div>
+
+<div class="viewcode-block" id="LocalSearchBatching.start_batching_class">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.start_batching_class">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_batching_class</span> <span class="o">=</span> <span class="n">start_batching_class</span></div>
+
+<div class="viewcode-block" id="LocalSearchBatching.start_batching_kwargs">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.start_batching_kwargs">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_batching_kwargs</span> <span class="o">=</span> <span class="n">start_batching_kwargs</span> <span class="ow">or</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="LocalSearchBatching.time_limit">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.time_limit">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span> <span class="o">=</span> <span class="n">time_limit</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_router</span> <span class="o">=</span> <span class="n">routing_class</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">routing_class_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="viewcode-block" id="LocalSearchBatching.algo_name">
+<a class="viewcode-back" href="../../../../autoapi/ware_ops_algos/algorithms/batching/batching/index.html#ware_ops_algos.algorithms.batching.batching.LocalSearchBatching.algo_name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">routing_class</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_batching_class</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">_LocalSearchBatching&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BatchingSolution</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_list</span> <span class="o">=</span> <span class="n">input_data</span>
+        <span class="n">start_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_start_batches</span><span class="p">()</span>
+        <span class="n">batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_search</span><span class="p">(</span><span class="n">start_batches</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BatchingSolution</span><span class="p">(</span><span class="n">batches</span><span class="o">=</span><span class="n">batches</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_start_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">]:</span>
+        <span class="n">batching_instance</span><span class="p">:</span> <span class="n">Batching</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_batching_class</span><span class="p">(</span>
+            <span class="n">pick_cart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_cart</span><span class="p">,</span>
+            <span class="n">articles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">articles</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">start_batching_kwargs</span>
+        <span class="p">)</span>
+        <span class="n">batching_sol</span> <span class="o">=</span> <span class="n">batching_instance</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batching_sol</span><span class="o">.</span><span class="n">batches</span>
+
+    <span class="k">def</span> <span class="nf">_time_limit_exceeded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if time limit has been exceeded.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span>
+
+    <span class="k">def</span> <span class="nf">_local_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">initial_cost</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Local Search Started&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial solution: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span><span class="si">}</span><span class="s2"> batches, cost: </span><span class="si">{</span><span class="n">initial_cost</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time limit: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_limit</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">swap_improvements</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">shift_improvements</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_exceeded</span><span class="p">():</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⏱️  Time limit exceeded after </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">overall_improved</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">iter_start_cost</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">)</span>
+
+            <span class="c1"># Exhaust all SWAP improvements</span>
+            <span class="n">swap_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">swap_improved</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">swap_improved</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_exceeded</span><span class="p">():</span>
+                <span class="n">batches</span><span class="p">,</span> <span class="n">swap_improved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_swap</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">swap_improved</span><span class="p">:</span>
+                    <span class="n">swap_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">swap_improvements</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">overall_improved</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Exhaust all SHIFT improvements</span>
+            <span class="n">shift_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">shift_improved</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">shift_improved</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_exceeded</span><span class="p">():</span>
+                <span class="n">batches</span><span class="p">,</span> <span class="n">shift_improved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shift</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">shift_improved</span><span class="p">:</span>
+                    <span class="n">shift_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">shift_improvements</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">overall_improved</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">overall_improved</span><span class="p">:</span>
+                <span class="n">iter_end_cost</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">)</span>
+                <span class="n">improvement</span> <span class="o">=</span> <span class="n">iter_start_cost</span> <span class="o">-</span> <span class="n">iter_end_cost</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">: &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;swaps=</span><span class="si">{</span><span class="n">swap_count</span><span class="si">}</span><span class="s2">, shifts=</span><span class="si">{</span><span class="n">shift_count</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;cost: </span><span class="si">{</span><span class="n">iter_end_cost</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;(Δ </span><span class="si">{</span><span class="n">improvement</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">) | &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span><span class="si">}</span><span class="s2"> batches | &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;cache: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">)</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">overall_improved</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Final summary</span>
+        <span class="n">final_cost</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">)</span>
+        <span class="n">total_improvement</span> <span class="o">=</span> <span class="n">initial_cost</span> <span class="o">-</span> <span class="n">final_cost</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Local Search Completed&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iterations: </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total improvements: </span><span class="si">{</span><span class="n">swap_improvements</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">shift_improvements</span><span class="si">}</span><span class="s2"> &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;(swaps: </span><span class="si">{</span><span class="n">swap_improvements</span><span class="si">}</span><span class="s2">, shifts: </span><span class="si">{</span><span class="n">shift_improvements</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial cost: </span><span class="si">{</span><span class="n">initial_cost</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final cost: </span><span class="si">{</span><span class="n">final_cost</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total improvement: </span><span class="si">{</span><span class="n">total_improvement</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">total_improvement</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">initial_cost</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Route cache size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time elapsed: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">batches</span>
+
+    <span class="k">def</span> <span class="nf">_swap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_exceeded</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">False</span>
+
+                <span class="n">batch_i</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">batch_j</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+                <span class="n">old_cost_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+                <span class="n">old_cost_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+                <span class="n">old_total</span> <span class="o">=</span> <span class="n">old_cost_i</span> <span class="o">+</span> <span class="n">old_cost_j</span>
+
+                <span class="k">for</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">order_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j_idx</span><span class="p">,</span> <span class="n">order_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">):</span>
+                        <span class="n">temp_orders_i</span> <span class="o">=</span> <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">[:</span><span class="n">i_idx</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">order_j</span><span class="p">]</span> <span class="o">+</span> <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">i_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+                        <span class="n">temp_orders_j</span> <span class="o">=</span> <span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">[:</span><span class="n">j_idx</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">order_i</span><span class="p">]</span> <span class="o">+</span> <span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">j_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">orders_fit</span><span class="p">(</span><span class="n">temp_orders_i</span><span class="p">)</span> <span class="ow">or</span> \
+                                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">orders_fit</span><span class="p">(</span><span class="n">temp_orders_j</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># Compute new costs</span>
+                        <span class="n">new_cost_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">temp_orders_i</span><span class="p">)</span>
+                        <span class="n">new_cost_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">temp_orders_j</span><span class="p">)</span>
+                        <span class="n">new_total</span> <span class="o">=</span> <span class="n">new_cost_i</span> <span class="o">+</span> <span class="n">new_cost_j</span>
+
+                        <span class="k">if</span> <span class="n">new_total</span> <span class="o">&lt;</span> <span class="n">old_total</span> <span class="o">-</span> <span class="mf">1e-6</span><span class="p">:</span>
+                            <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">i_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">order_j</span>
+                            <span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">j_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">order_i</span>
+                            <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)):</span>
+            <span class="n">batch_i</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">order_idx</span><span class="p">,</span> <span class="n">order</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_limit_exceeded</span><span class="p">():</span>
+                        <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">False</span>
+
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">batch_j</span> <span class="o">=</span> <span class="n">batches</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+                    <span class="c1"># Skip if source batch would become empty</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Check capacity BEFORE computing costs</span>
+                    <span class="n">temp_orders_i</span> <span class="o">=</span> <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">[:</span><span class="n">order_idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">order_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">temp_orders_j</span> <span class="o">=</span> <span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span> <span class="o">+</span> <span class="p">[</span><span class="n">order</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">orders_fit</span><span class="p">(</span><span class="n">temp_orders_i</span><span class="p">)</span> <span class="ow">or</span> \
+                            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">capacity_checker</span><span class="o">.</span><span class="n">orders_fit</span><span class="p">(</span><span class="n">temp_orders_j</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Compute costs</span>
+                    <span class="n">old_cost_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+                    <span class="n">old_cost_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+                    <span class="n">old_total</span> <span class="o">=</span> <span class="n">old_cost_i</span> <span class="o">+</span> <span class="n">old_cost_j</span>
+
+                    <span class="n">new_cost_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">temp_orders_i</span><span class="p">)</span>
+                    <span class="n">new_cost_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">temp_orders_j</span><span class="p">)</span>
+                    <span class="n">new_total</span> <span class="o">=</span> <span class="n">new_cost_i</span> <span class="o">+</span> <span class="n">new_cost_j</span>
+
+                    <span class="k">if</span> <span class="n">new_total</span> <span class="o">&lt;</span> <span class="n">old_total</span> <span class="o">-</span> <span class="mf">1e-6</span><span class="p">:</span>
+                        <span class="c1"># Apply improvement IN PLACE</span>
+                        <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">order_idx</span><span class="p">)</span>
+                        <span class="n">batch_j</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+
+                        <span class="c1"># Clean up empty batches if needed</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">batch_i</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
+                            <span class="n">batches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+                        <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">batches</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_batch_cost_from_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate routing cost for a list of orders with caching.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">orders</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">order_id</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">orders</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_router</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+            <span class="n">pick_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">orders</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">order</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">]</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_router</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">pick_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">route</span><span class="o">.</span><span class="n">distance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_route_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_batch_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">BatchObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate routing cost for a batch with caching.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_cost_from_orders</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

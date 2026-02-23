@@ -1,0 +1,303 @@
+ware_ops_algos.algorithms.batching.batching
+===========================================
+
+.. py:module:: ware_ops_algos.algorithms.batching.batching
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.batching.batching.Batching
+   ware_ops_algos.algorithms.batching.batching.PriorityBatching
+   ware_ops_algos.algorithms.batching.batching.OrderNrFifoBatching
+   ware_ops_algos.algorithms.batching.batching.FifoBatching
+   ware_ops_algos.algorithms.batching.batching.RandomBatching
+   ware_ops_algos.algorithms.batching.batching.DueDateBatching
+   ware_ops_algos.algorithms.batching.batching.SavingsBatching
+   ware_ops_algos.algorithms.batching.batching.ClarkAndWrightBatching
+   ware_ops_algos.algorithms.batching.batching.SeedCriteria
+   ware_ops_algos.algorithms.batching.batching.SimilarityMeasure
+   ware_ops_algos.algorithms.batching.batching.SeedBatching
+   ware_ops_algos.algorithms.batching.batching.LocalSearchBatching
+
+
+Module Contents
+---------------
+
+.. py:class:: Batching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm.WarehouseOrder`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm.BatchingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Batching class to batch orders
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: capacity_checker
+
+
+.. py:class:: PriorityBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`Batching`
+
+
+   Priority batching class to batch orders based on sorting criterion.
+
+
+.. py:class:: OrderNrFifoBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching based on order number.
+
+
+   .. py:attribute:: algo_name
+      :value: 'OrderNrFiFoBatching'
+
+
+
+.. py:class:: FifoBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'FiFoBatching'
+
+
+
+.. py:class:: RandomBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, seed=44)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'RandomBatching'
+
+
+
+   .. py:attribute:: seed
+      :value: 44
+
+
+
+   .. py:attribute:: batch_number
+      :value: 0
+
+
+
+.. py:class:: DueDateBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'DueDateBatching'
+
+
+
+.. py:class:: SavingsBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: Type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs, time_limit: float | None = None)
+
+   Bases: :py:obj:`Batching`, :py:obj:`abc.ABC`
+
+
+   Base class for savings-based batching algorithms.
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: time_limit
+      :value: None
+
+
+
+   .. py:attribute:: algo_name
+
+
+.. py:class:: ClarkAndWrightBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: Type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs, time_limit: float | None = None)
+
+   Bases: :py:obj:`SavingsBatching`
+
+
+   Base class for savings-based batching algorithms.
+
+
+.. py:class:: SeedCriteria
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: RANDOM
+      :value: 'random'
+
+
+
+   .. py:attribute:: FEWEST_POSITIONS
+      :value: 'fewest_positions'
+
+
+
+   .. py:attribute:: MOST_POSITIONS
+      :value: 'most_positions'
+
+
+
+   .. py:attribute:: CLOSEST_TO_DEPOT
+      :value: 'closest_to_depot'
+
+
+
+.. py:class:: SimilarityMeasure
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: SHARED_ARTICLES
+      :value: 'shared_articles'
+
+
+
+   .. py:attribute:: MIN_DISTANCE
+      :value: 'min_distance'
+
+
+
+.. py:class:: SeedBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, distance_matrix: Optional[pandas.DataFrame] = None, seed_criterion: SeedCriteria = SeedCriteria.RANDOM, similarity_measure: SimilarityMeasure = SimilarityMeasure.SHARED_ARTICLES, start_node: Optional[tuple[int, int]] = None)
+
+   Bases: :py:obj:`Batching`
+
+
+   Batching class to batch orders
+
+
+   .. py:attribute:: distance_matrix
+      :value: None
+
+
+
+   .. py:attribute:: similarity_measure
+
+
+   .. py:attribute:: seed_criterion
+
+
+   .. py:attribute:: start_node
+      :value: None
+
+
+
+   .. py:attribute:: algo_name
+      :value: 'random_shared_articles_SeedBatching'
+
+
+
+   .. py:method:: shared_article_similarity(seed_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder)
+      :staticmethod:
+
+
+
+   .. py:method:: min_distance_similarity(seed_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder)
+
+
+   .. py:method:: rand_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: most_positions_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: fewest_positions_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: closest_to_depot_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm.WarehouseOrder
+
+
+   .. py:method:: similarity(seed_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm.WarehouseOrder)
+
+
+   .. py:method:: get_seed_order(seed_criterion: SeedCriteria, candidate_orders: list[ware_ops_algos.algorithms.algorithm.WarehouseOrder])
+
+
+.. py:class:: LocalSearchBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs: dict, start_batching_class: type[Batching], start_batching_kwargs: dict = None, time_limit: float = 120.0)
+
+   Bases: :py:obj:`Batching`
+
+
+   Batching class to batch orders
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: start_batching_class
+
+
+   .. py:attribute:: start_batching_kwargs
+
+
+   .. py:attribute:: time_limit
+      :value: 120.0
+
+
+
+   .. py:attribute:: algo_name
+
+

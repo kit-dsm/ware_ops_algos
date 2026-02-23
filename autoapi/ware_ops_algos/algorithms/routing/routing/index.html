@@ -1,0 +1,944 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
+        <link rel="prefetch" href="../../../../../_static/favicon.png" as="image">
+
+    <link rel="shortcut icon" href="../../../../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>ware_ops_algos.algorithms.routing.routing - ware_ops_algos: Algorithms for warehouse operations</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #0080c0;
+  --color-brand-content: #0080c0;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../index.html"><div class="brand">ware_ops_algos: Algorithms for warehouse operations</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../_static/favicon.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../../_sources/autoapi/ware_ops_algos/algorithms/routing/routing/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-ware_ops_algos.algorithms.routing.routing">
+<span id="ware-ops-algos-algorithms-routing-routing"></span><h1>ware_ops_algos.algorithms.routing.routing<a class="headerlink" href="#module-ware_ops_algos.algorithms.routing.routing" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing" title="ware_ops_algos.algorithms.routing.routing.Routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Routing</span></code></a></p></td>
+<td><p>Abstract base class for all algorithms (routing, batching, etc.).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p></td>
+<td><p>Base class for heuristic routing algorithms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.SShapeRouting" title="ware_ops_algos.algorithms.routing.routing.SShapeRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SShapeRouting</span></code></a></p></td>
+<td><p>Implements S-shape routing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ReturnRouting" title="ware_ops_algos.algorithms.routing.routing.ReturnRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReturnRouting</span></code></a></p></td>
+<td><p>Implements Return routing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting" title="ware_ops_algos.algorithms.routing.routing.MidpointRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MidpointRouting</span></code></a></p></td>
+<td><p>Implements Midpoint routing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.LargestGapRouting" title="ware_ops_algos.algorithms.routing.routing.LargestGapRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LargestGapRouting</span></code></a></p></td>
+<td><p>Implements Largest Gap Routing for order picking in a warehouse.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting" title="ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NearestNeighbourhoodRouting</span></code></a></p></td>
+<td><p>A class to perform nearest neighbourhood routing for order picking in a warehouse using Dijkstra's algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.PickListRouting" title="ware_ops_algos.algorithms.routing.routing.PickListRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickListRouting</span></code></a></p></td>
+<td><p>Base class for heuristic routing algorithms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting" title="ware_ops_algos.algorithms.routing.routing.ExactRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactRouting</span></code></a></p></td>
+<td><p>Base class for exact routing algorithms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a></p></td>
+<td><p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRoutingDistance</span></code></a></p></td>
+<td><p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using distance as the objective.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence</span></code></a></p></td>
+<td><p>Implements the exact routing algorithm for TSP with weight-based precedence constraints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRoutingTime</span></code></a></p></td>
+<td><p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using time as the objective.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRoutingMaxCompletionTime</span></code></a></p></td>
+<td><p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using maximum completion time as the objective.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting" title="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RatliffRosenthalRouting</span></code></a></p></td>
+<td><p>Abstract base class for all algorithms (routing, batching, etc.).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">Routing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_tour</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_item_sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_to_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_to_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.Algorithm" title="ware_ops_algos.algorithms.algorithm.Algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ware_ops_algos.algorithms.algorithm.Algorithm</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></code></a>]<code class="xref py py-obj docutils literal notranslate"><span class="pre">|</span> <span class="pre">list</span></code>[<a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.OrderPosition" title="ware_ops_algos.domain_models.OrderPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ware_ops_algos.domain_models.OrderPosition</span></code></a>], <a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.RoutingSolution" title="ware_ops_algos.algorithms.algorithm.RoutingSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ware_ops_algos.algorithms.algorithm.RoutingSolution</span></code></a>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class for all algorithms (routing, batching, etc.).
+Handles timing, algo naming, and ensures consistent result metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.start_node">
+<span class="sig-name descname"><span class="pre">start_node</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.start_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.start_node" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.end_node">
+<span class="sig-name descname"><span class="pre">end_node</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.end_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.end_node" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.closest_node_to_start">
+<span class="sig-name descname"><span class="pre">closest_node_to_start</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.closest_node_to_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.closest_node_to_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.min_aisle_position">
+<span class="sig-name descname"><span class="pre">min_aisle_position</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.min_aisle_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.min_aisle_position" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.max_aisle_position">
+<span class="sig-name descname"><span class="pre">max_aisle_position</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.max_aisle_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.max_aisle_position" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.pick_list">
+<span class="sig-name descname"><span class="pre">pick_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.pick_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.pick_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.distance_matrix">
+<span class="sig-name descname"><span class="pre">distance_matrix</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.distance_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.distance_matrix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.predecessor_matrix">
+<span class="sig-name descname"><span class="pre">predecessor_matrix</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.predecessor_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.predecessor_matrix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.node_list">
+<span class="sig-name descname"><span class="pre">node_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.node_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.node_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.node_to_idx">
+<span class="sig-name descname"><span class="pre">node_to_idx</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.node_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.node_to_idx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.idx_to_node">
+<span class="sig-name descname"><span class="pre">idx_to_node</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.idx_to_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.idx_to_node" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.gen_item_sequence">
+<span class="sig-name descname"><span class="pre">gen_item_sequence</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.gen_item_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.gen_item_sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.gen_tour">
+<span class="sig-name descname"><span class="pre">gen_tour</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.gen_tour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.gen_tour" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.item_sequence">
+<span class="sig-name descname"><span class="pre">item_sequence</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.item_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.item_sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.route">
+<span class="sig-name descname"><span class="pre">route</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.annotated_route">
+<span class="sig-name descname"><span class="pre">annotated_route</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.RouteNode" title="ware_ops_algos.algorithms.algorithm.RouteNode"><span class="pre">ware_ops_algos.algorithms.algorithm.RouteNode</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.annotated_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.annotated_route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.distance">
+<span class="sig-name descname"><span class="pre">distance</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.distance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.current_order">
+<span class="sig-name descname"><span class="pre">current_order</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.current_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.current_order" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.picker">
+<span class="sig-name descname"><span class="pre">picker</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.picker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.picker" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.execution_time">
+<span class="sig-name descname"><span class="pre">execution_time</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.execution_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.execution_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.Routing.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#Routing.reset_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.Routing.reset_parameters" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.HeuristicRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">HeuristicRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#HeuristicRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing" title="ware_ops_algos.algorithms.routing.routing.Routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Routing</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for heuristic routing algorithms.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.HeuristicRouting.fixed_depot">
+<span class="sig-name descname"><span class="pre">fixed_depot</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#HeuristicRouting.fixed_depot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting.fixed_depot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.SShapeRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">SShapeRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#SShapeRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.SShapeRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>Implements S-shape routing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.SShapeRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SShapeRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#SShapeRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.SShapeRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ReturnRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ReturnRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ReturnRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ReturnRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>Implements Return routing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ReturnRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ReturnRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ReturnRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ReturnRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.MidpointRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">MidpointRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#MidpointRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>Implements Midpoint routing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.MidpointRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'MidpointRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#MidpointRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.MidpointRouting.split_orders_by_pickzone">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">split_orders_by_pickzone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolved_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mid_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#MidpointRouting.split_orders_by_pickzone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting.split_orders_by_pickzone" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.LargestGapRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">LargestGapRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#LargestGapRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.LargestGapRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>Implements Largest Gap Routing for order picking in a warehouse.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.LargestGapRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LargestGapRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#LargestGapRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.LargestGapRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">NearestNeighbourhoodRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_depot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#NearestNeighbourhoodRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>A class to perform nearest neighbourhood routing for order picking in a warehouse using Dijkstra’s algorithm.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NearestNeighbourhoodRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#NearestNeighbourhoodRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.PickListRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">PickListRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#PickListRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.PickListRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting" title="ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a></p>
+<p>Base class for heuristic routing algorithms.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.PickListRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PickListRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#PickListRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.PickListRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_time_limit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing" title="ware_ops_algos.algorithms.routing.routing.Routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Routing</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for exact routing algorithms.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.big_m">
+<span class="sig-name descname"><span class="pre">big_m</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.big_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.big_m" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.time_limit">
+<span class="sig-name descname"><span class="pre">time_limit</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.time_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.time_limit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.length">
+<span class="sig-name descname"><span class="pre">length</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.length" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.pick_nodes">
+<span class="sig-name descname"><span class="pre">pick_nodes</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.pick_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.pick_nodes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.mdl">
+<span class="sig-name descname"><span class="pre">mdl</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.mdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.mdl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactRouting.amount_at_pick_nodes">
+<span class="sig-name descname"><span class="pre">amount_at_pick_nodes</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactRouting.amount_at_pick_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.amount_at_pick_nodes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactTSPRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_time_limit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting" title="ware_ops_algos.algorithms.routing.routing.ExactRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactRouting</span></code></a></p>
+<p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.T">
+<span class="sig-name descname"><span class="pre">T</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.T"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.T" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.C_max">
+<span class="sig-name descname"><span class="pre">C_max</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.C_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.C_max" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x">
+<span class="sig-name descname"><span class="pre">x</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_start">
+<span class="sig-name descname"><span class="pre">x_start</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.x_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_end">
+<span class="sig-name descname"><span class="pre">x_end</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.x_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_end" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.construct_route_and_item_sequence">
+<span class="sig-name descname"><span class="pre">construct_route_and_item_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRouting.construct_route_and_item_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.construct_route_and_item_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>Generates the route for the exact routing algorithm from solution variables.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactTSPRoutingDistance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_tour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_item_sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a></p>
+<p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using distance as the objective.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ExactTSPRoutingDistance'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistance.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_tour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_item_sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">articles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Article" title="ware_ops_algos.domain_models.Article"><span class="pre">ware_ops_algos.domain_models.Article</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistanceWithWeightPrecedence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a></p>
+<p>Implements the exact routing algorithm for TSP with weight-based precedence constraints.
+Heavy items must be picked before lighter items.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ExactTSPRoutingDistanceWithWeightPrecedence'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistanceWithWeightPrecedence.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.articles">
+<span class="sig-name descname"><span class="pre">articles</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistanceWithWeightPrecedence.articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.articles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingDistanceWithWeightPrecedence.weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.weights" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactTSPRoutingTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_tour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_item_sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_time_limit</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a></p>
+<p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using time as the objective.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ExactTSPRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingTime.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.travel_time_matrix">
+<span class="sig-name descname"><span class="pre">travel_time_matrix</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingTime.travel_time_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.travel_time_matrix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">ExactTSPRoutingMaxCompletionTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batched_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tour_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">big_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingMaxCompletionTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting" title="ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a></p>
+<p>Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using maximum completion time as the objective.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ExactTSPRoutingMaxCompletionTime'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#ExactTSPRoutingMaxCompletionTime.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.routing.routing.</span></span><span class="sig-name descname"><span class="pre">RatliffRosenthalRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_node_to_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_aisle_position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../domain_models/index.html#ware_ops_algos.domain_models.Resource" title="ware_ops_algos.domain_models.Resource"><span class="pre">ware_ops_algos.domain_models.Resource</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_aisles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pick_locations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_aisle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_pick_locations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_aisle_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_tour</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen_item_sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing" title="ware_ops_algos.algorithms.routing.routing.Routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Routing</span></code></a></p>
+<p>Abstract base class for all algorithms (routing, batching, etc.).
+Handles timing, algo naming, and ensures consistent result metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RatliffRosenthalRouting'</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.state_graph">
+<span class="sig-name descname"><span class="pre">state_graph</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.state_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.state_graph" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_aisles">
+<span class="sig-name descname"><span class="pre">n_aisles</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.n_aisles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_aisles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_pick_locations">
+<span class="sig-name descname"><span class="pre">n_pick_locations</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.n_pick_locations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_pick_locations" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle">
+<span class="sig-name descname"><span class="pre">dist_aisle</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.dist_aisle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_pick_locations">
+<span class="sig-name descname"><span class="pre">dist_pick_locations</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.dist_pick_locations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_pick_locations" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle_location">
+<span class="sig-name descname"><span class="pre">dist_aisle_location</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.dist_aisle_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle_location" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_start">
+<span class="sig-name descname"><span class="pre">dist_start</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.dist_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_end">
+<span class="sig-name descname"><span class="pre">dist_end</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.dist_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_end" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.depot">
+<span class="sig-name descname"><span class="pre">depot</span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.depot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.depot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.build_state_space">
+<span class="sig-name descname"><span class="pre">build_state_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.build_state_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.build_state_space" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.largest_gap">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">largest_gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.largest_gap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.largest_gap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.one_pass">
+<span class="sig-name descname"><span class="pre">one_pass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.one_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.one_pass" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.two_pass">
+<span class="sig-name descname"><span class="pre">two_pass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.two_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.two_pass" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.top">
+<span class="sig-name descname"><span class="pre">top</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pick_node_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.top" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.bottom">
+<span class="sig-name descname"><span class="pre">bottom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pick_node_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.bottom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.bottom" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.gap">
+<span class="sig-name descname"><span class="pre">gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gap_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.gap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.gap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.void">
+<span class="sig-name descname"><span class="pre">void</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.void"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.void" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cross_aisle_cost">
+<span class="sig-name descname"><span class="pre">cross_aisle_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cross_aisle_action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.cross_aisle_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cross_aisle_cost" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cost_fn_wrapper">
+<span class="sig-name descname"><span class="pre">cost_fn_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order_subset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.cost_fn_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cost_fn_wrapper" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.get_item_sequence_from_path">
+<span class="sig-name descname"><span class="pre">get_item_sequence_from_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition" title="ware_ops_algos.algorithms.algorithm.PickPosition"><span class="pre">ware_ops_algos.algorithms.algorithm.PickPosition</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.get_item_sequence_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.get_item_sequence_from_path" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts the ordered pick sequence from the dynamic programming path (self.path).
+:returns: ordered item sequence along the optimal tour.
+:rtype: list[PickPosition]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.plot_picker_tour">
+<span class="sig-name descname"><span class="pre">plot_picker_tour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.MultiGraph</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/ware_ops_algos/algorithms/routing/routing.html#RatliffRosenthalRouting.plot_picker_tour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.plot_picker_tour" title="Link to this definition">¶</a></dt>
+<dd><p>Visualizes the picker tour graph T as a 2D warehouse layout.
+Nodes are (aisle, pick_y) positions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ware_ops_algos.algorithms.routing.routing</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing"><code class="docutils literal notranslate"><span class="pre">Routing</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.start_node"><code class="docutils literal notranslate"><span class="pre">Routing.start_node</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.end_node"><code class="docutils literal notranslate"><span class="pre">Routing.end_node</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.closest_node_to_start"><code class="docutils literal notranslate"><span class="pre">Routing.closest_node_to_start</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.min_aisle_position"><code class="docutils literal notranslate"><span class="pre">Routing.min_aisle_position</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.max_aisle_position"><code class="docutils literal notranslate"><span class="pre">Routing.max_aisle_position</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.pick_list"><code class="docutils literal notranslate"><span class="pre">Routing.pick_list</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.distance_matrix"><code class="docutils literal notranslate"><span class="pre">Routing.distance_matrix</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.predecessor_matrix"><code class="docutils literal notranslate"><span class="pre">Routing.predecessor_matrix</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.node_list"><code class="docutils literal notranslate"><span class="pre">Routing.node_list</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.node_to_idx"><code class="docutils literal notranslate"><span class="pre">Routing.node_to_idx</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.idx_to_node"><code class="docutils literal notranslate"><span class="pre">Routing.idx_to_node</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.gen_item_sequence"><code class="docutils literal notranslate"><span class="pre">Routing.gen_item_sequence</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.gen_tour"><code class="docutils literal notranslate"><span class="pre">Routing.gen_tour</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.item_sequence"><code class="docutils literal notranslate"><span class="pre">Routing.item_sequence</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.route"><code class="docutils literal notranslate"><span class="pre">Routing.route</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.annotated_route"><code class="docutils literal notranslate"><span class="pre">Routing.annotated_route</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.distance"><code class="docutils literal notranslate"><span class="pre">Routing.distance</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.current_order"><code class="docutils literal notranslate"><span class="pre">Routing.current_order</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.picker"><code class="docutils literal notranslate"><span class="pre">Routing.picker</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.execution_time"><code class="docutils literal notranslate"><span class="pre">Routing.execution_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.Routing.reset_parameters"><code class="docutils literal notranslate"><span class="pre">Routing.reset_parameters()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting"><code class="docutils literal notranslate"><span class="pre">HeuristicRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.HeuristicRouting.fixed_depot"><code class="docutils literal notranslate"><span class="pre">HeuristicRouting.fixed_depot</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.SShapeRouting"><code class="docutils literal notranslate"><span class="pre">SShapeRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.SShapeRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">SShapeRouting.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ReturnRouting"><code class="docutils literal notranslate"><span class="pre">ReturnRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ReturnRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">ReturnRouting.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting"><code class="docutils literal notranslate"><span class="pre">MidpointRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">MidpointRouting.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.MidpointRouting.split_orders_by_pickzone"><code class="docutils literal notranslate"><span class="pre">MidpointRouting.split_orders_by_pickzone()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.LargestGapRouting"><code class="docutils literal notranslate"><span class="pre">LargestGapRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.LargestGapRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">LargestGapRouting.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting"><code class="docutils literal notranslate"><span class="pre">NearestNeighbourhoodRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.NearestNeighbourhoodRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">NearestNeighbourhoodRouting.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.PickListRouting"><code class="docutils literal notranslate"><span class="pre">PickListRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.PickListRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">PickListRouting.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting"><code class="docutils literal notranslate"><span class="pre">ExactRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.big_m"><code class="docutils literal notranslate"><span class="pre">ExactRouting.big_m</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.time_limit"><code class="docutils literal notranslate"><span class="pre">ExactRouting.time_limit</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.length"><code class="docutils literal notranslate"><span class="pre">ExactRouting.length</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.pick_nodes"><code class="docutils literal notranslate"><span class="pre">ExactRouting.pick_nodes</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.mdl"><code class="docutils literal notranslate"><span class="pre">ExactRouting.mdl</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactRouting.amount_at_pick_nodes"><code class="docutils literal notranslate"><span class="pre">ExactRouting.amount_at_pick_nodes</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.T"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.T</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.C_max"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.C_max</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.x</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_start"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.x_start</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.x_end"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.x_end</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRouting.construct_route_and_item_sequence"><code class="docutils literal notranslate"><span class="pre">ExactTSPRouting.construct_route_and_item_sequence()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistance</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistance.algo_name"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistance.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.algo_name"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.articles"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence.articles</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingDistanceWithWeightPrecedence.weights"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingDistanceWithWeightPrecedence.weights</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingTime</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.algo_name"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingTime.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingTime.travel_time_matrix"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingTime.travel_time_matrix</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingMaxCompletionTime</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.ExactTSPRoutingMaxCompletionTime.algo_name"><code class="docutils literal notranslate"><span class="pre">ExactTSPRoutingMaxCompletionTime.algo_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.algo_name"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.state_graph"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.state_graph</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_aisles"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.n_aisles</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.n_pick_locations"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.n_pick_locations</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.dist_aisle</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_pick_locations"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.dist_pick_locations</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_aisle_location"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.dist_aisle_location</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_start"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.dist_start</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.dist_end"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.dist_end</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.depot"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.depot</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.build_state_space"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.build_state_space()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.largest_gap"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.largest_gap()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.one_pass"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.one_pass()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.two_pass"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.two_pass()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.top"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.top()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.bottom"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.bottom()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.gap"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.gap()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.void"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.void()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cross_aisle_cost"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.cross_aisle_cost()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.cost_fn_wrapper"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.cost_fn_wrapper()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.get_item_sequence_from_path"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.get_item_sequence_from_path()</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.routing.routing.RatliffRosenthalRouting.plot_picker_tour"><code class="docutils literal notranslate"><span class="pre">RatliffRosenthalRouting.plot_picker_tour()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

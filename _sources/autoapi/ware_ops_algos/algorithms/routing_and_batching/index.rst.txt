@@ -1,0 +1,462 @@
+ware_ops_algos.algorithms.routing_and_batching
+==============================================
+
+.. py:module:: ware_ops_algos.algorithms.routing_and_batching
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/algorithms/routing_and_batching/batching_routing_assigning/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.routing_and_batching.RoutingSolution
+   ware_ops_algos.algorithms.routing_and_batching.Route
+   ware_ops_algos.algorithms.routing_and_batching.CombinedRoutingSolution
+   ware_ops_algos.algorithms.routing_and_batching.PickPosition
+   ware_ops_algos.algorithms.routing_and_batching.Resource
+   ware_ops_algos.algorithms.routing_and_batching.Routing
+   ware_ops_algos.algorithms.routing_and_batching.RoutingBatchingAssigning
+   ware_ops_algos.algorithms.routing_and_batching.ExactTSPBatchingAndRoutingDistance
+   ware_ops_algos.algorithms.routing_and_batching.ExactTSPBatchingAndRoutingMaxCompletionTime
+
+
+Package Contents
+----------------
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Optional[Route]
+      :value: None
+
+
+
+.. py:class:: Route
+
+   .. py:attribute:: route
+      :type:  list[tuple[int, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  list[tuple[int, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: distance
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[PickList]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  Optional[list[Route]]
+      :value: None
+
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Routing(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, node_list: list[tuple[float, float]] = None, node_to_idx: dict = None, idx_to_node: dict = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm.PickPosition`\ ]\ :py:obj:`| list`\ [\ :py:obj:`ware_ops_algos.domain_models.OrderPosition`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm.RoutingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: start_node
+
+
+   .. py:attribute:: end_node
+
+
+   .. py:attribute:: closest_node_to_start
+
+
+   .. py:attribute:: min_aisle_position
+
+
+   .. py:attribute:: max_aisle_position
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: predecessor_matrix
+
+
+   .. py:attribute:: node_list
+      :type:  list[tuple[float, float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_to_idx
+      :value: None
+
+
+
+   .. py:attribute:: idx_to_node
+      :value: None
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[ware_ops_algos.algorithms.algorithm.RouteNode]
+      :value: []
+
+
+
+   .. py:attribute:: distance
+      :value: 0
+
+
+
+   .. py:attribute:: current_order
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: picker
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:method:: reset_parameters()
+
+
+.. py:class:: RoutingBatchingAssigning(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, time_limit: int | None = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.routing.Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for routing algorithms.
+   :param network_graph: the network graph
+   :param order_list: list of orders or just one order, each order is a dictionary with at least keys 'batch_number' or 'order_number'
+   :param distance_matrix: the distance matrix
+   :param picker_list: list[{'id': int, 'speed': m/sec, 'time_to_pick': sec, 'capacity': int}], can be a list of pickers or a single picker
+   :param kwargs: additional keyword arguments
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: distance_per_batch
+      :value: None
+
+
+
+   .. py:attribute:: solution
+      :value: None
+
+
+
+   .. py:attribute:: current_order
+      :value: None
+
+
+
+   .. py:attribute:: pick_list
+      :value: None
+
+
+
+   .. py:attribute:: routing_algo
+      :value: None
+
+
+
+   .. py:attribute:: list_item_pick_locations
+      :value: None
+
+
+
+   .. py:attribute:: list_item_numbers
+      :value: None
+
+
+
+   .. py:attribute:: list_item_amounts
+      :value: None
+
+
+
+   .. py:attribute:: list_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: x_start
+      :value: None
+
+
+
+   .. py:attribute:: x_end
+      :value: None
+
+
+
+   .. py:attribute:: x
+      :value: None
+
+
+
+   .. py:attribute:: w
+      :value: None
+
+
+
+   .. py:attribute:: T
+      :value: None
+
+
+
+   .. py:attribute:: y
+      :value: None
+
+
+
+   .. py:attribute:: z
+      :value: None
+
+
+
+   .. py:attribute:: C_bp
+      :value: None
+
+
+
+   .. py:attribute:: C_max
+      :value: None
+
+
+
+   .. py:attribute:: C_max_p
+      :value: None
+
+
+
+   .. py:attribute:: range_item_number
+      :value: None
+
+
+
+   .. py:attribute:: set_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: set_batch_numbers
+      :value: None
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: time_limit
+      :value: None
+
+
+
+   .. py:method:: construct_route_and_sequence(b)
+
+      Generates the route and/or item sequence from solution variables.
+
+
+
+.. py:class:: ExactTSPBatchingAndRoutingDistance(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`, :py:obj:`abc.ABC`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: big_m
+
+
+   .. py:attribute:: routing_algo
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+.. py:class:: ExactTSPBatchingAndRoutingMaxCompletionTime(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m: int, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: routing_algo
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+   .. py:attribute:: big_m
+
+

@@ -1,0 +1,143 @@
+ware_ops_algos.algorithms.scheduling.scheduling
+===============================================
+
+.. py:module:: ware_ops_algos.algorithms.scheduling.scheduling
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.scheduling.scheduling.SequencingInput
+   ware_ops_algos.algorithms.scheduling.scheduling.Sequencing
+   ware_ops_algos.algorithms.scheduling.scheduling.SequencingSolution
+   ware_ops_algos.algorithms.scheduling.scheduling.PickListSequencer
+   ware_ops_algos.algorithms.scheduling.scheduling.EDDSequencer
+   ware_ops_algos.algorithms.scheduling.scheduling.SchedulingInput
+   ware_ops_algos.algorithms.scheduling.scheduling.PriorityScheduling
+   ware_ops_algos.algorithms.scheduling.scheduling.SPTScheduling
+   ware_ops_algos.algorithms.scheduling.scheduling.LPTScheduling
+   ware_ops_algos.algorithms.scheduling.scheduling.EDDScheduling
+   ware_ops_algos.algorithms.scheduling.scheduling.ERDScheduling
+   ware_ops_algos.algorithms.scheduling.scheduling.FIFOScheduling
+
+
+Module Contents
+---------------
+
+.. py:class:: SequencingInput
+
+   .. py:attribute:: pick_lists
+      :type:  list[ware_ops_algos.algorithms.algorithm.PickList]
+
+
+   .. py:attribute:: routes
+      :type:  list[ware_ops_algos.algorithms.algorithm.Route]
+
+
+.. py:class:: Sequencing
+
+   .. py:attribute:: sequenced_pick_lists
+      :type:  list[ware_ops_algos.algorithms.algorithm.Route]
+
+
+.. py:class:: SequencingSolution
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm.AlgorithmSolution`
+
+
+   .. py:attribute:: sequencing
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm.PickList]]
+      :value: None
+
+
+
+.. py:class:: PickListSequencer(orders: ware_ops_algos.domain_models.OrdersDomain, resources: ware_ops_algos.domain_models.Resources)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm.PickList`\ ]\ , :py:obj:`SequencingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Performs sequencing of pick list: takes pick list, returns them in sorted order.
+
+
+   .. py:attribute:: orders_domain
+
+
+   .. py:attribute:: resource_domain
+
+
+.. py:class:: EDDSequencer(orders: ware_ops_algos.domain_models.OrdersDomain, resources: ware_ops_algos.domain_models.Resources)
+
+   Bases: :py:obj:`PickListSequencer`
+
+
+   Performs sequencing of pick list: takes pick list, returns them in sorted order.
+
+
+.. py:class:: SchedulingInput
+
+   Minimal info the scheduler needs.
+
+
+   .. py:attribute:: routes
+      :type:  list[ware_ops_algos.algorithms.algorithm.Route]
+
+
+   .. py:attribute:: orders
+      :type:  ware_ops_algos.domain_models.OrdersDomain
+
+
+   .. py:attribute:: resources
+      :type:  ware_ops_algos.domain_models.Resources
+
+
+.. py:class:: PriorityScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`SchedulingInput`\ , :py:obj:`ware_ops_algos.algorithms.algorithm.SchedulingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Schedule by: sort jobs once using a rule, then assign to earliest-free picker.
+   Subclasses implement `_sorted_jobs`.
+
+
+.. py:class:: SPTScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`PriorityScheduling`
+
+
+   Shortest Processing Time first.
+
+
+.. py:class:: LPTScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`PriorityScheduling`
+
+
+   Longest Processing Time first (often better for makespan).
+
+
+.. py:class:: EDDScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`PriorityScheduling`
+
+
+   Earliest Due Date first (good for tardiness).
+
+
+.. py:class:: ERDScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`PriorityScheduling`
+
+
+   Earliest Release Date first (start as soon as available).
+
+
+.. py:class:: FIFOScheduling(seed: Optional[int] = None)
+
+   Bases: :py:obj:`PriorityScheduling`
+
+
+   By smallest order number in batch (proxy for input order).
+
+

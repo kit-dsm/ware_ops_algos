@@ -1,0 +1,1094 @@
+ware_ops_algos.domain_models
+============================
+
+.. py:module:: ware_ops_algos.domain_models
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/domain_models/articles/index
+   /autoapi/ware_ops_algos/domain_models/base_domain/index
+   /autoapi/ware_ops_algos/domain_models/base_domain_object/index
+   /autoapi/ware_ops_algos/domain_models/datacards/index
+   /autoapi/ware_ops_algos/domain_models/layout/index
+   /autoapi/ware_ops_algos/domain_models/orders/index
+   /autoapi/ware_ops_algos/domain_models/resources/index
+   /autoapi/ware_ops_algos/domain_models/storage/index
+   /autoapi/ware_ops_algos/domain_models/taxonomy/index
+   /autoapi/ware_ops_algos/domain_models/warehouse_info/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.Coord
+   ware_ops_algos.domain_models.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.BaseDomainObject
+   ware_ops_algos.domain_models.ArticleType
+   ware_ops_algos.domain_models.Article
+   ware_ops_algos.domain_models.Articles
+   ware_ops_algos.domain_models.LayoutType
+   ware_ops_algos.domain_models.LayoutParameters
+   ware_ops_algos.domain_models.LayoutNetwork
+   ware_ops_algos.domain_models.LayoutData
+   ware_ops_algos.domain_models.OrderType
+   ware_ops_algos.domain_models.OrderPosition
+   ware_ops_algos.domain_models.ResolvedOrderPosition
+   ware_ops_algos.domain_models.Order
+   ware_ops_algos.domain_models.OrdersDomain
+   ware_ops_algos.domain_models.ResourceType
+   ware_ops_algos.domain_models.DimensionType
+   ware_ops_algos.domain_models.Box
+   ware_ops_algos.domain_models.PickCart
+   ware_ops_algos.domain_models.Resource
+   ware_ops_algos.domain_models.CobotPicker
+   ware_ops_algos.domain_models.ManualPicker
+   ware_ops_algos.domain_models.Resources
+   ware_ops_algos.domain_models.StorageType
+   ware_ops_algos.domain_models.Position
+   ware_ops_algos.domain_models.BoundingBox
+   ware_ops_algos.domain_models.StorageSlot
+   ware_ops_algos.domain_models.StorageLocation
+   ware_ops_algos.domain_models.Location
+   ware_ops_algos.domain_models.StorageLocations
+   ware_ops_algos.domain_models.WarehouseInfoType
+   ware_ops_algos.domain_models.WarehouseInfo
+   ware_ops_algos.domain_models.BaseWarehouseDomain
+   ware_ops_algos.domain_models.BaseDomainObject
+   ware_ops_algos.domain_models.BaseWarehouseDomain
+   ware_ops_algos.domain_models.BaseDomainObject
+   ware_ops_algos.domain_models.DataCard
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.datacard_from_instance
+   ware_ops_algos.domain_models.validate_against_card
+   ware_ops_algos.domain_models.save_card_yaml
+   ware_ops_algos.domain_models.build_domain_from_card_path
+
+
+Package Contents
+----------------
+
+.. py:class:: BaseDomainObject
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  T
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+   .. py:method:: get_type_value() -> str
+
+
+.. py:class:: ArticleType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: STANDARD
+      :value: 'standard'
+
+
+
+.. py:class:: Article
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: weight
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: volume
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:method:: to_dict() -> dict[str, Any]
+
+
+.. py:class:: Articles
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.base_domain_object.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  ArticleType
+
+
+   .. py:attribute:: articles
+      :type:  Optional[list[Article]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:data:: Coord
+
+.. py:class:: LayoutType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: CONVENTIONAL
+      :value: 'conventional'
+
+
+
+   .. py:attribute:: UNCONVENTIONAL
+      :value: 'unconventional'
+
+
+
+.. py:class:: LayoutParameters
+
+   .. py:attribute:: n_aisles
+      :type:  int
+
+
+   .. py:attribute:: n_pick_locations
+      :type:  int
+
+
+   .. py:attribute:: n_blocks
+      :type:  int
+
+
+   .. py:attribute:: dist_top_to_pick_location
+      :type:  float
+
+
+   .. py:attribute:: dist_bottom_to_pick_location
+      :type:  float
+
+
+   .. py:attribute:: dist_pick_locations
+      :type:  float
+
+
+   .. py:attribute:: dist_aisle
+      :type:  float
+
+
+   .. py:attribute:: dist_start
+      :type:  float
+
+
+   .. py:attribute:: start_location
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: dist_end
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: dist_change_aisle
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: dist_cross_aisle
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: end_location
+      :type:  Optional[tuple[int, int]]
+      :value: None
+
+
+
+   .. py:attribute:: start_connection_point
+      :type:  Optional[tuple[int, int]]
+      :value: None
+
+
+
+   .. py:attribute:: end_connection_point
+      :type:  Optional[tuple[int, int]]
+      :value: (None,)
+
+
+
+   .. py:attribute:: depot_location
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: LayoutNetwork
+
+   .. py:attribute:: graph
+      :type:  networkx.Graph
+
+
+   .. py:attribute:: distance_matrix
+      :type:  Optional[pandas.DataFrame]
+      :value: None
+
+
+
+   .. py:attribute:: predecessor_matrix
+      :type:  Optional[numpy.ndarray]
+      :value: None
+
+
+
+   .. py:attribute:: shortest_paths
+      :type:  Optional[dict]
+      :value: None
+
+
+
+   .. py:attribute:: closest_node_to_start
+      :type:  Optional[Coord]
+      :value: None
+
+
+
+   .. py:attribute:: min_aisle_position
+      :type:  Optional[int | float]
+      :value: None
+
+
+
+   .. py:attribute:: max_aisle_position
+      :type:  Optional[int | float]
+      :value: None
+
+
+
+   .. py:attribute:: start_node
+      :type:  Optional[Tuple[int | float, int | float]]
+      :value: None
+
+
+
+   .. py:attribute:: end_node
+      :type:  Optional[Tuple[int | float, int | float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_list
+      :type:  Optional[list[Tuple[int | float, int | float]]]
+      :value: None
+
+
+
+.. py:class:: LayoutData
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  LayoutType
+
+
+   .. py:attribute:: graph_data
+      :type:  Optional[LayoutParameters]
+      :value: None
+
+
+
+   .. py:attribute:: layout_network
+      :type:  Optional[LayoutNetwork]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+
+.. py:class:: OrderType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: STANDARD
+      :value: 'standard'
+
+
+
+   .. py:attribute:: UNIT_DEMAND
+      :value: 'unit_demand'
+
+
+
+   .. py:attribute:: GENERAL_DEMAND
+      :value: 'general_demand'
+
+
+
+.. py:class:: OrderPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> OrderPosition
+      :staticmethod:
+
+
+
+.. py:class:: ResolvedOrderPosition
+
+   .. py:attribute:: position
+      :type:  OrderPosition
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: OrdersDomain
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  OrderType
+
+
+   .. py:attribute:: orders
+      :type:  Optional[list[Order]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+
+.. py:class:: ResourceType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: HUMAN
+      :value: 'human'
+
+
+
+   .. py:attribute:: ROBOT
+      :value: 'robot'
+
+
+
+   .. py:attribute:: COBOT
+      :value: 'cobot'
+
+
+
+   .. py:attribute:: MIXED
+      :value: 'mixed'
+
+
+
+.. py:class:: DimensionType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: WEIGHT
+      :value: 'weight'
+
+
+
+   .. py:attribute:: ITEMS
+      :value: 'items'
+
+
+
+   .. py:attribute:: VOLUME
+      :value: 'volume'
+
+
+
+   .. py:attribute:: ORDERS
+      :value: 'orders'
+
+
+
+   .. py:attribute:: ORDERLINES
+      :value: 'orderline'
+
+
+
+.. py:class:: Box
+
+   .. py:attribute:: box_id
+      :type:  int
+
+
+   .. py:attribute:: order_ids
+      :type:  set[int]
+
+
+   .. py:attribute:: items
+      :type:  list[tuple[int, int]]
+      :value: []
+
+
+
+   .. py:attribute:: consumption
+      :type:  list[float]
+      :value: []
+
+
+
+.. py:class:: PickCart
+
+   .. py:attribute:: n_dimension
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: capacities
+      :type:  Optional[list[float]]
+      :value: None
+
+
+
+   .. py:attribute:: dimensions
+      :type:  Optional[list[DimensionType]]
+      :value: None
+
+
+
+   .. py:attribute:: n_boxes
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: box_can_mix_orders
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: CobotPicker
+
+   Bases: :py:obj:`Resource`
+
+
+   .. py:attribute:: mode
+      :type:  str
+      :value: 'driving'
+
+
+
+   .. py:attribute:: speed_follow_mode
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: aisle_congestion_rate
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+.. py:class:: ManualPicker
+
+   Bases: :py:obj:`Resource`
+
+
+   .. py:attribute:: aisle_congestion_rate
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+.. py:class:: Resources
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: resources
+      :type:  Optional[list[Resource]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+
+.. py:class:: StorageType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: SCATTERED
+      :value: 'scattered'
+
+
+
+   .. py:attribute:: DEDICATED
+      :value: 'dedicated'
+
+
+
+.. py:class:: Position
+
+   .. py:attribute:: x
+      :type:  float
+
+
+   .. py:attribute:: y
+      :type:  float
+
+
+.. py:class:: BoundingBox
+
+   .. py:attribute:: x_min
+      :type:  float
+
+
+   .. py:attribute:: y_min
+      :type:  float
+
+
+   .. py:attribute:: x_max
+      :type:  float
+
+
+   .. py:attribute:: y_max
+      :type:  float
+
+
+.. py:class:: StorageSlot
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: level
+      :type:  int
+
+
+.. py:class:: StorageLocation
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: bbox
+      :type:  BoundingBox
+
+
+   .. py:attribute:: aisle_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: slots
+      :type:  list[StorageSlot]
+      :value: []
+
+
+
+   .. py:attribute:: pick_node
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Location
+
+   .. py:attribute:: x
+      :type:  int | float
+
+
+   .. py:attribute:: y
+      :type:  int | float
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int | float
+
+
+.. py:class:: StorageLocations
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  StorageType
+
+
+   .. py:attribute:: locations
+      :type:  Optional[list[Location]]
+      :value: None
+
+
+
+   .. py:attribute:: storage_slots
+      :type:  Optional[list[StorageLocation]]
+      :value: None
+
+
+
+   .. py:attribute:: article_location_mapping
+      :type:  Optional[dict[int, list[Location]]]
+
+
+   .. py:attribute:: location_article_mapping
+      :type:  Optional[dict[tuple[int | float, int | float], int]]
+
+
+   .. py:method:: build_article_location_mapping()
+
+
+   .. py:method:: get_locations_by_article_id(article_id: int) -> list[Location]
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:class:: WarehouseInfoType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: ONLINE
+      :value: 'online'
+
+
+
+   .. py:attribute:: OFFLINE
+      :value: 'offline'
+
+
+
+.. py:class:: WarehouseInfo
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  WarehouseInfoType
+
+
+.. py:class:: BaseWarehouseDomain(problem_class: str, objective: str, layout: ware_ops_algos.domain_models.LayoutData, articles: ware_ops_algos.domain_models.Articles, orders: ware_ops_algos.domain_models.OrdersDomain, resources: ware_ops_algos.domain_models.Resources, storage: ware_ops_algos.domain_models.StorageLocations, warehouse_info: ware_ops_algos.domain_models.WarehouseInfo = None)
+
+   .. py:attribute:: problem_class
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: layout
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: orders
+
+
+   .. py:attribute:: resources
+
+
+   .. py:attribute:: storage
+
+
+   .. py:attribute:: warehouse_info
+      :value: None
+
+
+
+.. py:data:: T
+
+.. py:class:: BaseDomainObject
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  T
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+   .. py:method:: get_type_value() -> str
+
+
+.. py:class:: BaseWarehouseDomain(problem_class: str, objective: str, layout: ware_ops_algos.domain_models.LayoutData, articles: ware_ops_algos.domain_models.Articles, orders: ware_ops_algos.domain_models.OrdersDomain, resources: ware_ops_algos.domain_models.Resources, storage: ware_ops_algos.domain_models.StorageLocations, warehouse_info: ware_ops_algos.domain_models.WarehouseInfo = None)
+
+   .. py:attribute:: problem_class
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: layout
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: orders
+
+
+   .. py:attribute:: resources
+
+
+   .. py:attribute:: storage
+
+
+   .. py:attribute:: warehouse_info
+      :value: None
+
+
+
+.. py:class:: BaseDomainObject
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  T
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+   .. py:method:: get_type_value() -> str
+
+
+.. py:class:: DataCard
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: problem_class
+      :type:  str
+
+
+   .. py:attribute:: objective
+      :type:  str
+
+
+   .. py:attribute:: layout
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: articles
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: orders
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: resources
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: storage
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: warehouse_info
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: sources
+      :type:  Optional[dict[str, Any]]
+      :value: None
+
+
+
+.. py:function:: datacard_from_instance(domain: ware_ops_algos.domain_models.base_domain.BaseWarehouseDomain, name: str, file_path: str | pathlib.Path | None = None, parser: str | None = None) -> DataCard
+
+.. py:function:: validate_against_card(domain: ware_ops_algos.domain_models.base_domain.BaseWarehouseDomain, card: DataCard) -> tuple[bool, list[str]]
+
+.. py:function:: save_card_yaml(card: DataCard, path: str | pathlib.Path) -> None
+
+.. py:function:: build_domain_from_card_path(card_path: str | pathlib.Path) -> DataCard
+

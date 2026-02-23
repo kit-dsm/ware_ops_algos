@@ -1,0 +1,39 @@
+ware_ops_algos.algorithms.assignment.assignment
+===============================================
+
+.. py:module:: ware_ops_algos.algorithms.assignment.assignment
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.assignment.assignment.Assigner
+   ware_ops_algos.algorithms.assignment.assignment.RoundRobinAssigner
+
+
+Module Contents
+---------------
+
+.. py:class:: Assigner(resources: list[ware_ops_algos.domain_models.Resource])
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.PickList`\ ]\ , :py:obj:`ware_ops_algos.algorithms.AssignmentSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resources
+
+
+.. py:class:: RoundRobinAssigner(resources: list[ware_ops_algos.domain_models.Resource])
+
+   Bases: :py:obj:`Assigner`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+

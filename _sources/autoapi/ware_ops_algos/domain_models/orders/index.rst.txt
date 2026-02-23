@@ -1,0 +1,160 @@
+ware_ops_algos.domain_models.orders
+===================================
+
+.. py:module:: ware_ops_algos.domain_models.orders
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/domain_models/orders/models/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.orders.OrderType
+   ware_ops_algos.domain_models.orders.OrderPosition
+   ware_ops_algos.domain_models.orders.ResolvedOrderPosition
+   ware_ops_algos.domain_models.orders.Order
+   ware_ops_algos.domain_models.orders.OrdersDomain
+
+
+Package Contents
+----------------
+
+.. py:class:: OrderType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: STANDARD
+      :value: 'standard'
+
+
+
+   .. py:attribute:: UNIT_DEMAND
+      :value: 'unit_demand'
+
+
+
+   .. py:attribute:: GENERAL_DEMAND
+      :value: 'general_demand'
+
+
+
+.. py:class:: OrderPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> OrderPosition
+      :staticmethod:
+
+
+
+.. py:class:: ResolvedOrderPosition
+
+   .. py:attribute:: position
+      :type:  OrderPosition
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: OrdersDomain
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  OrderType
+
+
+   .. py:attribute:: orders
+      :type:  Optional[list[Order]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+

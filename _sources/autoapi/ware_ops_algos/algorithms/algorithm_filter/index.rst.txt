@@ -1,0 +1,111 @@
+ware_ops_algos.algorithms.algorithm_filter
+==========================================
+
+.. py:module:: ware_ops_algos.algorithms.algorithm_filter
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_filter.evaluator
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_filter.ConstraintEvaluator
+   ware_ops_algos.algorithms.algorithm_filter.AlgorithmFilter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_filter.match_instance_solver
+   ware_ops_algos.algorithms.algorithm_filter.match_ontology
+
+
+Module Contents
+---------------
+
+.. py:class:: ConstraintEvaluator
+
+   Evaluates feature constraints on domain objects.
+
+   Supports:
+   - Comparison: equals, not_equals, greater_than, less_than, etc.
+   - Set operations: in, not_in
+   - Logical combinations: and, or
+
+
+   .. py:attribute:: OPERATORS
+
+
+   .. py:method:: evaluate(actual_value: Any, constraint: Dict[str, Any]) -> bool
+
+      Evaluate a constraint against an actual feature value.
+
+      :param actual_value: The actual value from the domain
+      :param constraint: The constraint specification
+
+      :returns: True if constraint is satisfied, False otherwise
+
+
+
+.. py:class:: AlgorithmFilter(subproblems: Dict[str, List[str]])
+
+   Filters algorithms by feasibility for a given warehouse problem instance.
+
+   The filter checks whether algorithms can be executed on an instance by validating:
+   1. Problem type compatibility (e.g., routing, batching, storage)
+   2. Domain requirements (layout, resources, orders, storage features)
+   3. Feature constraints (e.g., n_blocks = 1, n_aisles > 2)
+
+   .. rubric:: Example
+
+   subproblems = {
+       "routing": ["single_picker_routing", "tsp"],
+       "batching": ["order_batching", "wave_planning"]
+   }
+
+   filter = AlgorithmFilter(subproblems)
+   feasible_algos = filter.filter(all_algorithms, warehouse_instance)
+
+
+   .. py:attribute:: subproblems
+
+
+   .. py:attribute:: evaluator
+
+
+   .. py:method:: filter(algorithms: List[ModelCard], instance: BaseWarehouseDomain, verbose: bool = False) -> List[ModelCard]
+
+      Filter algorithms to find those feasible for the given instance.
+
+      :param algorithms: List of all available algorithms
+      :param instance: The warehouse problem instance
+      :param verbose: If True, print detailed filtering information
+
+      :returns: List of algorithms that are feasible for this instance
+
+
+
+.. py:function:: match_instance_solver(models: List[ModelCard], predicate_func: Dict, problem: str) -> List[ModelCard]
+
+   Legacy function: Problem-based filtering only.
+   Deprecated: Use AlgorithmFilter.filter() instead.
+
+
+.. py:function:: match_ontology(models: List[ModelCard], instance: BaseWarehouseDomain, verbose: bool = False) -> List[ModelCard]
+
+   Legacy function: Requirement-based filtering only.
+   Deprecated: Use AlgorithmFilter.filter() instead.
+
+
+.. py:data:: evaluator
+

@@ -1,0 +1,176 @@
+ware_ops_algos.domain_models.storage.models
+===========================================
+
+.. py:module:: ware_ops_algos.domain_models.storage.models
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.storage.models.StorageType
+   ware_ops_algos.domain_models.storage.models.Position
+   ware_ops_algos.domain_models.storage.models.BoundingBox
+   ware_ops_algos.domain_models.storage.models.StorageSlot
+   ware_ops_algos.domain_models.storage.models.StorageLocation
+   ware_ops_algos.domain_models.storage.models.Location
+   ware_ops_algos.domain_models.storage.models.StorageLocations
+
+
+Module Contents
+---------------
+
+.. py:class:: StorageType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: SCATTERED
+      :value: 'scattered'
+
+
+
+   .. py:attribute:: DEDICATED
+      :value: 'dedicated'
+
+
+
+.. py:class:: Position
+
+   .. py:attribute:: x
+      :type:  float
+
+
+   .. py:attribute:: y
+      :type:  float
+
+
+.. py:class:: BoundingBox
+
+   .. py:attribute:: x_min
+      :type:  float
+
+
+   .. py:attribute:: y_min
+      :type:  float
+
+
+   .. py:attribute:: x_max
+      :type:  float
+
+
+   .. py:attribute:: y_max
+      :type:  float
+
+
+.. py:class:: StorageSlot
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: level
+      :type:  int
+
+
+.. py:class:: StorageLocation
+
+   .. py:attribute:: id
+      :type:  str
+
+
+   .. py:attribute:: bbox
+      :type:  BoundingBox
+
+
+   .. py:attribute:: aisle_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: slots
+      :type:  list[StorageSlot]
+      :value: []
+
+
+
+   .. py:attribute:: pick_node
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Location
+
+   .. py:attribute:: x
+      :type:  int | float
+
+
+   .. py:attribute:: y
+      :type:  int | float
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int | float
+
+
+.. py:class:: StorageLocations
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  StorageType
+
+
+   .. py:attribute:: locations
+      :type:  Optional[list[Location]]
+      :value: None
+
+
+
+   .. py:attribute:: storage_slots
+      :type:  Optional[list[StorageLocation]]
+      :value: None
+
+
+
+   .. py:attribute:: article_location_mapping
+      :type:  Optional[dict[int, list[Location]]]
+
+
+   .. py:attribute:: location_article_mapping
+      :type:  Optional[dict[tuple[int | float, int | float], int]]
+
+
+   .. py:method:: build_article_location_mapping()
+
+
+   .. py:method:: get_locations_by_article_id(article_id: int) -> list[Location]
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+

@@ -1,0 +1,56 @@
+ware_ops_algos.utils.general_functions
+======================================
+
+.. py:module:: ware_ops_algos.utils.general_functions
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.utils.general_functions.ModelCard
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.utils.general_functions.load_model_card
+   ware_ops_algos.utils.general_functions.load_model_cards
+   ware_ops_algos.utils.general_functions.import_model_class
+   ware_ops_algos.utils.general_functions.create_domain_from_data_card
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelCard(model_name: str, problem_type: str, requirements: Dict, objective: str, implementation: Dict)
+
+   .. py:attribute:: model_name
+
+
+   .. py:attribute:: problem_type
+
+
+   .. py:attribute:: requirements
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: implementation
+
+
+.. py:function:: load_model_card(path: str | pathlib.Path) -> ModelCard
+
+.. py:function:: load_model_cards(directory: str | pathlib.Path) -> List[ModelCard]
+
+.. py:function:: import_model_class(cls_name: str, module_path: str | pathlib.Path)
+
+.. py:function:: create_domain_from_data_card(domain_class, type_enum, domain_data: Dict) -> ware_ops_algos.domain_models.BaseDomainObject
+
+   Factory to create domain object from data card.
+
+

@@ -1,0 +1,45 @@
+ware_ops_algos.domain_models.base_domain
+========================================
+
+.. py:module:: ware_ops_algos.domain_models.base_domain
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.base_domain.BaseWarehouseDomain
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseWarehouseDomain(problem_class: str, objective: str, layout: ware_ops_algos.domain_models.LayoutData, articles: ware_ops_algos.domain_models.Articles, orders: ware_ops_algos.domain_models.OrdersDomain, resources: ware_ops_algos.domain_models.Resources, storage: ware_ops_algos.domain_models.StorageLocations, warehouse_info: ware_ops_algos.domain_models.WarehouseInfo = None)
+
+   .. py:attribute:: problem_class
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: layout
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: orders
+
+
+   .. py:attribute:: resources
+
+
+   .. py:attribute:: storage
+
+
+   .. py:attribute:: warehouse_info
+      :value: None
+
+
+

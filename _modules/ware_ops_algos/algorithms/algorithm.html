@@ -1,0 +1,918 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+        <link rel="prefetch" href="../../../_static/favicon.png" as="image">
+
+    <link rel="shortcut icon" href="../../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>ware_ops_algos.algorithms.algorithm - ware_ops_algos: Algorithms for warehouse operations</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #0080c0;
+  --color-brand-content: #0080c0;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">ware_ops_algos: Algorithms for warehouse operations</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../_static/favicon.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for ware_ops_algos.algorithms.algorithm</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Deque</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">ware_ops_algos.domain_models</span> <span class="kn">import</span> <span class="n">Order</span><span class="p">,</span> <span class="n">ResolvedOrderPosition</span><span class="p">,</span> <span class="n">OrderPosition</span><span class="p">,</span> <span class="n">Resource</span>
+
+<div class="viewcode-block" id="I">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.I">[docs]</a>
+<span class="n">I</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">)</span>  <span class="c1"># input type</span></div>
+
+<div class="viewcode-block" id="O">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.O">[docs]</a>
+<span class="n">O</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;O&quot;</span><span class="p">)</span>  <span class="c1"># output type</span></div>
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="AlgorithmSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/scheduling/index.html#ware_ops_algos.algorithms.algorithm.AlgorithmSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">AlgorithmSolution</span><span class="p">:</span>
+<div class="viewcode-block" id="AlgorithmSolution.algo_name">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.AlgorithmSolution.algo_name">[docs]</a>
+    <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AlgorithmSolution.execution_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.AlgorithmSolution.execution_time">[docs]</a>
+    <span class="n">execution_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="AlgorithmSolution.provenance">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.AlgorithmSolution.provenance">[docs]</a>
+    <span class="n">provenance</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PickPosition">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing_and_batching/index.html#ware_ops_algos.algorithms.algorithm.PickPosition">[docs]</a>
+<span class="k">class</span> <span class="nc">PickPosition</span><span class="p">:</span>
+<div class="viewcode-block" id="PickPosition.order_number">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.order_number">[docs]</a>
+    <span class="n">order_number</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="PickPosition.article_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.article_id">[docs]</a>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="PickPosition.amount">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.amount">[docs]</a>
+    <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="PickPosition.pick_node">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.pick_node">[docs]</a>
+    <span class="n">pick_node</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PickPosition.in_store">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.in_store">[docs]</a>
+    <span class="n">in_store</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="PickPosition.article_name">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.article_name">[docs]</a>
+    <span class="n">article_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># dynamic info</span>
+<div class="viewcode-block" id="PickPosition.picked">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickPosition.picked">[docs]</a>
+    <span class="n">picked</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="WarehouseOrder">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder">[docs]</a>
+<span class="k">class</span> <span class="nc">WarehouseOrder</span><span class="p">:</span>
+<div class="viewcode-block" id="WarehouseOrder.order_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder.order_id">[docs]</a>
+    <span class="n">order_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="WarehouseOrder.due_date">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder.due_date">[docs]</a>
+    <span class="n">due_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="WarehouseOrder.order_date">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder.order_date">[docs]</a>
+    <span class="n">order_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="WarehouseOrder.pick_positions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder.pick_positions">[docs]</a>
+    <span class="n">pick_positions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PickPosition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># dynamic info</span>
+<div class="viewcode-block" id="WarehouseOrder.fulfilled">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.WarehouseOrder.fulfilled">[docs]</a>
+    <span class="n">fulfilled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="ItemAssignmentSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.ItemAssignmentSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">ItemAssignmentSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="ItemAssignmentSolution.resolved_orders">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.ItemAssignmentSolution.resolved_orders">[docs]</a>
+    <span class="n">resolved_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="BatchObject">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.BatchObject">[docs]</a>
+<span class="k">class</span> <span class="nc">BatchObject</span><span class="p">:</span>
+<div class="viewcode-block" id="BatchObject.batch_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.BatchObject.batch_id">[docs]</a>
+    <span class="n">batch_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="BatchObject.orders">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.BatchObject.orders">[docs]</a>
+    <span class="n">orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="BatchingSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.BatchingSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">BatchingSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchingSolution.batches">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.BatchingSolution.batches">[docs]</a>
+    <span class="n">batches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BatchObject</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># pick_lists: list[list[PickPosition]] = None</span>
+<div class="viewcode-block" id="BatchingSolution.pick_lists">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.BatchingSolution.pick_lists">[docs]</a>
+    <span class="n">pick_lists</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PickList</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PickList">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/scheduling/index.html#ware_ops_algos.algorithms.algorithm.PickList">[docs]</a>
+<span class="k">class</span> <span class="nc">PickList</span><span class="p">:</span>
+<div class="viewcode-block" id="PickList.pick_positions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.pick_positions">[docs]</a>
+    <span class="n">pick_positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PickPosition</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PickList.orders">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.orders">[docs]</a>
+    <span class="n">orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PickList.release">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.release">[docs]</a>
+    <span class="n">release</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PickList.earliest_due_date">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.earliest_due_date">[docs]</a>
+    <span class="n">earliest_due_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PickList.id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.id">[docs]</a>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="fm">__next__</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="PickList.order_numbers">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickList.order_numbers">[docs]</a>
+    <span class="k">def</span> <span class="nf">order_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">pp</span><span class="o">.</span><span class="n">order_number</span> <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_positions</span><span class="p">})</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PickerAssignment">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.PickerAssignment">[docs]</a>
+<span class="k">class</span> <span class="nc">PickerAssignment</span><span class="p">:</span>
+<div class="viewcode-block" id="PickerAssignment.picker">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickerAssignment.picker">[docs]</a>
+    <span class="n">picker</span><span class="p">:</span> <span class="n">Resource</span></div>
+
+<div class="viewcode-block" id="PickerAssignment.pick_list">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickerAssignment.pick_list">[docs]</a>
+    <span class="n">pick_list</span><span class="p">:</span> <span class="n">PickList</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="AssignmentSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.AssignmentSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">AssignmentSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="AssignmentSolution.assignments">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.AssignmentSolution.assignments">[docs]</a>
+    <span class="n">assignments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PickerAssignment</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NodeType">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing/index.html#ware_ops_algos.algorithms.algorithm.NodeType">[docs]</a>
+<span class="k">class</span> <span class="nc">NodeType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="NodeType.PICK">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.NodeType.PICK">[docs]</a>
+    <span class="n">PICK</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="NodeType.ROUTE">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.NodeType.ROUTE">[docs]</a>
+    <span class="n">ROUTE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RouteNode">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing/index.html#ware_ops_algos.algorithms.algorithm.RouteNode">[docs]</a>
+<span class="k">class</span> <span class="nc">RouteNode</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<div class="viewcode-block" id="RouteNode.position">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.RouteNode.position">[docs]</a>
+    <span class="n">position</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="RouteNode.node_type">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.RouteNode.node_type">[docs]</a>
+    <span class="n">node_type</span><span class="p">:</span> <span class="n">NodeType</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/scheduling/index.html#ware_ops_algos.algorithms.algorithm.Route">[docs]</a>
+<span class="k">class</span> <span class="nc">Route</span><span class="p">:</span>
+<div class="viewcode-block" id="Route.route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Route.route">[docs]</a>
+    <span class="n">route</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Route.item_sequence">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Route.item_sequence">[docs]</a>
+    <span class="n">item_sequence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Route.distance">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Route.distance">[docs]</a>
+    <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="Route.pick_list">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Route.pick_list">[docs]</a>
+    <span class="n">pick_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PickList</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Route.annotated_route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Route.annotated_route">[docs]</a>
+    <span class="n">annotated_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">RouteNode</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PickTour">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.PickTour">[docs]</a>
+<span class="k">class</span> <span class="nc">PickTour</span><span class="p">:</span>
+<div class="viewcode-block" id="PickTour.pick_list">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.pick_list">[docs]</a>
+    <span class="n">pick_list</span><span class="p">:</span> <span class="n">PickList</span></div>
+
+<div class="viewcode-block" id="PickTour.route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.route">[docs]</a>
+    <span class="n">route</span><span class="p">:</span> <span class="n">Route</span></div>
+
+<div class="viewcode-block" id="PickTour.assigned_picker">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.assigned_picker">[docs]</a>
+    <span class="n">assigned_picker</span><span class="p">:</span> <span class="n">Resource</span></div>
+
+<div class="viewcode-block" id="PickTour.starts_after">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.starts_after">[docs]</a>
+    <span class="n">starts_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PickTour.starts_before">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.starts_before">[docs]</a>
+    <span class="n">starts_before</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PickTour.planned_start">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.planned_start">[docs]</a>
+    <span class="n">planned_start</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># if scheduled</span></div>
+
+<div class="viewcode-block" id="PickTour.planned_end">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PickTour.planned_end">[docs]</a>
+    <span class="n">planned_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Node">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.Node">[docs]</a>
+<span class="n">Node</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TourStates">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.TourStates">[docs]</a>
+<span class="k">class</span> <span class="nc">TourStates</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="TourStates.PLANNED">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.PLANNED">[docs]</a>
+    <span class="n">PLANNED</span> <span class="o">=</span> <span class="s2">&quot;planned&quot;</span>  <span class="c1"># PickList is generated</span></div>
+
+<div class="viewcode-block" id="TourStates.ASSIGNED">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.ASSIGNED">[docs]</a>
+    <span class="n">ASSIGNED</span> <span class="o">=</span> <span class="s2">&quot;assigned&quot;</span>  <span class="c1"># Is assigned to a picker</span></div>
+
+<div class="viewcode-block" id="TourStates.SCHEDULED">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.SCHEDULED">[docs]</a>
+    <span class="n">SCHEDULED</span> <span class="o">=</span> <span class="s2">&quot;scheduled&quot;</span>  <span class="c1"># Is scheduled for a point in time</span></div>
+
+<div class="viewcode-block" id="TourStates.PENDING">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.PENDING">[docs]</a>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;pending&quot;</span></div>
+
+<div class="viewcode-block" id="TourStates.STARTED">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.STARTED">[docs]</a>
+    <span class="n">STARTED</span> <span class="o">=</span> <span class="s2">&quot;started&quot;</span>  <span class="c1"># Tour has started picking</span></div>
+
+<div class="viewcode-block" id="TourStates.DONE">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourStates.DONE">[docs]</a>
+    <span class="n">DONE</span> <span class="o">=</span> <span class="s2">&quot;done&quot;</span>  <span class="c1"># Tour is done</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="TourPlanningState">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState">[docs]</a>
+<span class="k">class</span> <span class="nc">TourPlanningState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thin wrapper around a Route object.</span>
+<span class="sd">    Keeps track of the planning state for a single tour.</span>
+
+<span class="sd">    - route_nodes / pick_sequence are copies from the plan (immutable intent).</span>
+<span class="sd">    - cursor / picks_left / version are the mutable execution state.</span>
+<span class="sd">    - original_route is kept only for debugging/inspection (do not mutate).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TourPlanningState.tour_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.tour_id">[docs]</a>
+    <span class="n">tour_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+    <span class="c1"># original plan (copied from Route)</span>
+<div class="viewcode-block" id="TourPlanningState.route_nodes">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.route_nodes">[docs]</a>
+    <span class="n">route_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.pick_sequence">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.pick_sequence">[docs]</a>
+    <span class="n">pick_sequence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.pick_positions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.pick_positions">[docs]</a>
+    <span class="n">pick_positions</span><span class="p">:</span> <span class="nb">list</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.order_numbers">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.order_numbers">[docs]</a>
+    <span class="n">order_numbers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.original_route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.original_route">[docs]</a>
+    <span class="n">original_route</span><span class="p">:</span> <span class="n">Route</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.pick_list">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.pick_list">[docs]</a>
+    <span class="n">pick_list</span><span class="p">:</span> <span class="n">PickList</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.visits_left">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.visits_left">[docs]</a>
+    <span class="n">visits_left</span><span class="p">:</span> <span class="nb">dict</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.pick_nodes">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.pick_nodes">[docs]</a>
+    <span class="n">pick_nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.annotated_route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.annotated_route">[docs]</a>
+    <span class="n">annotated_route</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RouteNode</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TourPlanningState.assigned_resource">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.assigned_resource">[docs]</a>
+    <span class="n">assigned_resource</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.start_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.start_time">[docs]</a>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.end_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.end_time">[docs]</a>
+    <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.end_time_planned">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.end_time_planned">[docs]</a>
+    <span class="n">end_time_planned</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="c1"># execution state, mutable during picking</span>
+<div class="viewcode-block" id="TourPlanningState.cursor">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.cursor">[docs]</a>
+    <span class="n">cursor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>                 <span class="c1"># index into route_nodes</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.picks_left">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.picks_left">[docs]</a>
+    <span class="n">picks_left</span><span class="p">:</span> <span class="n">Deque</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">deque</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.open_pick_positions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.open_pick_positions">[docs]</a>
+    <span class="n">open_pick_positions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TourPlanningState.status">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.status">[docs]</a>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TourStates</span><span class="o">.</span><span class="n">PLANNED</span></div>
+
+
+<div class="viewcode-block" id="TourPlanningState.current_node">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.current_node">[docs]</a>
+    <span class="k">def</span> <span class="nf">current_node</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RouteNode</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotated_route</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TourPlanningState.at_end">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.at_end">[docs]</a>
+    <span class="k">def</span> <span class="nf">at_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if cursor is on the final node (typically the depot).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotated_route</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TourPlanningState.next_node">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.TourPlanningState.next_node">[docs]</a>
+    <span class="k">def</span> <span class="nf">next_node</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RouteNode</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotated_route</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="RoutingSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing_and_batching/index.html#ware_ops_algos.algorithms.algorithm.RoutingSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">RoutingSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="RoutingSolution.route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.RoutingSolution.route">[docs]</a>
+    <span class="n">route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Route</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="CombinedRoutingSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing_and_batching/index.html#ware_ops_algos.algorithms.algorithm.CombinedRoutingSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">CombinedRoutingSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="CombinedRoutingSolution.routes">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.CombinedRoutingSolution.routes">[docs]</a>
+    <span class="n">routes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Route</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Sequencing">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Sequencing">[docs]</a>
+<span class="k">class</span> <span class="nc">Sequencing</span><span class="p">:</span>
+<div class="viewcode-block" id="Sequencing.pick_list_sequence">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Sequencing.pick_list_sequence">[docs]</a>
+    <span class="n">pick_list_sequence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Assignment">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.Assignment">[docs]</a>
+<span class="k">class</span> <span class="nc">Assignment</span><span class="p">:</span>
+<div class="viewcode-block" id="Assignment.tour_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Assignment.tour_id">[docs]</a>
+    <span class="n">tour_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="Assignment.picker_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Assignment.picker_id">[docs]</a>
+    <span class="n">picker_id</span><span class="p">:</span> <span class="nb">int</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="Job">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/scheduling/index.html#ware_ops_algos.algorithms.algorithm.Job">[docs]</a>
+<span class="k">class</span> <span class="nc">Job</span><span class="p">:</span>
+<div class="viewcode-block" id="Job.batch_idx">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.batch_idx">[docs]</a>
+    <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="Job.picker_id">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.picker_id">[docs]</a>
+    <span class="n">picker_id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="Job.start_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.start_time">[docs]</a>
+    <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.end_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.end_time">[docs]</a>
+    <span class="n">end_time</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.release_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.release_time">[docs]</a>
+    <span class="n">release_time</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.distance">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.distance">[docs]</a>
+    <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.n_picks">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.n_picks">[docs]</a>
+    <span class="n">n_picks</span><span class="p">:</span> <span class="nb">int</span></div>
+
+<div class="viewcode-block" id="Job.travel_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.travel_time">[docs]</a>
+    <span class="n">travel_time</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.handling_time">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.handling_time">[docs]</a>
+    <span class="n">handling_time</span><span class="p">:</span> <span class="nb">float</span></div>
+
+<div class="viewcode-block" id="Job.route">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Job.route">[docs]</a>
+    <span class="n">route</span><span class="p">:</span> <span class="n">Route</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="SchedulingSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/scheduling/index.html#ware_ops_algos.algorithms.algorithm.SchedulingSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">SchedulingSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="SchedulingSolution.jobs">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.SchedulingSolution.jobs">[docs]</a>
+    <span class="n">jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Job</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="OrderSelectionSolution">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.OrderSelectionSolution">[docs]</a>
+<span class="k">class</span> <span class="nc">OrderSelectionSolution</span><span class="p">(</span><span class="n">AlgorithmSolution</span><span class="p">):</span>
+<div class="viewcode-block" id="OrderSelectionSolution.selected_orders">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.OrderSelectionSolution.selected_orders">[docs]</a>
+    <span class="n">selected_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">WarehouseOrder</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+</div>
+
+
+<span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PlanningState">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/index.html#ware_ops_algos.algorithms.algorithm.PlanningState">[docs]</a>
+<span class="k">class</span> <span class="nc">PlanningState</span><span class="p">:</span>
+<div class="viewcode-block" id="PlanningState.item_assignment">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.item_assignment">[docs]</a>
+    <span class="n">item_assignment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ItemAssignmentSolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PlanningState.batching_solutions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.batching_solutions">[docs]</a>
+    <span class="n">batching_solutions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BatchingSolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PlanningState.assignment_solutions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.assignment_solutions">[docs]</a>
+    <span class="n">assignment_solutions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AssignmentSolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PlanningState.routing_solutions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.routing_solutions">[docs]</a>
+    <span class="n">routing_solutions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">RoutingSolution</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlanningState.sequencing_solutions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.sequencing_solutions">[docs]</a>
+    <span class="n">sequencing_solutions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchedulingSolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PlanningState.order_selection_solutions">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.order_selection_solutions">[docs]</a>
+    <span class="n">order_selection_solutions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OrderSelectionSolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PlanningState.provenance">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.PlanningState.provenance">[docs]</a>
+    <span class="n">provenance</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="Algorithm">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing/index.html#ware_ops_algos.algorithms.algorithm.Algorithm">[docs]</a>
+<span class="k">class</span> <span class="nc">Algorithm</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">I</span><span class="p">,</span> <span class="n">O</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for all algorithms (routing, batching, etc.).</span>
+<span class="sd">    Handles timing, algo naming, and ensures consistent result metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Algorithm.algo_name">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Algorithm.algo_name">[docs]</a>
+    <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Algorithm&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+<div class="viewcode-block" id="Algorithm.logger">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/algorithm/index.html#ware_ops_algos.algorithms.algorithm.Algorithm.logger">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Algorithm.solve">
+<a class="viewcode-back" href="../../../autoapi/ware_ops_algos/algorithms/routing/index.html#ware_ops_algos.algorithms.algorithm.Algorithm.solve">[docs]</a>
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="n">I</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">O</span><span class="p">:</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">:</span> <span class="n">O</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Algorithm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">algo_name</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">elapsed</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="n">I</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">O</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Concrete algorithms implement this method.</span>
+<span class="sd">        Must return a subclass of AlgorithmResult.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

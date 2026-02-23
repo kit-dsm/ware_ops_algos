@@ -1,0 +1,678 @@
+ware_ops_algos.algorithms.algorithm
+===================================
+
+.. py:module:: ware_ops_algos.algorithms.algorithm
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm.I
+   ware_ops_algos.algorithms.algorithm.O
+   ware_ops_algos.algorithms.algorithm.Node
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm.AlgorithmSolution
+   ware_ops_algos.algorithms.algorithm.PickPosition
+   ware_ops_algos.algorithms.algorithm.WarehouseOrder
+   ware_ops_algos.algorithms.algorithm.ItemAssignmentSolution
+   ware_ops_algos.algorithms.algorithm.BatchObject
+   ware_ops_algos.algorithms.algorithm.BatchingSolution
+   ware_ops_algos.algorithms.algorithm.PickList
+   ware_ops_algos.algorithms.algorithm.PickerAssignment
+   ware_ops_algos.algorithms.algorithm.AssignmentSolution
+   ware_ops_algos.algorithms.algorithm.NodeType
+   ware_ops_algos.algorithms.algorithm.RouteNode
+   ware_ops_algos.algorithms.algorithm.Route
+   ware_ops_algos.algorithms.algorithm.PickTour
+   ware_ops_algos.algorithms.algorithm.TourStates
+   ware_ops_algos.algorithms.algorithm.TourPlanningState
+   ware_ops_algos.algorithms.algorithm.RoutingSolution
+   ware_ops_algos.algorithms.algorithm.CombinedRoutingSolution
+   ware_ops_algos.algorithms.algorithm.Sequencing
+   ware_ops_algos.algorithms.algorithm.Assignment
+   ware_ops_algos.algorithms.algorithm.Job
+   ware_ops_algos.algorithms.algorithm.SchedulingSolution
+   ware_ops_algos.algorithms.algorithm.OrderSelectionSolution
+   ware_ops_algos.algorithms.algorithm.PlanningState
+   ware_ops_algos.algorithms.algorithm.Algorithm
+
+
+Module Contents
+---------------
+
+.. py:data:: I
+
+.. py:data:: O
+
+.. py:class:: AlgorithmSolution
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: execution_time
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: provenance
+      :type:  dict[str, Any]
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: WarehouseOrder
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_positions
+      :type:  Optional[list[PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: ItemAssignmentSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: resolved_orders
+      :type:  list[WarehouseOrder]
+      :value: []
+
+
+
+.. py:class:: BatchObject
+
+   .. py:attribute:: batch_id
+      :type:  int
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+.. py:class:: BatchingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: batches
+      :type:  list[BatchObject] | None
+      :value: None
+
+
+
+   .. py:attribute:: pick_lists
+      :type:  list[PickList]
+      :value: None
+
+
+
+.. py:class:: PickList
+
+   .. py:attribute:: pick_positions
+      :type:  list[PickPosition]
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+   .. py:attribute:: release
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: earliest_due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:property:: order_numbers
+      :type: list[int]
+
+
+
+.. py:class:: PickerAssignment
+
+   .. py:attribute:: picker
+      :type:  ware_ops_algos.domain_models.Resource
+
+
+   .. py:attribute:: pick_list
+      :type:  PickList
+
+
+.. py:class:: AssignmentSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: assignments
+      :type:  list[PickerAssignment]
+      :value: []
+
+
+
+.. py:class:: NodeType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Create a collection of name/value pairs.
+
+   Example enumeration:
+
+   >>> class Color(Enum):
+   ...     RED = 1
+   ...     BLUE = 2
+   ...     GREEN = 3
+
+   Access them by:
+
+   - attribute access:
+
+     >>> Color.RED
+     <Color.RED: 1>
+
+   - value lookup:
+
+     >>> Color(1)
+     <Color.RED: 1>
+
+   - name lookup:
+
+     >>> Color['RED']
+     <Color.RED: 1>
+
+   Enumerations can be iterated over, and know how many members they have:
+
+   >>> len(Color)
+   3
+
+   >>> list(Color)
+   [<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+   Methods can be added to enumerations, and members can have their own
+   attributes -- see the documentation for details.
+
+
+   .. py:attribute:: PICK
+
+
+   .. py:attribute:: ROUTE
+
+
+.. py:class:: RouteNode
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   .. py:attribute:: position
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: node_type
+      :type:  NodeType
+
+
+.. py:class:: Route
+
+   .. py:attribute:: route
+      :type:  list[tuple[int, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  list[tuple[int, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: distance
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[PickList]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+.. py:class:: PickTour
+
+   .. py:attribute:: pick_list
+      :type:  PickList
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+   .. py:attribute:: assigned_picker
+      :type:  ware_ops_algos.domain_models.Resource
+
+
+   .. py:attribute:: starts_after
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: starts_before
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: planned_start
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: planned_end
+      :type:  Optional[float]
+      :value: None
+
+
+
+.. py:data:: Node
+
+.. py:class:: TourStates
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: PLANNED
+      :value: 'planned'
+
+
+
+   .. py:attribute:: ASSIGNED
+      :value: 'assigned'
+
+
+
+   .. py:attribute:: SCHEDULED
+      :value: 'scheduled'
+
+
+
+   .. py:attribute:: PENDING
+      :value: 'pending'
+
+
+
+   .. py:attribute:: STARTED
+      :value: 'started'
+
+
+
+   .. py:attribute:: DONE
+      :value: 'done'
+
+
+
+.. py:class:: TourPlanningState
+
+   Thin wrapper around a Route object.
+   Keeps track of the planning state for a single tour.
+
+   - route_nodes / pick_sequence are copies from the plan (immutable intent).
+   - cursor / picks_left / version are the mutable execution state.
+   - original_route is kept only for debugging/inspection (do not mutate).
+
+
+   .. py:attribute:: tour_id
+      :type:  int
+
+
+   .. py:attribute:: route_nodes
+      :type:  list[Node]
+
+
+   .. py:attribute:: pick_sequence
+      :type:  list[Node]
+
+
+   .. py:attribute:: pick_positions
+      :type:  list
+
+
+   .. py:attribute:: order_numbers
+      :type:  list[int]
+
+
+   .. py:attribute:: original_route
+      :type:  Route
+
+
+   .. py:attribute:: pick_list
+      :type:  PickList
+
+
+   .. py:attribute:: visits_left
+      :type:  dict
+
+
+   .. py:attribute:: pick_nodes
+      :type:  list[Node]
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[RouteNode]
+
+
+   .. py:attribute:: assigned_resource
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: start_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: end_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: end_time_planned
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: cursor
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: picks_left
+      :type:  Deque[Node]
+
+
+   .. py:attribute:: open_pick_positions
+      :type:  list
+      :value: []
+
+
+
+   .. py:attribute:: status
+      :type:  str
+
+
+   .. py:method:: current_node() -> RouteNode
+
+
+   .. py:method:: at_end() -> bool
+
+      True if cursor is on the final node (typically the depot).
+
+
+
+   .. py:method:: next_node() -> RouteNode
+
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Optional[Route]
+      :value: None
+
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  Optional[list[Route]]
+      :value: None
+
+
+
+.. py:class:: Sequencing
+
+   .. py:attribute:: pick_list_sequence
+      :type:  list[int]
+
+
+.. py:class:: Assignment
+
+   .. py:attribute:: tour_id
+      :type:  int
+
+
+   .. py:attribute:: picker_id
+      :type:  int
+
+
+.. py:class:: Job
+
+   .. py:attribute:: batch_idx
+      :type:  int
+
+
+   .. py:attribute:: picker_id
+      :type:  int
+
+
+   .. py:attribute:: start_time
+      :type:  float
+
+
+   .. py:attribute:: end_time
+      :type:  float
+
+
+   .. py:attribute:: release_time
+      :type:  float
+
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: n_picks
+      :type:  int
+
+
+   .. py:attribute:: travel_time
+      :type:  float
+
+
+   .. py:attribute:: handling_time
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+.. py:class:: SchedulingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: jobs
+      :type:  list[Job] | None
+      :value: None
+
+
+
+.. py:class:: OrderSelectionSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: selected_orders
+      :type:  list[WarehouseOrder]
+      :value: []
+
+
+
+.. py:class:: PlanningState
+
+   .. py:attribute:: item_assignment
+      :type:  Optional[ItemAssignmentSolution]
+      :value: None
+
+
+
+   .. py:attribute:: batching_solutions
+      :type:  Optional[BatchingSolution]
+      :value: None
+
+
+
+   .. py:attribute:: assignment_solutions
+      :type:  Optional[AssignmentSolution]
+      :value: None
+
+
+
+   .. py:attribute:: routing_solutions
+      :type:  Optional[list[RoutingSolution]]
+      :value: []
+
+
+
+   .. py:attribute:: sequencing_solutions
+      :type:  Optional[SchedulingSolution]
+      :value: None
+
+
+
+   .. py:attribute:: order_selection_solutions
+      :type:  Optional[OrderSelectionSolution]
+      :value: None
+
+
+
+   .. py:attribute:: provenance
+      :type:  dict[str, Any]
+
+
+.. py:class:: Algorithm(seed: Optional[int] = None)
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`I`\ , :py:obj:`O`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: 'Algorithm'
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: solve(input_data: I) -> O
+
+
