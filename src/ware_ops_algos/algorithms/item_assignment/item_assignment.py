@@ -25,7 +25,7 @@ class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
 
 class GreedyItemAssignment(ItemAssignment):
     def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
-        orders = deepcopy(input_data)
+        orders = input_data
         warehouse_orders = []
         for order in orders:
             resolved = []
