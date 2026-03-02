@@ -140,14 +140,10 @@ class TourPlanningState:
     tour_id: int
 
     # original plan (copied from Route)
-    route_nodes: list[Node]
-    pick_sequence: list[Node]
-    pick_positions: list
     order_numbers: list[int]
     original_route: Route
     pick_list: PickList
-    visits_left: dict
-    pick_nodes: list[Node]
+    # pick_nodes: list[Node]
     annotated_route: list[RouteNode]
 
     assigned_resource: Optional[int] = None
