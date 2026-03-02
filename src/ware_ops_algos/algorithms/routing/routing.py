@@ -80,6 +80,7 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         self.distance = 0
         self.route = []
         self.item_sequence = []
+        self.annotated_route = []
 
     def _get_aisle_entry_points(self) -> dict:
         """Find the entry point (min y) for each aisle."""
@@ -143,8 +144,8 @@ class HeuristicRouting(Routing, ABC):
     def _walk_to_target(self, source: tuple, target: tuple, target_is_pick_node: bool = False, target_is_end_node: bool = False) -> tuple:
         if self.gen_tour:
             self._get_route_for_tour(source, target, target_is_end_node)
-            if target_is_pick_node:
-                self.annotated_route.append(RouteNode(target, NodeType.PICK))
+            # if target_is_pick_node:
+            #     self.annotated_route.append(RouteNode(target, NodeType.PICK))
         # self.distance += self.distance_matrix.at[source, target]
         self.distance += self._get_distance(source, target)
         if target_is_pick_node:
@@ -153,6 +154,7 @@ class HeuristicRouting(Routing, ABC):
                 if pos.pick_node == target:
                     if self.gen_item_sequence:
                         self.item_sequence.append(target)
+                        self.annotated_route.append(RouteNode(target, NodeType.PICK))
                 else:
                     remaining.append(pos)
             self.current_order = remaining
