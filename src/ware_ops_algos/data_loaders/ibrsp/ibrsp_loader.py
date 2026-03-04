@@ -229,7 +229,7 @@ class IBRSPLoader(DataLoader):
         graph_generator = ExplicitGraphGenerator(vertices_coords, arcs)
         graph_generator.populate_graph()
         graph = graph_generator.G
-        graph_generator.render()
+        # graph_generator.render()
 
         # Identify depot nodes
         depot_idx = header["DepartingDepot"]
