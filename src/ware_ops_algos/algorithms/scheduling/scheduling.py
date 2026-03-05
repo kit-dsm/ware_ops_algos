@@ -105,6 +105,8 @@ class PriorityScheduling(Algorithm[SchedulingInput, SchedulingSolution], ABC):
             pt = self._processing_time(job["solution"], picker, n_picks)
 
             start_time = max(job["release"], avail_time)
+            if picker.tour_setup_time:
+                start_time += picker.tour_setup_time
             end_time = start_time + pt
 
             travel_time = job["solution"].distance / picker.speed

@@ -45,6 +45,7 @@ class Resource:
     time_per_pick: Optional[float] = None
     pick_cart: Optional[PickCart] = None
     tpe: ResourceType = ResourceType.HUMAN
+    tour_setup_time: float = None
     # Dynamic Information
     occupied: Optional[bool] = None
     current_location: Optional[tuple[float, float]] = None
@@ -61,7 +62,6 @@ class CobotPicker(Resource):
 @dataclass
 class ManualPicker(Resource):
     aisle_congestion_rate: float = None
-    tour_setup_time: float = None
 
 
 @dataclass
