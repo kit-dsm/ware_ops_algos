@@ -316,6 +316,7 @@ class IBRSPLoader(DataLoader):
         n_pickers = header["NbPickers"]
         picker_speed = header["TimeToTravelOneDistanceUnit"]
         time_per_pick = header["PickTime"]
+        tour_setup_time = header["SetupTime"]
         pick_cart = PickCart(
             n_dimension=1,
             capacities=[capacity],
@@ -330,7 +331,9 @@ class IBRSPLoader(DataLoader):
                                 capacity=capacity,
                                 speed=picker_speed,
                                 time_per_pick=time_per_pick,
-                                pick_cart=pick_cart) for i in range(n_pickers)]
+                                pick_cart=pick_cart,
+                                tour_setup_time=tour_setup_time
+                                ) for i in range(n_pickers)]
         )
 
         warehouse_info = WarehouseInfo(tpe=WarehouseInfoType.OFFLINE)
