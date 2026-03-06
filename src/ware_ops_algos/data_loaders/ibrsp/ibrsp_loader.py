@@ -316,7 +316,7 @@ class IBRSPLoader(DataLoader):
         n_pickers = header["NbPickers"]
         picker_speed = header["TimeToTravelOneDistanceUnit"]
         time_per_pick = header["PickTime"]
-        tour_setup_time = header["SetupTime"]
+        tour_setup_time = 1 / header["SetupTime"]
         pick_cart = PickCart(
             n_dimension=1,
             capacities=[capacity],
