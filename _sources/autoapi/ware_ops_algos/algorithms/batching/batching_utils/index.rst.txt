@@ -1,0 +1,39 @@
+ware_ops_algos.algorithms.batching.batching_utils
+=================================================
+
+.. py:module:: ware_ops_algos.algorithms.batching.batching_utils
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.batching.batching_utils.CapacityChecker
+
+
+Module Contents
+---------------
+
+.. py:class:: CapacityChecker(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles)
+
+   .. py:attribute:: pick_cart
+
+
+   .. py:method:: can_add_order(current_batch: list[ware_ops_algos.algorithms.WarehouseOrder], new_order: ware_ops_algos.algorithms.WarehouseOrder) -> bool
+
+
+   .. py:method:: orders_fit(orders: list[ware_ops_algos.algorithms.WarehouseOrder]) -> bool
+
+
+   .. py:method:: get_item_consumption(article_id: int, quantity: int = 1) -> list[float]
+
+      Get consumption for an article.
+
+      :param article_id: Article ID
+      :param quantity: Number of units (default: 1)
+
+      :returns: Consumption vector [dim0, dim1, ...]
+
+
+
