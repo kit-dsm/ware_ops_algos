@@ -1,12 +1,13 @@
 import math
 
-from ware_ops_algos.algorithms import WarehouseOrder
+from ware_ops_algos.algorithms import WarehouseOrder, PickList
 from ware_ops_algos.domain_models import Order, DimensionType, Articles, PickCart
 
 
 class CapacityChecker:
     def __init__(self, pick_cart: PickCart, articles: Articles):
         self.pick_cart = pick_cart
+        self._order_consumption_cache: dict[int, list[float]] = {}
 
         # Only load article dimensions if needed (non-ITEMS/ORDERLINES dimensions)
         if any(dim not in [DimensionType.ITEMS, DimensionType.ORDERLINES]
@@ -95,6 +96,8 @@ class CapacityChecker:
         return total
 
     def _compute_order_consumption(self, order: WarehouseOrder) -> list[float]:
+        if order.order_id in self._order_consumption_cache:
+            return self._order_consumption_cache[order.order_id]
         consumption = [0.0] * self.pick_cart.n_dimension
 
         for d, dim_type in enumerate(self.pick_cart.dimensions):
@@ -123,6 +126,7 @@ class CapacityChecker:
                     dim_idx = self._get_article_dim_index(d)
                     consumption[d] += quantity * article_dims[dim_idx]
 
+        self._order_consumption_cache[order.order_id] = consumption
         return consumption
 
     def _get_article_dim_index(self, pick_cart_dim_index: int) -> int:
@@ -160,3 +164,35 @@ class CapacityChecker:
                 consumption[d] = article_dims[dim_idx] * quantity
 
         return consumption
+
+
+def latest_order_arrival(orders: list[WarehouseOrder]) -> float:
+    if any(o.order_date is not None for o in orders):
+        arrivals = [o.order_date for o in orders]
+        return max(arrivals) if arrivals else 0.0
+    else:
+        return 0.0
+
+
+def first_due_date(orders: list[WarehouseOrder]) -> float:
+    if any(o.order_date is not None for o in orders):
+        due_dates = [o.order_date for o in orders]
+        return min(due_dates) if due_dates else float("inf")
+    else:
+        return 0.0
+
+
+def build_pick_lists(orders: list[WarehouseOrder]):
+    # build pick lists
+    pick_positions = []
+    for order in orders:
+        for pos in order.pick_positions:
+            pick_positions.append(pos)
+
+    pick_list = PickList(
+        pick_positions=pick_positions,
+        release=latest_order_arrival(orders),
+        earliest_due_date=first_due_date(orders),
+        orders=orders
+    )
+    return pick_list
