@@ -9,7 +9,8 @@ from gurobipy import GRB
 from matplotlib import pyplot as plt
 import gurobipy as gp
 
-from ware_ops_algos.algorithms.algorithm import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType
+from ware_ops_algos.algorithms.algorithm import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
+    CombinedRoutingSolution
 from ware_ops_algos.domain_models import Resource, OrderPosition, Article
 from ware_ops_algos.utils.dynamic_programming_helpers import (
     equivalence_classes,
@@ -68,7 +69,7 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         self.execution_time = None
 
     @abstractmethod
-    def _run(self, input_data: list[PickPosition]) -> RoutingSolution:
+    def _run(self, input_data: list[PickPosition]) -> RoutingSolution | CombinedRoutingSolution:
         """Concrete routing algorithms implement this and return a Route result."""
         ...
 
@@ -97,13 +98,16 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         current_idx = target_idx
 
         while current_idx != source_idx:
-            path_indices.insert(0, current_idx)
+            # path_indices.insert(0, current_idx)
+            path_indices.append(current_idx)
             current_idx = self.predecessor_matrix[source_idx, current_idx]
 
             if current_idx == -9999:
                 raise ValueError(f"No path from {source} to {target}")
 
-        path_indices.insert(0, source_idx)
+        # path_indices.insert(0, source_idx)
+        path_indices.append(source_idx)
+        path_indices.reverse()
 
         # Convert back to node names
         path = [self.idx_to_node[idx] for idx in path_indices]
@@ -171,15 +175,6 @@ class HeuristicRouting(Routing, ABC):
                 source = self._walk_to_target(source, (source[0], last_position))
         return source
 
-    # def _process_aisle(self, current_source: tuple, aisle_to_visit: int, walking_up: bool = None) -> tuple:
-    #     if current_source[0] == aisle_to_visit:
-    #         target_y_values = self._get_sorted_y_values_for_current_aisle(current_source, walking_up)
-    #         current_source = self._walk_to_target_and_pick(current_source, target_y_values, walking_up)
-    #     else:
-    #         target = (aisle_to_visit, current_source[1])
-    #         current_source = self._walk_to_target(current_source, target)
-    #     return current_source
-
     def _process_aisle(self, current_source: tuple, aisle_to_visit: int, walking_up: bool = None) -> tuple:
         if current_source[0] == aisle_to_visit:
             target_y_values = self._get_sorted_y_values_for_current_aisle(current_source, walking_up)
@@ -192,7 +187,8 @@ class HeuristicRouting(Routing, ABC):
             if self.gen_tour:
                 self.route.append(current_source)
                 self.annotated_route.append(RouteNode(current_source, NodeType.ROUTE))
-            self.distance += self.distance_matrix.at[current_source, target]
+            # self.distance += self.distance_matrix.at[current_source, target]
+            self.distance += self._get_distance(current_source, target)
             current_source = target
 
         return current_source
@@ -252,7 +248,8 @@ class SShapeRouting(HeuristicRouting):
             # Bypass predecessor matrix - direct edge only
             if self.gen_tour:
                 self.route.append(current_source)
-            self.distance += self.distance_matrix.at[current_source, target]
+            # self.distance += self.distance_matrix.at[current_source, target]
+            self.distance += self._get_distance(current_source, target)
             current_source = target
 
         return current_source
@@ -605,11 +602,19 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
                          distance_matrix, predecessor_matrix, picker, fixed_depot, **kwargs)
 
+    def _walk_to_target(self, source, target, target_is_pick_node=False, target_is_end_node=False):
+        if target_is_pick_node and hasattr(self, '_current_pick_nodes'):
+            idx = self._current_pick_nodes.index(target)
+            self._current_pick_nodes.pop(idx)
+        return super()._walk_to_target(source, target, target_is_pick_node, target_is_end_node)
+
+
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         self.pick_list = list(pick_list)
         self.current_order = list(pick_list)
 
         current_source = self._walk_to_target(self.start_node, self.closest_node_to_start)
+        self._current_pick_nodes = [pos.pick_node for pos in self.current_order]
 
         while self.current_order:
             nearest_pick_node = self._get_next_nearest_node_by_dijkstra(current_source)
@@ -637,17 +642,23 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
     #         key=lambda item: self.distance_matrix.at[current_source, item]
     #     )
 
+    # def _get_next_nearest_node_by_dijkstra(self, current_source: tuple) -> tuple:
+    #     source_idx = self._node_to_idx[current_source]
+    #
+    #     pick_nodes = [pos.pick_node for pos in self.current_order]
+    #     pick_indices = [self._node_to_idx[node] for node in pick_nodes]
+    #
+    #     # Single NumPy operation instead of repeated lookups
+    #     distances = self._dist_array[source_idx, pick_indices]
+    #
+    #     return pick_nodes[distances.argmin()]
+
     def _get_next_nearest_node_by_dijkstra(self, current_source: tuple) -> tuple:
-        """Vectorized nearest neighbor selection."""
         source_idx = self._node_to_idx[current_source]
-
-        pick_nodes = [pos.pick_node for pos in self.current_order]
-        pick_indices = [self._node_to_idx[node] for node in pick_nodes]
-
-        # Single NumPy operation instead of repeated lookups
+        # Build indices inline - cheap list comprehension, no persistent array
+        pick_indices = [self._node_to_idx[n] for n in self._current_pick_nodes]
         distances = self._dist_array[source_idx, pick_indices]
-
-        return pick_nodes[distances.argmin()]
+        return self._current_pick_nodes[distances.argmin()]
 
 
 class PickListRouting(HeuristicRouting):
@@ -789,6 +800,7 @@ class ExactTSPRouting(ExactRouting):
         else:
             print(f"Model could not be solved. Status: {self.mdl.status}")
         route = Route(route=self.route,
+                      annotated_route=self.annotated_route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
                       )
@@ -829,6 +841,8 @@ class ExactTSPRouting(ExactRouting):
                     if self.gen_tour:
                         self._get_route_for_tour(self.start_node, self.pick_nodes[i])
                     if self.gen_item_sequence:
+                        # self.annotated_route.pop()
+                        self.annotated_route.append(RouteNode(self.pick_nodes[i], NodeType.PICK))
                         self.item_sequence.append(self.pick_nodes[i])
                     current_node = i
                     break
@@ -843,7 +857,9 @@ class ExactTSPRouting(ExactRouting):
                         if self.gen_tour:
                             self._get_route_for_tour(self.pick_nodes[current_node], self.pick_nodes[j])
                         if self.gen_item_sequence:
+                            # self.annotated_route.pop()
                             self.item_sequence.append(self.pick_nodes[j])
+                            self.annotated_route.append(RouteNode(self.pick_nodes[j], NodeType.PICK))
                         visited.add(current_node)
                         current_node = j
                         found = True
@@ -858,6 +874,9 @@ class ExactTSPRouting(ExactRouting):
                         self._get_route_for_tour(self.pick_nodes[current_node], self.end_node, with_last_element=True)
                     break
 
+            pick_positions = {n.position for n in self.annotated_route if n.node_type == NodeType.PICK}
+            self.annotated_route = [n for n in self.annotated_route if
+                                    n.node_type == NodeType.PICK or n.position not in pick_positions]
 
 class ExactTSPRoutingDistance(ExactTSPRouting):
     """
