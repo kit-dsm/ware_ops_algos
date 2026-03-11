@@ -6,7 +6,9 @@ from abc import ABC
 from gurobipy import *
 import gurobipy as gp
 
-from ware_ops_algos.algorithms.algorithm import RoutingSolution, Route, CombinedRoutingSolution, PickPosition
+from ware_ops_algos.algorithms.algorithm import RoutingSolution, Route, CombinedRoutingSolution, PickPosition, \
+    WarehouseOrder
+from ware_ops_algos.algorithms.batching.batching_utils import build_pick_lists
 from ware_ops_algos.domain_models import Resource
 
 from ware_ops_algos.algorithms.routing import Routing
@@ -206,9 +208,9 @@ class ExactTSPBatchingAndRoutingDistance(RoutingBatchingAssigning, ABC):
         """Sets the parameters for the exact routing algorithm."""
 
         self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
-        self.list_item_numbers = [item.position.article_id for item in self.pick_list]
-        self.list_item_amounts = [item.position.amount for item in self.pick_list]
-        self.list_order_numbers = [item.position.order_number for item in self.pick_list]
+        self.list_item_numbers = [item.article_id for item in self.pick_list]
+        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_order_numbers = [item.order_number for item in self.pick_list]
 
         self.set_order_numbers = set(self.list_order_numbers)
         self.set_batch_numbers = range(len(self.set_order_numbers))
@@ -224,8 +226,8 @@ class ExactTSPBatchingAndRoutingDistance(RoutingBatchingAssigning, ABC):
 
         # Amount items in each order
         df = pd.DataFrame([{
-            'order_number': item.position.order_number,
-            'amount': item.position.amount
+            'order_number': item.order_number,
+            'amount': item.amount
         } for item in self.pick_list])
 
         self.s_i = df.groupby('order_number')['amount'].sum().to_dict()
@@ -361,8 +363,8 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
         super().__init__(start_node, end_node, distance_matrix, predecessor_matrix,
                          picker, gen_tour, gen_item_sequence, **kwargs)
 
-        self.routing_algo = 'ExactTSPBatchingAndRouting'
-        self.mdl = gp.Model(self.routing_algo)
+        self.algo_name = 'ExactTSPBatchingAndRouting'
+        self.mdl = gp.Model(self.algo_name)
 
         self.big_m = big_m
 
@@ -379,11 +381,13 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
         self._set_decision_variables()
         self._set_objective()
         self._set_constraints()
+        if self.time_limit is not None:
+            self.mdl.Params.TimeLimit = self.time_limit
         self.mdl.optimize()
 
         execution_time = time.time() - start_time
 
-        if self.mdl.status == GRB.OPTIMAL:
+        if self.mdl.status == GRB.OPTIMAL or (self.time_limit and self.mdl.SolCount > 0):
             self.solution = {
                 'picker': {}
             }
@@ -393,7 +397,7 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
                     if self.w[b, p].x > 0.5:  # aktivierte Zuordnung
 
                         self.construct_route_and_sequence(b)
-                        self.distance_per_batch[b] = self.C_bp[b, p].x
+                        # self.distance_per_batch[b] = self.C_bp[b, p].x
                         # Speichern
                         self.solution['picker'][p]['batches'][b] = {
                             'order_in_batch': [o for o in self.set_order_numbers if self.y[o, b].x > 0.5],
@@ -412,12 +416,13 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
         """Sets the parameters for the exact routing algorithm."""
 
         self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
-        self.list_item_numbers = [item.position.article_id for item in self.pick_list]
-        self.list_item_amounts = [item.position.amount for item in self.pick_list]
-        self.list_order_numbers = [item.position.order_number for item in self.pick_list]
+        self.list_item_numbers = [item.article_id for item in self.pick_list]
+        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_order_numbers = [item.order_number for item in self.pick_list]
 
         self.set_order_numbers = set(self.list_order_numbers)
         self.set_batch_numbers = range(len(self.set_order_numbers))
+        self.order_to_batch = {o: b for b, o in enumerate(self.set_order_numbers)}
 
         self.len_item_numbers = len(self.list_item_numbers)
 
@@ -430,8 +435,8 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
 
         # Amount items in each order
         df = pd.DataFrame([{
-            'order_number': item.position.order_number,
-            'amount': item.position.amount
+            'order_number': item.order_number,
+            'amount': item.amount
         } for item in self.pick_list])
 
         self.s_i = df.groupby('order_number')['amount'].sum().to_dict()
@@ -447,10 +452,6 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
         self.u_i_j = {i: {j: self.list_item_amounts[j]
             if self.list_item_numbers[j] in self.list_item_numbers and self.list_order_numbers[j] == i
             else 0 for j in self.range_item_number} for i in self.set_order_numbers}
-
-        print()
-
-
 
     def _set_decision_variables(self):
         """Set the decision variables for the exact routing model."""
@@ -525,9 +526,12 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
                 self.mdl.addConstr(gp.quicksum(self.x[j1, j2, b] for j1 in self.range_item_number if j1 != j2) <= self.z[j2, b])
 
         # Kapazitätsbeschränkung pro Picker
-        for index_p, p in enumerate(self.picker_id):
-            for b in self.set_batch_numbers:
-                self.mdl.addConstr(gp.quicksum(self.s_i[i] * self.y[i, b] * self.w[b, p] for i in self.set_order_numbers) <= self.picker_capa[index_p])
+        # for index_p, p in enumerate(self.picker_id):
+        #     for b in self.set_batch_numbers:
+        #         self.mdl.addConstr(gp.quicksum(self.s_i[i] * self.y[i, b] * self.w[b, p] for i in self.set_order_numbers) <= self.picker_capa[index_p])
+        for o in self.set_order_numbers:
+            b = self.order_to_batch[o]
+            self.mdl.addConstr(self.y[o, b] == 1)
 
         # Zeitplanung (Reisedauer)
         for j1 in self.range_item_number:
@@ -551,3 +555,321 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
             self.mdl.addConstr(self.C_max_p[p] >= gp.quicksum(self.C_bp[b, p] for b in self.set_batch_numbers))
             self.mdl.addConstr(self.C_max >= self.C_max_p[p])
 
+
+
+class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
+    """
+    Exact MIP for the joint Order-Batching and Picker-Routing Problem (OBRP)
+    with homogeneous pickers.
+    """
+
+    algo_name = "ExactCombinedBatchingRouting"
+
+    def __init__(
+        self,
+        start_node: tuple[int, int],
+        end_node: tuple[int, int],
+        distance_matrix: pd.DataFrame,
+        predecessor_matrix: np.ndarray,
+        picker: list[Resource],
+        gen_tour: bool = False,
+        gen_item_sequence: bool = False,
+        time_limit: int | None = None,
+        **kwargs,
+    ):
+        super().__init__(
+            start_node=start_node,
+            end_node=end_node,
+            distance_matrix=distance_matrix,
+            predecessor_matrix=predecessor_matrix,
+            picker=picker,
+            gen_tour=gen_tour,
+            gen_item_sequence=gen_item_sequence,
+            time_limit=time_limit,
+            **kwargs,
+        )
+        self.mdl = gp.Model(self.algo_name)
+
+        # New variables (set in _set_decision_variables)
+        self.a = None   # batch-active indicator
+        self.t = None   # MTZ position variables
+
+        self.orders: list[WarehouseOrder] | None = None  # for building batches later
+    # ------------------------------------------------------------------
+    # Main entry point
+    # ------------------------------------------------------------------
+    def _run(self, orders: list[WarehouseOrder] = None) -> CombinedRoutingSolution:
+        pick_list = []
+        self.orders = orders
+        for order in orders:
+            for pos in order.pick_positions:
+                pick_list.append(pos)
+        self.pick_list = pick_list
+        start_time = time.time()
+
+        self._set_routing_parameters()
+        self._set_decision_variables()
+        self._set_objective()
+        self._set_constraints()
+
+        if self.time_limit is not None:
+            self.mdl.Params.TimeLimit = self.time_limit
+        self.mdl.Params.OutputFlag = 1
+        self.mdl.optimize()
+
+        execution_time = time.time() - start_time
+
+        return self._extract_solution(execution_time)
+
+    # ------------------------------------------------------------------
+    # Parameters
+    # ------------------------------------------------------------------
+    def _set_routing_parameters(self):
+        self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
+        self.list_item_numbers = [item.article_id for item in self.pick_list]
+        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_order_numbers = [item.order_number for item in self.pick_list]
+
+        self.set_order_numbers = sorted(set(self.list_order_numbers))
+        self.set_batch_numbers = range(len(self.set_order_numbers))
+
+        self.len_item_numbers = len(self.list_item_numbers)
+        self.range_item_number = range(self.len_item_numbers)
+
+        self.picker_id = [p.id for p in self.picker]
+        self.num_pickers = len(self.picker)
+        self.Q = self.picker[0].capacity  # uniform capacity
+
+        # Total size per order: s_o
+        df = pd.DataFrame(
+            [
+                {"order_number": item.order_number, "amount": item.amount}
+                for item in self.pick_list
+            ]
+        )
+        self.s_o = df.groupby("order_number")["amount"].sum().to_dict()
+
+        # Items belonging to each order
+        self.items_of_order: dict[int, list[int]] = {}
+        for i in self.range_item_number:
+            o = self.list_order_numbers[i]
+            self.items_of_order.setdefault(o, []).append(i)
+
+    # ------------------------------------------------------------------
+    # Decision variables
+    # ------------------------------------------------------------------
+    def _set_decision_variables(self):
+        n = self.len_item_numbers
+        B = self.set_batch_numbers
+        I = self.range_item_number
+
+        # Routing arcs per batch
+        self.x = self.mdl.addVars(I, I, B, vtype=GRB.BINARY, name="x")
+        self.x_start = self.mdl.addVars(I, B, vtype=GRB.BINARY, name="x_start")
+        self.x_end = self.mdl.addVars(I, B, vtype=GRB.BINARY, name="x_end")
+
+        # Order → batch assignment
+        self.y = self.mdl.addVars(
+            self.set_order_numbers, B, vtype=GRB.BINARY, name="y",
+        )
+
+        # Item → batch assignment (linked to y)
+        self.z = self.mdl.addVars(I, B, vtype=GRB.BINARY, name="z")
+
+        # Batch active indicator
+        self.a = self.mdl.addVars(B, vtype=GRB.BINARY, name="a")
+
+        # MTZ position variables for subtour elimination
+        self.t = self.mdl.addVars(
+            I, B, vtype=GRB.CONTINUOUS, lb=0, ub=n - 1, name="t",
+        )
+
+    # Objective: minimise total travel distance
+    def _set_objective(self):
+        dist = self.distance_matrix
+        locs = self.list_item_pick_locations
+        s = self.start_node
+        e = self.end_node
+        I = self.range_item_number
+        B = self.set_batch_numbers
+
+        obj = (
+            gp.quicksum(
+                dist[s][locs[j]] * self.x_start[j, b]
+                for j in I for b in B
+            )
+            + gp.quicksum(
+                dist[locs[j]][e] * self.x_end[j, b]
+                for j in I for b in B
+            )
+            + gp.quicksum(
+                dist[locs[i]][locs[j]] * self.x[i, j, b]
+                for i in I for j in I for b in B if i != j
+            )
+        )
+        self.mdl.setObjective(obj, GRB.MINIMIZE)
+
+    def _set_constraints(self):
+        I = self.range_item_number
+        B = self.set_batch_numbers
+        O = self.set_order_numbers
+        n = self.len_item_numbers
+
+        # (1) Each order assigned to exactly one batch
+        for o in O:
+            self.mdl.addConstr(
+                gp.quicksum(self.y[o, b] for b in B) == 1,
+                name=f"order_to_batch_{o}",
+            )
+
+        #  (2) Batch active iff it has orders
+        #  a[b] >= y[o,b]        ∀ o,b   (any order → active)
+        #  a[b] <= sum_o y[o,b]           (no orders → inactive)
+        for b in B:
+            for o in O:
+                self.mdl.addConstr(
+                    self.a[b] >= self.y[o, b],
+                    name=f"active_lb_{b}_{o}",
+                )
+            self.mdl.addConstr(
+                self.a[b] <= gp.quicksum(self.y[o, b] for o in O),
+                name=f"active_ub_{b}",
+            )
+
+        # (3) Link item-batch z to order-batch y
+        for o in O:
+            for i in self.items_of_order[o]:
+                for b in B:
+                    self.mdl.addConstr(
+                        self.z[i, b] == self.y[o, b],
+                        name=f"item_batch_link_{i}_{b}_{o}",
+                    )
+
+        # (4) Capacity per batch is measured in total item units (sum of amount per order
+        #  sum_o s_o * y[o,b] <= Q
+        for b in B:
+            self.mdl.addConstr(
+                gp.quicksum(self.s_o[o] * self.y[o, b] for o in O) <= self.Q,
+                name=f"capacity_{b}",
+            )
+
+        # (5) Each item visited exactly once
+        # Redundant given (1)+(3), but tightens LP relaxation.
+        for i in I:
+            self.mdl.addConstr(
+                gp.quicksum(self.z[i, b] for b in B) == 1,
+                name=f"item_once_{i}",
+            )
+
+        # (6) Flow conservation: degree = z[i,b]
+        for i in I:
+            for b in B:
+                self.mdl.addConstr(
+                    gp.quicksum(self.x[i, j, b] for j in I if j != i)
+                    + self.x_end[i, b]
+                    == self.z[i, b],
+                    name=f"flow_out_{i}_{b}",
+                )
+                self.mdl.addConstr(
+                    gp.quicksum(self.x[j, i, b] for j in I if j != i)
+                    + self.x_start[i, b]
+                    == self.z[i, b],
+                    name=f"flow_in_{i}_{b}",
+                )
+
+        # (7) Depot degree: one departure / return per active batch
+        for b in B:
+            self.mdl.addConstr(
+                gp.quicksum(self.x_start[j, b] for j in I) == self.a[b],
+                name=f"depot_out_{b}",
+            )
+            self.mdl.addConstr(
+                gp.quicksum(self.x_end[j, b] for j in I) == self.a[b],
+                name=f"depot_in_{b}",
+            )
+
+        # (8) MTZ subtour elimination
+        for b in B:
+            for i in I:
+                for j in I:
+                    if i != j:
+                        self.mdl.addConstr(
+                            self.t[i, b] - self.t[j, b] + n * self.x[i, j, b]
+                            <= n - 1,
+                            name=f"mtz_{i}_{j}_{b}",
+                        )
+
+        # (9) Symmetry breaking: batch indices used in order
+        # Batch b+1 can only be active if batch b is active.
+        for b in B:
+            if b + 1 in B:
+                self.mdl.addConstr(
+                    self.a[b] >= self.a[b + 1],
+                    name=f"sym_batch_{b}",
+                )
+
+    def _extract_solution(self, execution_time: float) -> CombinedRoutingSolution:
+        routes: list[Route] = []
+
+        orders_by_id = {o.order_id: o for o in self.orders}
+
+        if self.mdl.status == GRB.OPTIMAL or (
+            self.time_limit and self.mdl.SolCount > 0
+        ):
+            # Collect batches
+            for b in self.set_batch_numbers:
+                if self.a[b].X > 0.5:
+                    self.construct_route_and_sequence(b)
+
+                    batch_order_ids = [
+                        o for o in self.set_order_numbers
+                        if self.y[o, b].X > 0.5
+                    ]
+                    batch_distance = self._compute_batch_distance(b)
+
+                    batch_orders = [orders_by_id[i] for i in batch_order_ids]
+
+                    pl = build_pick_lists(batch_orders)
+
+                    routes.append(
+                        Route(
+                            route=list(self.route),
+                            item_sequence=list(self.item_sequence),
+                            distance=batch_distance,
+                            pick_list=pl,
+                            annotated_route=self.annotated_route
+                        )
+                    )
+
+        elif self.mdl.status == GRB.INFEASIBLE:
+            print(f"Model is infeasible (status {self.mdl.status}). Computing IIS...")
+            self.mdl.computeIIS()
+            self.mdl.write("model_iis.ilp")
+            for c in self.mdl.getConstrs():
+                if c.IISConstr:
+                    print(f"  IIS constraint: {c.ConstrName}")
+        else:
+            print(f"No solution found. Gurobi status: {self.mdl.status}")
+
+        return CombinedRoutingSolution(algo_name=self.algo_name, routes=routes)
+
+    def _compute_batch_distance(self, b: int) -> float:
+        """Compute total travel distance for a single batch from solution values."""
+        dist = self.distance_matrix
+        locs = self.list_item_pick_locations
+        I = self.range_item_number
+
+        return (
+            sum(
+                dist[self.start_node][locs[j]] * self.x_start[j, b].X
+                for j in I
+            )
+            + sum(
+                dist[locs[j]][self.end_node] * self.x_end[j, b].X
+                for j in I
+            )
+            + sum(
+                dist[locs[i]][locs[j]] * self.x[i, j, b].X
+                for i in I for j in I if i != j
+            )
+        )
