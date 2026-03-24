@@ -359,6 +359,20 @@ class SeedBatching(Batching):
 
 
 class LocalSearchBatching(Batching):
+    """Order batching via local search with swap and shift neighborhoods.
+
+    Generates an initial solution using a configurable start batching algorithm,
+    then iteratively improves it by swapping orders between batches and shifting
+    orders from one batch to another until no improvement is found or the time
+    limit is exceeded.
+
+    Based on:
+        Henn, S., Koch, S., Doerner, K.F. et al.
+        Metaheuristics for the Order Batching Problem in Manual Order Picking Systems.
+        Bus Res 3, 82–105 (2010). https://doi.org/10.1007/BF03342717
+
+    Note: While Henn et al. present an iterated local search approach, we only implemented the local search component.
+    """
     def __init__(self,
                  pick_cart: PickCart,
                  articles: Articles,
@@ -572,6 +586,35 @@ class LocalSearchBatching(Batching):
             pick_list = [pos for order in orders for pos in order.pick_positions]
             sol = self._router.solve(pick_list)
             self._route_cache[key] = sol.route.distance
+        return self._route_cache[key]
+
+    def _nn_cost(self, pick_list: list) -> float:
+        if not pick_list:
+            return 0.0
+
+        remaining_indices = [self._router._node_to_idx[pos.pick_node] for pos in pick_list]
+        source_idx = self._router._node_to_idx[self._router.start_node]
+        end_idx = self._router._node_to_idx[self._router.end_node]
+        dist = self._router._dist_array
+        cost = 0.0
+
+        while remaining_indices:
+            distances = dist[source_idx, remaining_indices]
+            best = int(distances.argmin())
+            cost += distances[best]
+            source_idx = remaining_indices[best]
+            remaining_indices.pop(best)  # O(n) but preserves order → consistent costs
+
+        cost += dist[source_idx, end_idx]
+        return cost
+
+    def _batch_cost_from_orders_estimator(self, orders: list[WarehouseOrder]) -> float:
+        if not orders:
+            return 0.0
+        key = tuple(sorted(o.order_id for o in orders))
+        if key not in self._route_cache:
+            pick_list = [pos for order in orders for pos in order.pick_positions]
+            self._route_cache[key] = self._nn_cost(pick_list)
         return self._route_cache[key]
 
     def _batch_cost(self, batch: BatchObject) -> float:
