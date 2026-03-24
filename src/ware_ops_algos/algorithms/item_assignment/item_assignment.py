@@ -24,32 +24,38 @@ class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
 
 
 class GreedyItemAssignment(ItemAssignment):
+    """Greedy item assignment heuristic. Assigns items from locations with the highest inventory level first
+    until demand is satisfied."""
+
+    algo_name = "GIA"
+    def __init__(self, storage_locations: StorageLocations, **kwargs):
+        super().__init__(storage_locations, **kwargs)
+        self._location_lookup: dict[int, list[Location]] = {
+            article_id: sorted(locs, key=lambda l: -l.amount)
+            for article_id, locs in storage_locations.article_location_mapping.items()
+        }
+
     def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
         orders = input_data
+
+        all_article_ids: set[int] = {
+            pos.article_id
+            for order in orders
+            for pos in order.order_positions
+        }
+
         warehouse_orders = []
         for order in orders:
             resolved = []
             for pos in order.order_positions:
-                locs = self.storage_locations.get_locations_by_article_id(pos.article_id)
-                sorted_locs = sorted(locs, key=lambda l: -l.amount)
-
+                sorted_locs = self._location_lookup[pos.article_id]
                 remaining = pos.amount
-                fulfilled = 0
-                used_locations = []
 
                 for loc in sorted_locs:
                     if remaining <= 0:
                         break
 
                     pick_qty = min(remaining, loc.amount)
-
-                    # resolved.append(ResolvedOrderPosition(
-                    #     pos,
-                    #     (loc.x, loc.y),
-                    #     fulfilled=pick_qty,
-                    #     picked=False
-                    # ))
-
                     resolved.append(PickPosition(
                         order_number=pos.order_number,
                         article_id=pos.article_id,
@@ -59,21 +65,32 @@ class GreedyItemAssignment(ItemAssignment):
                         article_name=pos.article_name,
                         picked=False
                     ))
-
-                    fulfilled += pick_qty
                     remaining -= pick_qty
-                    used_locations.append((loc.x, loc.y))
-            # order.order_positions = resolved
-            warehouse_orders.append(WarehouseOrder(order_id=order.order_id,
-                                                   due_date=order.due_date,
-                                                   order_date=order.order_date,
-                                                   pick_positions=resolved,
-                                                   fulfilled=False,
-                                                   ))
+
+            warehouse_orders.append(WarehouseOrder(
+                order_id=order.order_id,
+                due_date=order.due_date,
+                order_date=order.order_date,
+                pick_positions=resolved,
+                fulfilled=False,
+            ))
+
         return ItemAssignmentSolution(resolved_orders=warehouse_orders)
 
 
 class NearestNeighborItemAssignment(ItemAssignment):
+    """
+    Simple nearest neighborhood based item assignment heuristic. Selects closest to the current location until demand
+    is satisfied.
+
+    Based on:
+        Weidinger, F., Boysen, N., & Schneider, M. (2019). Picker routing
+        in the mixed-shelves warehouses of e-commerce retailers. European
+        Journal of Operational Research, 274(2), 501-515.
+        https://doi.org/10.1016/j.ejor.2018.10.021
+    """
+    algo_name = "NNIA"
+
     def __init__(
             self,
             storage_locations: StorageLocations,
@@ -162,7 +179,13 @@ class NearestNeighborItemAssignment(ItemAssignment):
 
 
 class PriorityItemAssignment(ItemAssignment):
-    """Base class for Weidinger selection algorithms."""
+    """Base class for Weidinger item assignment algorithms.
+
+    Based on:
+        Weidinger, F. (2018). Picker routing in rectangular mixed shelves
+        warehouses. Computers & Operations Research, 95, 139-150.
+        https://doi.org/10.1016/j.cor.2018.03.012
+    """
 
     def __init__(self, storage_locations: StorageLocations, distance_matrix: pd.DataFrame, **kwargs):
         super().__init__(storage_locations, **kwargs)
@@ -264,7 +287,8 @@ class PriorityItemAssignment(ItemAssignment):
 
 
 class SinglePositionItemAssignment(PriorityItemAssignment):
-    """Algorithm 2"""
+    algo_name = "SPIA"
+
     def __init__(self,
                  storage_locations: StorageLocations,
                  distance_matrix: pd.DataFrame,
@@ -339,6 +363,7 @@ class MinMaxItemAssignment(PriorityItemAssignment):
     Process SKUs by fewest locations first.
     Priority = MAX distance to any already-selected position.
     """
+    algo_name = "MinMaxIA"
 
     def __init__(self,
                  storage_locations: StorageLocations,
@@ -393,8 +418,9 @@ class MinMinItemAssignment(PriorityItemAssignment):
 
     Process SKUs by fewest locations first.
     Priority = MIN distance to any already-selected position.
-    Creates tight clusters.
     """
+
+    algo_name = "MinMinIA"
     def __init__(self,
                  storage_locations: StorageLocations,
                  distance_matrix: pd.DataFrame,
