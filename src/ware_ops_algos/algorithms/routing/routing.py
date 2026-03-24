@@ -1,3 +1,4 @@
+from itertools import combinations
 from typing import Optional
 from collections import defaultdict
 
@@ -11,7 +12,7 @@ import gurobipy as gp
 
 from ware_ops_algos.algorithms.algorithm import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
     CombinedRoutingSolution
-from ware_ops_algos.domain_models import Resource, OrderPosition, Article
+from ware_ops_algos.domain_models import Resource, OrderPosition, Article, StorageLocations
 from ware_ops_algos.utils.dynamic_programming_helpers import (
     equivalence_classes,
     cross_aisle_mapping,
@@ -30,14 +31,14 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
                  closest_node_to_start: tuple[int, int],
                  min_aisle_position: int,
                  max_aisle_position: int,
-                 distance_matrix: pd.DataFrame,
-                 predecessor_matrix: np.array,
                  picker: list[Resource],
                  gen_tour: bool = False,
                  gen_item_sequence: bool = False,
                  node_list: list[tuple[float, float]] = None,
                  node_to_idx: dict = None,
                  idx_to_node: dict = None,
+                 distance_matrix: pd.DataFrame | None = None,
+                 predecessor_matrix: np.array = None,
                  **kwargs):
         super().__init__(**kwargs)
 
@@ -49,8 +50,9 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
 
         self.pick_list: Optional[list[PickPosition]] = None
         self.distance_matrix = distance_matrix
-        self._dist_array = distance_matrix.values
-        self._node_to_idx = {node: idx for idx, node in enumerate(distance_matrix.index)}
+        if self.distance_matrix is not None:
+            self._dist_array = distance_matrix.values
+            self._node_to_idx = {node: idx for idx, node in enumerate(distance_matrix.index)}
         self.predecessor_matrix = predecessor_matrix
         self.node_list: list[tuple[float, float]] = node_list
         self.node_to_idx = node_to_idx
@@ -133,8 +135,9 @@ class HeuristicRouting(Routing, ABC):
                  fixed_depot=True,
                  **kwargs):
 
-        super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, **kwargs)
+        super().__init__(start_node=start_node, end_node=end_node, closest_node_to_start=closest_node_to_start,
+                         min_aisle_position=min_aisle_position, max_aisle_position=max_aisle_position,
+                         picker=picker, distance_matrix=distance_matrix, predecessor_matrix=predecessor_matrix, **kwargs)
         self.fixed_depot = fixed_depot
 
     def _determine_walking_direction(self, current_source: tuple) -> bool:
@@ -1078,6 +1081,16 @@ class ExactTSPRoutingMaxCompletionTime(ExactTSPRouting):
 
 
 class RatliffRosenthalRouting(Routing):
+    """
+    Dynamic Programming based approach to solve the picker routing problem in a single-block, parallel-aisle warehouse.
+
+    Based on:
+        Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+        INFORMS Journal on Computing 36(6):1417-1435.
+        https://doi.org/10.1287/ijoc.2023.0075
+
+
+    """
     algo_name = "RatliffRosenthalRouting"
 
     def __init__(self,
@@ -1086,8 +1099,6 @@ class RatliffRosenthalRouting(Routing):
                  closest_node_to_start: tuple[int, int],
                  min_aisle_position: int,
                  max_aisle_position: int,
-                 distance_matrix: pd.DataFrame,
-                 predecessor_matrix: np.array,
                  picker: list[Resource],
                  n_aisles: int,
                  n_pick_locations: int,
@@ -1100,7 +1111,7 @@ class RatliffRosenthalRouting(Routing):
                  gen_item_sequence: bool = False,
                  **kwargs):
         super().__init__(start_node, end_node, closest_node_to_start, min_aisle_position, max_aisle_position,
-                         distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, **kwargs)
+                         picker, gen_tour, gen_item_sequence, **kwargs)
 
         # self.algo_name = "RatliffRosenthal"
         self.state_graph = nx.DiGraph()
@@ -1286,12 +1297,6 @@ class RatliffRosenthalRouting(Routing):
         return False
 
     def _construct_picker_tour(self) -> nx.MultiGraph:
-        """
-        Constructs a MultiGraph representing the picker tour based on the DP solution path.
-        Uses self.path and self.state_graph edge attributes (action, action_node).
-        Returns:
-        nx.MultiGraph: constructed tour graph with nodes = (aisle, pick_y).
-        """
         assert hasattr(self, "path") and self.path, "No DP path found."
         T = nx.MultiGraph()
 
@@ -1438,3 +1443,433 @@ class RatliffRosenthalRouting(Routing):
         plt.ylim(-1, self.n_pick_locations + 2)
         plt.grid(True)
         plt.show()
+
+
+class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
+    """Dynamic Programming based approach to solve the picker routing problem in a single-block,
+    parallel-aisle warehouse with scattered storage.
+
+    Based on:
+        Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+        INFORMS Journal on Computing 36(6):1417-1435.
+        https://doi.org/10.1287/ijoc.2023.0075
+    """
+
+    algo_name = "RatliffRosenthalScattered"
+
+    def __init__(self, storage_locations: StorageLocations, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.storage_locations = storage_locations
+        if not hasattr(storage_locations, "article_location_mapping") or \
+                storage_locations.article_location_mapping is None:
+            storage_locations.build_article_location_mapping()
+
+        self.state_graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        self.demand: dict[int, int] = {}
+        self.aisle_content: dict[int, list[dict]] = defaultdict(list)
+        self.total_warehouse_supply: dict[int, int] = defaultdict(int)
+        self.aisle_total_supply: dict[int, dict[int, int]] = defaultdict(lambda: defaultdict(int))
+
+    def _run(self, input_data: list[OrderPosition]):
+        """Solve the SPRP-SS.
+
+        Parameters
+        ----------
+        input_data : list[OrderPosition]
+            Unresolved order positions with ``article_id`` and ``amount``.
+        """
+        self.state_graph = nx.MultiDiGraph()
+
+        # 1. Aggregate demand per article
+        self.demand = defaultdict(int)
+        for position in input_data:
+            self.demand[position.article_id] += position.amount
+
+        # 2. Build aisle content from storage locations
+        self._build_aisle_content()
+
+        # 3. Build extended state space (overridden aisle transitions)
+        self.build_state_space()
+
+        # 4. Solve IP (Eq 1a-1d)
+        route_edges = self._solve_ip()
+        print("DP PATH:")
+        for u, v, k, data in route_edges:
+            action = data.get("action")
+            print(f"  {u} -> {v}  action={action}  node={data.get('action_node')}  "
+                  f"cost={data['weight']}  supply={data.get('supply', {})}")
+        print(f"Total: {sum(d['weight'] for _, _, _, d in route_edges)}")
+        # 5. Reconstruct tour
+        self.distance = sum(d["weight"] for _, _, _, d in route_edges)
+        self.T = self._construct_scattered_tour(route_edges)
+
+        route = Route(
+            route=[],
+            item_sequence=[],
+            distance=self.distance,
+        )
+        return RoutingSolution(algo_name=self.algo_name, route=route)
+
+    def _build_aisle_content(self):
+        self.aisle_content = defaultdict(list)
+        self.total_warehouse_supply = defaultdict(int)
+        self.aisle_total_supply = defaultdict(lambda: defaultdict(int))
+
+        for article_id in self.demand:
+            for loc in self.storage_locations.get_locations_by_article_id(article_id):
+                j, y = int(loc.x), int(loc.y)
+                self.aisle_content[j].append({
+                    "y": y,
+                    "article_id": loc.article_id,
+                    "amount": loc.amount,
+                })
+                self.total_warehouse_supply[article_id] += loc.amount
+                self.aisle_total_supply[j][article_id] += loc.amount
+
+    def _get_relevant_y(self, aisle_index: int) -> list[int]:
+        return sorted({item["y"] for item in self.aisle_content.get(aisle_index, [])})
+
+    def _add_first_aisle_transitions(self):
+        """Aisle transitions for the first aisle (SS-extended)."""
+        self._add_aisle_transitions_for(j=1, prev_states=[("0", "0", "0C")])
+
+    def _add_aisle_transitions(self, j: int):
+        """Aisle transitions for subsequent aisles (SS-extended)."""
+        self._add_aisle_transitions_for(j=j, prev_states=equivalence_classes)
+
+    def _add_aisle_transitions_for(self, j: int, prev_states: list):
+        """Generate all aisle action edges for aisle j.
+
+        For each previous equivalence class and each valid action type,
+        generates standard actions (one_pass, two_pass, void) and
+        parameterised SS actions (top(p), bottom(p), gap(h,i) for all
+        relevant p, h, i).
+
+        Applies feasibility pruning (Eq 1) and dominance pruning (Section 3).
+        """
+        is_depot_aisle = (j == self.depot[0])
+        depot_cost = 2 * self.dist_end if is_depot_aisle else 0
+        relevant_y = self._get_relevant_y(j)
+
+        for prev_eq in prev_states:
+            candidates = []
+
+            # --- Void (allowed even for non-empty aisles in SS) ---
+            next_eq = self._next_state(prev_eq, 6)
+            if next_eq:
+                candidates.append(self._make_candidate(
+                    j, prev_eq, next_eq, "void", None,
+                    self.void() + depot_cost, [],
+                ))
+
+            # --- One pass ---
+            next_eq = self._next_state(prev_eq, 1)
+            if next_eq:
+                candidates.append(self._make_candidate(
+                    j, prev_eq, next_eq, "one_pass", None,
+                    self.one_pass() + depot_cost,
+                    [(0, self.n_pick_locations)],
+                ))
+
+            # --- Two pass ---
+            next_eq = self._next_state(prev_eq, 5)
+            if next_eq:
+                candidates.append(self._make_candidate(
+                    j, prev_eq, next_eq, "two_pass", None,
+                    self.two_pass() + depot_cost,
+                    [(0, self.n_pick_locations)],
+                ))
+
+            # --- Top(p): back cross-aisle to position p and back ---
+            next_eq = self._next_state(prev_eq, 2)
+            if next_eq and relevant_y:
+                for p in relevant_y:
+                    candidates.append(self._make_candidate(
+                        j, prev_eq, next_eq, "top", p,
+                        self.top(p) + depot_cost,
+                        [(p, self.n_pick_locations)],
+                    ))
+
+            # --- Bottom(p): front cross-aisle to position p and back ---
+            next_eq = self._next_state(prev_eq, 3)
+            if next_eq and relevant_y:
+                for p in relevant_y:
+                    candidates.append(self._make_candidate(
+                        j, prev_eq, next_eq, "bottom", p,
+                        self.bottom(p) + depot_cost,
+                        [(0, p)],
+                    ))
+
+            # --- Gap(h, i): all pairs (not just largest gap) ---
+            next_eq = self._next_state(prev_eq, 4)
+            if next_eq and len(relevant_y) >= 2:
+                for h, i in combinations(relevant_y, 2):
+                    gap_distance = (i - h) * self.dist_pick_locations
+                    candidates.append(self._make_candidate(
+                        j, prev_eq, next_eq, "gap", (h, i),
+                        self.gap(gap_distance) + depot_cost,
+                        [(0, h), (i, self.n_pick_locations)],
+                    ))
+
+            # Prune and emit
+            for cand in self._prune_dominated(candidates, j):
+                self._emit_edge(cand)
+
+    @staticmethod
+    def _next_state(prev_eq, action_id) -> Optional[tuple]:
+        """Look up the next equivalence class from table_I, or None."""
+        return table_I.get(prev_eq, {}).get(action_id)
+
+    def _make_candidate(self, j, prev_eq, next_eq, action_type,
+                        action_node, cost, coverage):
+        """Build a candidate edge dict with supply calculation."""
+        return {
+            "from": (j, prev_eq, "-"),
+            "to": (j, next_eq, "+"),
+            "weight": cost,
+            "action_type": action_type,
+            "action_node": action_node,
+            "aisle": j,
+            "supply": self._calculate_supply(j, coverage),
+            "coverage": coverage,
+        }
+
+    def _emit_edge(self, cand):
+        """Add a candidate edge to the MultiDiGraph."""
+        f, t = cand["from"], cand["to"]
+        if f in self.state_graph and t in self.state_graph:
+            self.state_graph.add_edge(
+                f, t,
+                weight=cand["weight"],
+                action=cand["action_type"],
+                action_node=cand["action_node"],
+                aisle=cand["aisle"],
+                supply=cand["supply"],
+                coverage=cand["coverage"],
+            )
+
+    def _add_cross_aisle_transitions(self, j: int):
+        """Cross-aisle transitions from stage j+ to (j+1)-.
+
+        Uses the same depot connectivity constraints as the base class.
+        These are structural requirements of the Ratliff-Rosenthal DP
+        and apply identically to SPRP-SS (Section 2 of Lueke et al.).
+        """
+        for prev_eq in equivalence_classes:
+            for cross_id, next_eq in table_II.get(prev_eq, {}).items():
+                if not next_eq:
+                    continue
+                cross_action = cross_aisle_mapping[cross_id]
+                if not self._is_valid_cross_aisle_transition(j, prev_eq, cross_action):
+                    continue
+                cost = self.cross_aisle_cost(cross_action)
+                f = (j, prev_eq, "+")
+                t = (j + 1, next_eq, "-")
+                if f in self.state_graph and t in self.state_graph:
+                    self.state_graph.add_edge(f, t, weight=cost, action=cross_action)
+
+    def _calculate_supply(self, aisle_index: int,
+                          coverage: list[tuple[int, int]]) -> dict[int, int]:
+        """Calculate b_se: units of each article collected by this action.
+
+        Parameters
+        ----------
+        aisle_index : int
+        coverage : list of (y_min, y_max) inclusive ranges visited
+        """
+        supply: dict[int, int] = defaultdict(int)
+        for item in self.aisle_content.get(aisle_index, []):
+            for y_min, y_max in coverage:
+                if y_min <= item["y"] <= y_max:
+                    supply[item["article_id"]] += item["amount"]
+                    break  # don't double-count across overlapping ranges
+        return dict(supply)
+
+    # Feasibility pruning (Eq 1)
+    def _is_edge_feasible(self, edge_supply: dict, aisle_index: int) -> bool:
+        """Check necessary feasibility condition (Eq 1 of Lueke et al.).
+
+        If we take this edge in aisle j, can all article demands still be
+        met using this edge's supply plus everything in other aisles?
+        """
+        for article_id, required in self.demand.items():
+            supply_other = (
+                    self.total_warehouse_supply[article_id]
+                    - self.aisle_total_supply[aisle_index][article_id]
+            )
+            supply_this = edge_supply.get(article_id, 0)
+            if supply_other + supply_this < required:
+                return False
+        return True
+
+    # Dominance pruning (Section 3)
+    def _prune_dominated(self, candidates: list[dict], aisle_index: int) -> list[dict]:
+        """Remove infeasible and dominated aisle actions.
+
+        Groups by (action_type, from, to) since different state transitions
+        cannot substitute each other.
+
+        Within a group, A dominates B if cost(A) <= cost(B) and
+        supply_A(s) >= supply_B(s) for all articles s.
+        """
+        # Feasibility filter
+        feasible = [c for c in candidates
+                    if self._is_edge_feasible(c["supply"], aisle_index)]
+
+        # Group by state transition
+        groups: dict[tuple, list[dict]] = defaultdict(list)
+        for c in feasible:
+            key = (c["action_type"], c["from"], c["to"])
+            groups[key].append(c)
+
+        result = []
+        for key, group in groups.items():
+            action_type = key[0]
+
+            # Void / one_pass / two_pass: at most one per transition, no pruning
+            if action_type in ("void", "one_pass", "two_pass"):
+                result.extend(group)
+                continue
+
+            # Top / bottom / gap: prune dominated actions
+            group.sort(key=lambda c: c["weight"])
+            survived: list[dict] = []
+
+            for cand in group:
+                dominated = False
+                for surv in survived:
+                    if surv["weight"] <= cand["weight"]:
+                        all_arts = set(cand["supply"]) | set(surv["supply"])
+                        if all(surv["supply"].get(a, 0) >= cand["supply"].get(a, 0)
+                               for a in all_arts):
+                            dominated = True
+                            break
+                if not dominated:
+                    survived.append(cand)
+
+            result.extend(survived)
+
+        return result
+
+    # IP formulation (Eq 1a-1d)
+    def _solve_ip(self) -> list[tuple]:
+        """Solve the SPRP-SS integer programme with Gurobi.
+
+        Returns ordered list of (u, v, key, data) edge tuples.
+        """
+        start_node = (1, ("0", "0", "0C"), "-")
+        end_node = (self.n_aisles + 1, ("0", "0", "1C"), "-")
+
+        mdl = gp.Model("SPRP_SS")
+        mdl.setParam("OutputFlag", 0)
+        mdl.setParam("Threads", 1)
+
+        # Binary variable per edge
+        edge_list = list(self.state_graph.edges(keys=True, data=True))
+        x = {}
+        for u, v, k, data in edge_list:
+            x[(u, v, k)] = mdl.addVar(vtype=gp.GRB.BINARY, obj=data["weight"])
+        mdl.update()
+
+        # (1b) Flow conservation
+        for node in self.state_graph.nodes():
+            out_expr = gp.quicksum(
+                x[(u, v, k)]
+                for u, v, k in self.state_graph.out_edges(node, keys=True)
+            )
+            in_expr = gp.quicksum(
+                x[(u, v, k)]
+                for u, v, k in self.state_graph.in_edges(node, keys=True)
+            )
+            if node == start_node:
+                rhs = 1
+            elif node == end_node:
+                rhs = -1
+            else:
+                rhs = 0
+            mdl.addConstr(out_expr - in_expr == rhs)
+
+        # (1c) Covering constraints
+        for article_id, qty_needed in self.demand.items():
+            terms = []
+            for u, v, k, data in edge_list:
+                b = data.get("supply", {}).get(article_id, 0)
+                if b > 0:
+                    terms.append(b * x[(u, v, k)])
+            if not terms:
+                raise ValueError(
+                    f"Article {article_id} (demand={qty_needed}): "
+                    f"no supply edge exists. Instance infeasible."
+                )
+            mdl.addConstr(gp.quicksum(terms) >= qty_needed)
+
+        mdl.optimize()
+        if mdl.status != gp.GRB.OPTIMAL:
+            raise RuntimeError(f"SPRP-SS IP status {mdl.status}")
+
+        # Extract and order selected edges
+        selected = [
+            (u, v, k, data)
+            for u, v, k, data in edge_list
+            if x[(u, v, k)].X > 0.5
+        ]
+        return self._order_path(selected, start_node, end_node)
+
+    @staticmethod
+    def _order_path(edges, start_node, end_node):
+        """Order selected edges into a sequential path from start to end."""
+        succ = {u: (u, v, k, d) for u, v, k, d in edges}
+        path, current = [], start_node
+        while current != end_node:
+            if current not in succ:
+                raise RuntimeError(f"Path broken at {current}")
+            edge = succ[current]
+            path.append(edge)
+            current = edge[1]
+        return path
+
+    def _construct_scattered_tour(self, route_edges) -> nx.MultiGraph:
+        """Reconstruct the picker tour graph T from selected edges."""
+        T = nx.MultiGraph()
+
+        for u, v, k, data in route_edges:
+            action = data.get("action")
+            aisle = data.get("aisle", u[0])
+
+            # Cross-aisle
+            if isinstance(action, tuple):
+                a_edge, b_edge = action
+                for _ in range(a_edge):
+                    T.add_edge((aisle, self.n_pick_locations + 1),
+                               (aisle + 1, self.n_pick_locations + 1))
+                for _ in range(b_edge):
+                    T.add_edge((aisle, 0), (aisle + 1, 0))
+                continue
+
+            coverage = data.get("coverage", [])
+
+            if action == "void":
+                continue
+
+            elif action in ("one_pass", "two_pass"):
+                passes = 1 if action == "one_pass" else 2
+                for _ in range(passes):
+                    T.add_edge((aisle, 0), (aisle, self.n_pick_locations + 1))
+
+            elif action in ("top", "bottom"):
+                if coverage:
+                    y_start, y_end = coverage[0]
+                    anchor = self.n_pick_locations + 1 if action == "top" else 0
+                    turn = y_start if action == "top" else y_end
+                    T.add_edge((aisle, anchor), (aisle, turn))
+                    T.add_edge((aisle, turn), (aisle, anchor))
+
+            elif action == "gap":
+                if len(coverage) == 2:
+                    seg_bot, seg_top = coverage
+                    T.add_edge((aisle, 0), (aisle, seg_bot[1]))
+                    T.add_edge((aisle, seg_bot[1]), (aisle, 0))
+                    T.add_edge((aisle, self.n_pick_locations + 1), (aisle, seg_top[0]))
+                    T.add_edge((aisle, seg_top[0]), (aisle, self.n_pick_locations + 1))
+
+        return T
