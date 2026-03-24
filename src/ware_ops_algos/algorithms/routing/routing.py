@@ -1704,34 +1704,46 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
 
     # Dominance pruning (Section 3)
     def _prune_dominated(self, candidates: list[dict], aisle_index: int) -> list[dict]:
-        """Remove infeasible and dominated aisle actions.
-
-        Groups by (action_type, from, to) since different state transitions
-        cannot substitute each other.
-
-        Within a group, A dominates B if cost(A) <= cost(B) and
-        supply_A(s) >= supply_B(s) for all articles s.
-        """
-        # Feasibility filter
         feasible = [c for c in candidates
                     if self._is_edge_feasible(c["supply"], aisle_index)]
 
-        # Group by state transition
         groups: dict[tuple, list[dict]] = defaultdict(list)
         for c in feasible:
-            key = (c["action_type"], c["from"], c["to"])
+            key = (c["from"], c["to"])  # group by state transition, not action type
             groups[key].append(c)
 
         result = []
         for key, group in groups.items():
-            action_type = key[0]
-
-            # Void / one_pass / two_pass: at most one per transition, no pruning
-            if action_type in ("void", "one_pass", "two_pass"):
+            # Singleton groups need no pruning
+            if len(group) <= 1:
                 result.extend(group)
                 continue
 
-            # Top / bottom / gap: prune dominated actions
+            # Geometric pre-filter for gaps: remove candidates where another gap
+            # has wider coverage (higher h AND lower i) and therefore lower cost
+            # AND superset supply. Uses monotone stack on sorted gap boundaries.
+            gaps = [c for c in group if c["action_type"] == "gap"]
+            non_gaps = [c for c in group if c["action_type"] != "gap"]
+
+            if len(gaps) > 1:
+                # Sort by h ascending (bottom boundary of gap)
+                gaps.sort(key=lambda c: (c["action_node"][0], -c["action_node"][1]))
+                filtered_gaps = []
+                min_i_seen = float('inf')
+                # Sweep h ascending: if i >= min_i_seen, this gap is dominated
+                # (a previous gap with smaller h and smaller i covers a superset)
+                # Wait, we want h2 >= h1 AND i2 <= i1 for domination.
+                # Sort by h descending, track min i. If current i >= min_i_seen, dominated.
+                gaps.sort(key=lambda c: -c["action_node"][0])
+                for g in gaps:
+                    h, i = g["action_node"]
+                    if i >= min_i_seen:
+                        continue  # dominated: some gap with higher h has lower i
+                    min_i_seen = i
+                    filtered_gaps.append(g)
+                gaps = filtered_gaps
+
+            group = non_gaps + gaps
             group.sort(key=lambda c: c["weight"])
             survived: list[dict] = []
 
