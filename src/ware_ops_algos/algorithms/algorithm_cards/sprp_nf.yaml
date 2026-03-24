@@ -1,4 +1,4 @@
-model_name: SPRPNF
+model_name: RatliffRosenthalNF
 problem_type: routing
 description: >
   Implementation of DP for SPRP with scattered storage
@@ -8,8 +8,18 @@ requirements:
     type:
       - conventional
     features:
-      - state_graph
-      - graph
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+      - n_pick_locations
+      - dist_pick_locations
+      - dist_bottom_to_pick_location
+      - n_blocks
+    constraints:
+      n_blocks:
+        equals: 1
   resources:
     type:
       - human
@@ -18,17 +28,18 @@ requirements:
     type:
       - standard
     features:
-      - aisle
-      - node
+    constraints:
+      n_orders:
+        greater_than: 0
   storage:
     type:
       - any
     features:
-      -
-
+      - x
+      - y
 objective: Distance
 
 implementation:
-  class_name: SSPRNetworkFlow
+  class_name: RatliffRosenthalNF
   solver: Gurobi
   type: exact

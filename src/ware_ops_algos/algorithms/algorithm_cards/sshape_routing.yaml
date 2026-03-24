@@ -23,6 +23,9 @@ requirements:
     type:
       - standard
     features:
+    constraints:
+      n_orders:
+        greater_than: 0
   storage:
     type:
       - any

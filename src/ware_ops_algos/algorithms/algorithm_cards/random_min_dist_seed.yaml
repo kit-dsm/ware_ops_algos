@@ -19,6 +19,9 @@ requirements:
     type:
       - any
     features:
+    constraints:
+      n_orders:
+        greater_than: 1
   storage:
     type:
       - any

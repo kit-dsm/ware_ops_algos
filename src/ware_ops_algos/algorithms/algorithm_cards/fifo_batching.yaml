@@ -21,6 +21,8 @@ requirements:
     constraints:
       order_date:
         equals: True
+      n_orders:
+        greater_than: 1
   storage:
     type:
       - any

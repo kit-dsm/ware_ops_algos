@@ -19,6 +19,9 @@ requirements:
       - any
     features:
       - order_number
+    constraints:
+      n_orders:
+        v: 1
   storage:
     type:
       - any

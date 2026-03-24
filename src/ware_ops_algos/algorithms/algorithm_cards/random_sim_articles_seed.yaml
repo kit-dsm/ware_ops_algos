@@ -18,6 +18,9 @@ requirements:
       - any
     features:
       - id
+    constraints:
+      n_orders:
+        greater_than: 1
   storage:
     type:
       - any

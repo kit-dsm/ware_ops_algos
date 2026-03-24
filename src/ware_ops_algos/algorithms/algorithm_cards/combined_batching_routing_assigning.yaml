@@ -20,6 +20,9 @@ requirements:
       - standard
     features:
       - order_date
+    constraints:
+      n_orders:
+        greater_than: 1
 
   storage:
     type:

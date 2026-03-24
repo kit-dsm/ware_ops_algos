@@ -20,6 +20,9 @@ requirements:
     constraints:
       n_blocks:
         equals: 1
+      constraints:
+        n_orders:
+          greater_than: 1
   resources:
     type:
       - human
