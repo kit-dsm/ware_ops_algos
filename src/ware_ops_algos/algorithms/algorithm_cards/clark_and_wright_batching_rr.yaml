@@ -21,27 +21,21 @@ requirements:
         equals: 1
   resources:
     type:
-      - human
+      - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - standard
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
-      - dedicated
-    features:
-      - x
-      - y
+      - any
 
 objective: Distance
 
 implementation:
   class_name: ClarkAndWrightBatchingRR
-  component_name:
-  solver:
+  routing_class: RatliffRosenthalRouting
   type: heuristic

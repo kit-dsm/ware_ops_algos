@@ -14,25 +14,21 @@ requirements:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - any
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
       - any
     features:
-      - x
-      - y
 
 objective: Distance
 
 implementation:
   class_name: RandomMinDistanceSeedBatching
-  component_name:
-  solver:
+  seed_criterion: RANDOM
+  similarity_measure: MIN_DISTANCE
   type: heuristic

@@ -9,25 +9,19 @@ requirements:
     type:
       - any
     features:
+      - start_node
+      - end_node
       - distance_matrix
+      - predecessor_matrix
   resources:
     type:
       - any
-    features:
   orders:
     type:
       - standard
-    features:
-      -
-    constraints:
-      n_orders:
-        greater_than: 0
-
   storage:
     type:
       - any
-    features:
-      -
 
 objective: Distance
 

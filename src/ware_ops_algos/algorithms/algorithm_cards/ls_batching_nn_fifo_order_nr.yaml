@@ -12,28 +12,24 @@ requirements:
       - graph
   resources:
     type:
-      - human
+      - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
+    type:
+      - standard
+    features:
+      - order_number
+  storage:
     type:
       - any
     features:
-      - order_number
-    constraints:
-      n_orders:
-        greater_than: 1
-  storage:
-    type:
-      - dedicated
-    features:
-      - x
-      - y
 
 objective: Distance
 
 implementation:
   class_name: LSBatchingNNFiFoOrderNr
-  component_name:
-  solver:
+  routing_class: NearestNeighborRouting
+  start_batching_class: OrderNrFiFoBatching
   type: metaheuristic

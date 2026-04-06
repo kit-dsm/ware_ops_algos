@@ -14,25 +14,21 @@ requirements:
     type:
       - human
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
-      - standard
+      - any
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
-      - dedicated
+      - any
     features:
-      - x
-      - y
 
 objective: Distance
 
 implementation:
   class_name: LSBatchingNNRand
-  component_name:
-  solver:
+  routing_class: NearestNeighborRouting
+  start_batching_class: RandomBatching
   type: metaheuristic

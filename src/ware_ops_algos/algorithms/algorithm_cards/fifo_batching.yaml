@@ -13,21 +13,17 @@ requirements:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - any
     features:
-    constraints:
-      order_date:
-        equals: True
-      n_orders:
-        greater_than: 1
+      - order_date
   storage:
     type:
       - any
     features:
-      -
 
 objective: Distance
 

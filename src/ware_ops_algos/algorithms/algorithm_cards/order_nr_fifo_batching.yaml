@@ -19,9 +19,6 @@ requirements:
       - any
     features:
       - order_number
-    constraints:
-      n_orders:
-        v: 1
   storage:
     type:
       - any
@@ -32,6 +29,4 @@ objective: Distance
 
 implementation:
   class_name: FifoBatching
-  component_name: FiFo
-  solver:
   type: heuristic

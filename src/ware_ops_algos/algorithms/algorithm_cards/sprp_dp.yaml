@@ -1,7 +1,8 @@
 model_name: RatliffRosenthal
 problem_type: routing
 description: >
-  Implementation of DP for SPRP
+  Dynamic programming approach for the single-picker routing
+    problem in single-block parallel-aisle warehouses.
 
 requirements:
   layout:
@@ -13,34 +14,29 @@ requirements:
       - closest_node_to_start
       - min_aisle_position
       - max_aisle_position
+      - n_aisles
       - n_pick_locations
+      - dist_aisle
       - dist_pick_locations
-      - dist_bottom_to_pick_location
-      - n_blocks
+      - dist_aisle_location
+      - dist_start
+      - dist_end
     constraints:
       n_blocks:
         equals: 1
   resources:
     type:
-      - human
-    features:
+      - any
   orders:
     type:
       - standard
-    features:
-    constraints:
-      n_orders:
-        greater_than: 0
   storage:
     type:
       - any
-    features:
-      - x
-      - y
 
 objective: Distance
 
 implementation:
   class_name: RatliffRosenthal
   solver:
-  type: heuristic
+  type: exact

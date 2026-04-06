@@ -14,25 +14,20 @@ requirements:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - any
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
       - any
-    features:
-      - x
-      - y
 
 objective: Distance
 
 implementation:
   class_name: ClosestDepotMinDistanceSeedBatching
-  component_name:
-  solver:
+  seed_criterion: CLOSEST_TO_DEPOT
+  similarity_measure: MIN_DISTANCE
   type: heuristic

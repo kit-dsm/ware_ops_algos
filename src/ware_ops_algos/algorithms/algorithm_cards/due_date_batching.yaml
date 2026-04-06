@@ -7,27 +7,20 @@ requirements:
   layout:
     type:
       - any
-    features:
-      -
   resources:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
-      - any
+      - standard
     features:
-    constraints:
-      due_date:
-        equals: True
-      n_orders:
-        greater_than: 1
+      - due_date
   storage:
     type:
       - any
-    features:
-      -
 
 objective: Distance
 

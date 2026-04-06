@@ -19,25 +19,19 @@ requirements:
     type:
       - human
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - standard
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
-      - dedicated
-    features:
-      - x
-      - y
+      - any
 
 objective: Distance
 
 implementation:
   class_name: ClarkAndWrightBatchingNN
-  component_name:
-  solver:
+  routing_class: NearestNeighborRouting
   type: heuristic

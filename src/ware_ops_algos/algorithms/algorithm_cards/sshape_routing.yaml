@@ -1,37 +1,32 @@
 model_name: SShape
 problem_type: routing
 description: >
-  Implementation of SShape heuristic
+  S-shape routing heuristic. Traverses aisles in an
+  alternating pattern, switching direction at each aisle
+  containing picks.
 
 requirements:
   layout:
     type:
       - conventional
     features:
-      - distance_matrix
-      - graph
       - start_node
       - end_node
       - closest_node_to_start
       - min_aisle_position
       - max_aisle_position
+      - distance_matrix
+      - predecessor_matrix
   resources:
     type:
       - human
-    features:
   orders:
     type:
       - standard
-    features:
-    constraints:
-      n_orders:
-        greater_than: 0
   storage:
     type:
       - any
-    features:
-      - x
-      - y
+
 
 objective: Distance
 

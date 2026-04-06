@@ -8,30 +8,22 @@ requirements:
     type:
       - conventional
     features:
-      - distance_matrix
-      - graph
       - start_node
       - end_node
       - closest_node_to_start
       - min_aisle_position
       - max_aisle_position
+      - distance_matrix
+      - predecessor_matrix
   resources:
     type:
       - human
-    features:
   orders:
     type:
       - standard
-    features:
-    constraints:
-      n_orders:
-        greater_than: 0
   storage:
     type:
       - any
-    features:
-      - x
-      - y
 
 objective: Distance
 

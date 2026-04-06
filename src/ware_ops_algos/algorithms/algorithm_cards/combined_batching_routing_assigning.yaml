@@ -1,34 +1,34 @@
 model_name: CombinedBatchingRoutingAssigning
-problem_type: batching #batching, sequencing, assigning, routing
+problem_type: batching_routing
 description: >
-  Exact TSP-based routing algorithm using Gurobi for order picking,
-  minimizing total travel distance.
+  Exact MIP for the joint order batching and picker routing
+  problem. Assigns orders to batches and solves routing per
+  batch simultaneously using Gurobi.
 
 requirements:
   layout:
     type:
       - any
     features:
+      - start_node
+      - end_node
       - distance_matrix
+      - predecessor_matrix
   resources:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
+    constraints:
+      dimensions_type:
+        equals: [items]
   orders:
     type:
       - standard
-    features:
-      - order_date
-    constraints:
-      n_orders:
-        greater_than: 1
-
   storage:
     type:
-      - dedicated
-    features:
-      -
+      - any
 
 objective: Distance
 

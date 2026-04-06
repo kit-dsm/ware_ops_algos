@@ -13,14 +13,12 @@ requirements:
     type:
       - any
     features:
-      - capacity
+      - capacities
+      - dimensions_type
   orders:
     type:
       - any
     features:
-    constraints:
-      n_orders:
-        greater_than: 1
   storage:
     type:
       - any
@@ -31,6 +29,4 @@ objective: Distance
 
 implementation:
   class_name: RandomBatching
-  component_name:
-  solver:
   type: heuristic
