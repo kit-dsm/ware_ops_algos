@@ -61,6 +61,20 @@ def import_model_class(cls_name: str, module_path: str | Path):
     return getattr(module, cls_name)
 
 
+def flatten_data_card(domain: dict) -> dict:
+    features = {}
+    for obj in domain.get("objects", []):
+        for feat in obj.get("features", []):
+            name = feat["name"]
+            if "value" in feat:
+                features[name] = feat["value"]
+            else:
+                features[name] = True
+        # recurse into nested objects
+        features.update(flatten_data_card(obj))
+    return features
+
+
 def create_domain_from_data_card(domain_class, type_enum, domain_data: Dict) -> BaseDomainObject:
     """Factory to create domain object from data card."""
     domain_type = type_enum(domain_data["type"][0])

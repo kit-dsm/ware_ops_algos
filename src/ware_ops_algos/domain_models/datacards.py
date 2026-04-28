@@ -29,6 +29,40 @@ def _section(obj: BaseDomainObject) -> dict[str, Any]:
     return data
 
 
+def load_and_flatten_data_card(card_path: str | Path) -> DataCard:
+    with open(card_path, "r", encoding="utf-8") as f:
+        raw = yaml.safe_load(f)
+
+    def flatten_domain(domain: dict) -> dict:
+        features = {}
+        for obj in domain.get("objects", []):
+            for feat in obj.get("features", []):
+                name = feat["name"]
+                if "value" in feat:
+                    features[name] = feat["value"]
+                else:
+                    features[name] = True
+            features.update(flatten_domain(obj))
+        return features
+
+    def section(domain: dict) -> dict:
+        return {
+            "type": domain.get("type"),
+            "features": flatten_domain(domain),
+        }
+
+    return DataCard(
+        name=raw.get("name", ""),
+        problem_class=raw.get("problem_class", ""),
+        objective=raw.get("objective", ""),
+        layout=section(raw.get("layout", {})),
+        articles=section(raw.get("articles", {})),
+        orders=section(raw.get("orders", {})),
+        resources=section(raw.get("resources", {})),
+        storage=section(raw.get("storage", {})),
+        warehouse_info=section(raw.get("warehouse_info", {})),
+    )
+
 def datacard_from_instance(domain: BaseWarehouseDomain,
                            name: str,
                            file_path: str | Path | None = None,
@@ -84,6 +118,10 @@ def save_card_yaml(card: DataCard, path: str | Path) -> None:
     with open(path, "w", encoding="utf-8") as f:
         yaml.safe_dump(card.__dict__, f, sort_keys=False)
 
+def load_card_yaml(path: str | Path) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        dc = yaml.safe_load(f)
+    return dc
 
 def build_domain_from_card_path(card_path: str | Path) -> DataCard:
     with open(card_path, "r", encoding="utf-8") as f:
