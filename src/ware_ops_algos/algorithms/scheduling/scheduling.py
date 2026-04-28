@@ -33,14 +33,14 @@ class PickListSequencer(Algorithm[list[PickList], SequencingSolution], ABC):
         self.orders_domain = orders
 
 
-class EDDSequencer(PickListSequencer):
-    def _sort_pick_lists(self, pick_lists: list[PickList]):
-        return sorted(pick_lists, key=lambda j: j.earliest_due_date)
-
-    def _run(self, input_data: list[PickList]) -> SequencingSolution:
-        sorted_pick_lists = self._sort_pick_lists(input_data)
-
-        return SequencingSolution(sequencing=sorted_pick_lists)
+# class EDDSequencer(PickListSequencer):
+#     def _sort_pick_lists(self, pick_lists: list[PickList]):
+#         return sorted(pick_lists, key=lambda j: j.earliest_due_date)
+#
+#     def _run(self, input_data: list[PickList]) -> SequencingSolution:
+#         sorted_pick_lists = self._sort_pick_lists(input_data)
+#
+#         return SequencingSolution(sequencing=sorted_pick_lists)
 
 
 @dataclass
@@ -105,6 +105,72 @@ class SPTSequencer(Algorithm[SequencingInput, SchedulingSolution]):
             algo_name=self.algo_name,
         )
 
+
+class EDDSequencer(Algorithm[SequencingInput, SchedulingSolution]):
+    algo_name = "EDDSequencer"
+
+    @staticmethod
+    def _processing_time(route: Route, picker: Resource) -> float:
+        if picker.speed is None or picker.speed <= 0:
+            raise ValueError(f"Resource {picker.id} needs a positive 'speed'.")
+        if picker.time_per_pick is None:
+            raise ValueError(f"Resource {picker.id} needs 'time_per_pick'.")
+
+        n_picks = len(route.item_sequence)
+        setup_time = picker.tour_setup_time or 0.0
+
+        return (
+            route.distance / picker.speed
+            + picker.time_per_pick * n_picks
+            + setup_time
+        )
+
+    @staticmethod
+    def _earliest_due_date(route: Route) -> float:
+        pl = route.pick_list
+
+        if pl.earliest_due_date is not None:
+            return pl.earliest_due_date
+
+        due_dates = [
+            o.due_date
+            for o in pl.orders
+            if o.due_date is not None
+        ]
+
+        return min(due_dates) if due_dates else float("inf")
+
+    def _run(self, input_data: SequencingInput) -> SchedulingSolution:
+        picker = input_data.resources.resources[0]
+
+        sorted_routes = sorted(
+            input_data.routes,
+            key=lambda route: self._earliest_due_date(route),
+        )
+
+        jobs = []
+        for idx, route in enumerate(sorted_routes):
+            pl = route.pick_list
+            pt = self._processing_time(route, picker)
+            release = pl.release if pl.release is not None else 0.0
+
+            jobs.append(Job(
+                batch_idx=idx,
+                picker_id=picker.id,
+                start_time=release,
+                end_time=release + pt,
+                release_time=release,
+                distance=route.distance,
+                n_picks=len(route.item_sequence),
+                travel_time=route.distance / picker.speed,
+                handling_time=picker.time_per_pick * len(route.item_sequence),
+                route=route,
+            ))
+
+        return SchedulingSolution(
+            jobs=jobs,
+            algo_name=self.algo_name,
+        )
 
 @dataclass
 class SchedulingInput:
