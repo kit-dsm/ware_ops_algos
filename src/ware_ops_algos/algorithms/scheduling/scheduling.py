@@ -28,10 +28,9 @@ class SequencingSolution(AlgorithmSolution):
 class PickListSequencer(Algorithm[list[PickList], SequencingSolution], ABC):
     """Performs sequencing of pick list: takes pick list, returns them in sorted order."""
 
-    def __init__(self, orders: OrdersDomain, resources: Resources):
+    def __init__(self, orders: OrdersDomain):
         super().__init__()
         self.orders_domain = orders
-        self.resource_domain = resources
 
 
 class EDDSequencer(PickListSequencer):
@@ -42,6 +41,69 @@ class EDDSequencer(PickListSequencer):
         sorted_pick_lists = self._sort_pick_lists(input_data)
 
         return SequencingSolution(sequencing=sorted_pick_lists)
+
+
+@dataclass
+class SequencingInput:
+    routes: list[Route]
+    resources: Resources
+
+
+@dataclass
+class SequencingSolution(AlgorithmSolution):
+    sequencing: Optional[list[Route]] = None
+
+
+class SPTSequencer(Algorithm[SequencingInput, SchedulingSolution]):
+    algo_name = "SPTSequencer"
+
+    @staticmethod
+    def _processing_time(route: Route, picker: Resource) -> float:
+        if picker.speed is None or picker.speed <= 0:
+            raise ValueError(f"Resource {picker.id} needs a positive 'speed'.")
+        if picker.time_per_pick is None:
+            raise ValueError(f"Resource {picker.id} needs 'time_per_pick'.")
+
+        n_picks = len(route.item_sequence)
+        setup_time = picker.tour_setup_time or 0.0
+
+        return (
+            route.distance / picker.speed
+            + picker.time_per_pick * n_picks
+            + setup_time
+        )
+
+    def _run(self, input_data: SequencingInput) -> SchedulingSolution:
+        picker = input_data.resources.resources[0]
+
+        sorted_routes = sorted(
+            input_data.routes,
+            key=lambda route: self._processing_time(route, picker),
+        )
+
+        jobs = []
+        for idx, route in enumerate(sorted_routes):
+            pl = route.pick_list
+            pt = self._processing_time(route, picker)
+            release = pl.release if pl.release is not None else 0.0
+
+            jobs.append(Job(
+                batch_idx=idx,
+                picker_id=picker.id,
+                start_time=release,
+                end_time=release + pt,
+                release_time=release,
+                distance=route.distance,
+                n_picks=len(route.item_sequence),
+                travel_time=route.distance / picker.speed,
+                handling_time=picker.time_per_pick * len(route.item_sequence),
+                route=route,
+            ))
+
+        return SchedulingSolution(
+            jobs=jobs,
+            algo_name=self.algo_name,
+        )
 
 
 @dataclass
