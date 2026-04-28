@@ -1,5 +1,5 @@
-model_name: LPTScheduling
-problem_type: scheduling
+model_name: SPTSequencing
+problem_type: sequencing
 description: >
 
 requirements:
@@ -18,17 +18,16 @@ requirements:
     type:
       - standard
     features:
-      - due_date
-      - order_date
 
   storage:
     type:
       - any
     features:
+      -
 
-objective: Distance
+objective: makespan
 
 implementation:
-  class_name: LPTScheduling
+  class_name: SPTSequencing
   solver:
   type: heuristic
