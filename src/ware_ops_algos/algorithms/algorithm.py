@@ -67,12 +67,26 @@ class PickList:
     release: Optional[float] = None
     earliest_due_date: Optional[float] = None
     id: int = field(default_factory=count().__next__)
+    service_time: Optional[float] = None
+    single_order_service_times: dict[int, float] = field(default_factory=dict)
 
     @property
     def order_numbers(self) -> list[int]:
         if self.pick_positions is None:
             return []
         return list({pp.order_number for pp in self.pick_positions})
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        # pick_positions and orders are immutable after creation
+        result.pick_positions = self.pick_positions  # shared ref
+        result.orders = self.orders  # shared ref
+        result.release = self.release
+        result.earliest_due_date = self.earliest_due_date
+        result.id = self.id
+        return result
 
 
 @dataclass
@@ -206,9 +220,16 @@ class Job:
 class SchedulingSolution(AlgorithmSolution):
     jobs: list[Job] | None = None
 
+
 @dataclass
 class OrderSelectionSolution(AlgorithmSolution):
     selected_orders: list[WarehouseOrder] = field(default_factory=list)
+
+
+@dataclass
+class PickListSelectionSolution(AlgorithmSolution):
+    selected_pick_lists: list[PickList] = field(default_factory=list)
+
 
 @dataclass
 class PlanningState:
@@ -218,8 +239,8 @@ class PlanningState:
     routing_solutions: Optional[list[RoutingSolution]] = field(default_factory=list)
     sequencing_solutions: Optional[SchedulingSolution] = None
     order_selection_solutions: Optional[OrderSelectionSolution] = None
+    pick_list_selection_solutions: Optional[PickListSelectionSolution] = None
     provenance: dict[str, Any] = field(default_factory=dict)
-
 
 
 class Algorithm(ABC, Generic[I, O]):
