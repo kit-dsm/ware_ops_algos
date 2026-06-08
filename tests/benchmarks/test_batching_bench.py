@@ -138,3 +138,14 @@ def test_clark_wright_batching_muter(benchmark, muter_domain, muter_resolved_ord
     )
     result = benchmark(algo.solve, muter_resolved_orders)
     assert_valid_batching_result(result, muter_resolved_orders, algo)
+
+
+# Kris
+
+@pytest.mark.benchmark(group="constructive_batching")
+def test_fifo_batching_kris(benchmark, kris_domain, kris_resolved_orders):
+    pick_cart = kris_domain.resources.resources[0].pick_cart
+    articles = kris_domain.articles
+    algo = OrderNrFifoBatching(pick_cart=pick_cart, articles=articles)
+    result = benchmark(algo.solve, kris_resolved_orders)
+    assert_valid_batching_result(result, kris_resolved_orders, algo)
