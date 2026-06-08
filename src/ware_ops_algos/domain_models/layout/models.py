@@ -84,22 +84,3 @@ class LayoutData(BaseDomainObject):
                         features[f.name] = value
 
         return features
-
-
-
-
-# @dataclass
-# class LayoutData(BaseDomainObject):
-#     tpe: LayoutType
-#     graph_data: Optional[LayoutParameters | GraphTopology] = None
-#     graph: Optional[nx.Graph] = None
-#     distance_matrix: Optional[pd.DataFrame] = None
-#     predecessor_matrix: Optional[np.array] = None
-#     start_node: Optional[Tuple[int | float, int | float]] = None
-#     end_node: Optional[Tuple[int | float, int | float]] = None
-#     shortest_paths: Optional[dict] = None,
-#     min_aisle_position: Optional[int | float] = None
-#     max_aisle_position: Optional[int | float] = None
-#     closest_node_to_start: Optional[Tuple[int | float, int | float]] = None
-
-
