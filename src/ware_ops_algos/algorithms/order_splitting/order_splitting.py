@@ -96,4 +96,5 @@ class LayerPackingSplitting(OrderSplitting):
             order_date=source.order_date,
             due_date=source.due_date,
             order_positions=positions,
+            parent_order_id=source.order_id
         )
