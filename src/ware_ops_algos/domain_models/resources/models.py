@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
-from ware_ops_algos.domain_models import BaseDomainObject
+from ware_ops_algos.domain_models import BaseDomainObject, OrderPosition, Article
 
 
 class ResourceType(str, Enum):
@@ -21,11 +21,65 @@ class DimensionType(str, Enum):
 
 
 @dataclass
-class Box:
-    box_id: int
-    order_ids: set[int]
-    items: list[tuple[int, int]] = field(default_factory=list)  # [(article_id, quantity), ...]
-    consumption: list[float] = field(default_factory=list)  # [weight, volume, ...]
+class PalletSpec:
+    """Physical pallet limits."""
+    max_weight: float = 1500.0    # kg
+    max_volume: float = 1500.0    # L
+    max_height: float = 1800.0    # mm
+    length: float = 1200.0        # mm
+    width: float = 800.0          # mm
+
+    @property
+    def floor_area(self) -> float:
+        return self.length * self.width
+
+
+@dataclass
+class Pallet:
+    """A pallet under construction.
+
+    Tracks total weight, volume, and a simple layer-based geometric state.
+    """
+    spec: PalletSpec
+    positions: list[OrderPosition] = field(default_factory=list)
+    weight: float = 0.0
+    volume: float = 0.0
+    height_below: float = 0.0
+    layer_height: float = 0.0
+    layer_area_used: float = 0.0
+
+    @property
+    def total_height(self) -> float:
+        return self.height_below + self.layer_height
+
+    def can_fit_kolli(self, art: Article) -> bool:
+        ks = art.kolli_size or 1
+        if self.weight + art.weight * ks > self.spec.max_weight:
+            return False
+        if self.volume + art.volume * ks > self.spec.max_volume:
+            return False
+        if art.length is None or art.width is None or art.height is None:
+            return True
+        footprint = art.length * art.width
+        if (art.height <= self.layer_height
+                and self.layer_area_used + footprint <= self.spec.floor_area):
+            return True
+        return self.total_height + art.height <= self.spec.max_height
+
+    def add_kolli(self, art: Article) -> None:
+        ks = art.kolli_size or 1
+        self.weight += art.weight * ks
+        self.volume += art.volume * ks
+        if art.length is None or art.width is None or art.height is None:
+            return
+        footprint = art.length * art.width
+        if (art.height <= self.layer_height
+                and self.layer_area_used + footprint <= self.spec.floor_area):
+            self.layer_area_used += footprint
+            return
+        self.height_below += self.layer_height
+        self.layer_height = art.height
+        self.layer_area_used = footprint
 
 
 @dataclass
@@ -76,6 +130,8 @@ class Resources(BaseDomainObject):
         features["n_resources"] = len(self.resources)
 
         features["capacity"] = any(r.capacity is not None for r in self.resources)
+        features["capacities"] = True
+        features["dimensions_type"] = True
         features["speed"] = any(r.speed is not None for r in self.resources)
         features["time_per_pick"] = any(r.time_per_pick is not None for r in self.resources)
         features["current_location"] = any(r.current_location is not None for r in self.resources)
