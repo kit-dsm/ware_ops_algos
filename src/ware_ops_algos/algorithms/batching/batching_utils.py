@@ -1,6 +1,6 @@
 import math
 
-from ware_ops_algos.algorithms import WarehouseOrder, PickList
+from ware_ops_algos.algorithms import WarehouseOrder
 from ware_ops_algos.domain_models import Order, DimensionType, Articles, PickCart
 
 
@@ -182,17 +182,17 @@ def first_due_date(orders: list[WarehouseOrder]) -> float:
         return 0.0
 
 
-def build_pick_lists(orders: list[WarehouseOrder]):
-    # build pick lists
-    pick_positions = []
-    for order in orders:
-        for pos in order.pick_positions:
-            pick_positions.append(pos)
-
-    pick_list = PickList(
-        pick_positions=pick_positions,
-        release=latest_order_arrival(orders),
-        earliest_due_date=first_due_date(orders),
-        orders=orders
-    )
-    return pick_list
+# def build_pick_lists(orders: list[WarehouseOrder]):
+#     # build pick lists
+#     pick_positions = []
+#     for order in orders:
+#         for pos in order.pick_positions:
+#             pick_positions.append(pos)
+#
+#     pick_list = PickList(
+#         pick_positions=pick_positions,
+#         release=latest_order_arrival(orders),
+#         earliest_due_date=first_due_date(orders),
+#         orders=orders
+#     )
+#     return pick_list
