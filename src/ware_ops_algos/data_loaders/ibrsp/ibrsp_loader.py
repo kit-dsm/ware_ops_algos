@@ -257,16 +257,22 @@ class IBRSPLoader(DataLoader):
             (x, y) for x, y, node_type in vertices_coords.values()
             if node_type == "intersection"
         ]
+        pick_nodes = [
+            (x, y) for x, y, node_type in vertices_coords.values()
+            if node_type == "pick_node"
+        ]
         min_aisle_pos = min(y for x, y in intersection_nodes) if intersection_nodes else 0
         max_aisle_pos = max(y for x, y, _ in vertices_coords.values())
         n_aisles = int(max(x for x, y, _ in vertices_coords.values()))
-
         # Find closest node to start (excluding start/end nodes)
-        closest_node_to_start = (
-            dima[start_node]
-            .drop(labels=[start_node, end_node])
-            .idxmin()
-        )
+        # closest_node_to_start = (
+        #     dima[start_node]
+        #     .drop(labels=[start_node, end_node])
+        #     .idxmin()
+        # )
+        pick_nodes.append(start_node)
+        pick_nodes.append(end_node)
+        closest_node_to_start = dima[start_node].drop(labels=pick_nodes).idxmin()
 
         # Layout parameters (distances are encoded in graph, so set to 0)
         layout_params = LayoutParameters(
