@@ -5,6 +5,16 @@ from ware_ops_algos.algorithms import Algorithm, AlgorithmSolution, PickList, Pi
 from ware_ops_algos.domain_models import Resource
 
 
+@dataclass
+class PickerAssignment:
+    picker: Resource
+    pick_list: PickList
+
+
+@dataclass
+class AssignmentSolution(AlgorithmSolution):
+    assignments: list[PickerAssignment] = field(default_factory=list)
+
 class Assigner(Algorithm[list[PickList], AssignmentSolution], ABC):
     def __init__(self, resources: list[Resource]):
         super().__init__()
