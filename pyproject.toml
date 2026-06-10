@@ -10,14 +10,14 @@ readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Janik Bischoff" }]
 dependencies = [
-    "gurobipy>=13.0",
-    "matplotlib>=3.8",
-    "networkx>=3.2",
-    "numpy>=2.0",
-    "pandas>=2.2",
-    "scipy>=1.13",
-    "seaborn>=0.13",
-    "PyYAML>=6.0",
+    "gurobipy",
+    "matplotlib",
+    "networkx",
+    "numpy",
+    "pandas",
+    "scipy",
+    "seaborn",
+    "PyYAML",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +25,7 @@ dev = [
     "pytest>=7.0",
     "pytest-benchmark",
 ]
+
 docs = [
     "sphinx",
     "sphinx-design",
@@ -37,3 +38,9 @@ docs = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"ware_ops_algos" = [
+    "algorithms/algo_cards/*.yaml",
+    "algorithms/algo_cards/*.yml",
+]
