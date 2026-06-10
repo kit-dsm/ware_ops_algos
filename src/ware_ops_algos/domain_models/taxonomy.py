@@ -13,6 +13,6 @@ SUBPROBLEMS = {
     },
     "OBSRP": {
         "objectives": ["tardiness", "picking_time", "cost", "completion_time"],
-        "variables": ["item_assignment", "batching", "sequencing", "routing"]
+        "variables": ["item_assignment", "batching", "scheduling", "routing"]
     }
 }
