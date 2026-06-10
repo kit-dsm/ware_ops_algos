@@ -1,23 +1,11 @@
 import importlib
+from importlib.resources import as_file, files
 import os
 from typing import List, Dict
 import yaml
-import pickle
 from pathlib import Path
 
-from ware_ops_algos.domain_models import (LayoutData,
-                                        LayoutType,
-                                        Articles,
-                                        ArticleType,
-                                        OrderType,
-                                        OrdersDomain,
-                                        Resources,
-                                        StorageLocations,
-                                        ResourceType,
-                                        StorageType,
-                                        BaseDomainObject)
-from ware_ops_algos.domain_models.base_domain import BaseWarehouseDomain
-
+from ware_ops_algos.domain_models import BaseDomainObject
 
 class ModelCard:
     def __init__(self, model_name: str, problem_type: str, requirements: Dict, objective: str, implementation: Dict):
@@ -32,6 +20,8 @@ class ModelCard:
 
 
 def load_model_card(path: str | Path) -> ModelCard:
+    path = Path(path)
+    
     with open(path, 'r') as f:
         data = yaml.safe_load(f)
     return ModelCard(
@@ -87,3 +77,13 @@ def create_domain_from_data_card(domain_class, type_enum, domain_data: Dict) -> 
     domain.get_features = lambda: features
 
     return domain
+
+
+def load_packaged_model_cards() -> List[ModelCard]:
+    cards_resource = files("ware_ops_algos").joinpath(
+        "algorithms",
+        "algorithm_cards",
+    )
+
+    with as_file(cards_resource) as cards_path:
+        return load_model_cards(cards_path)
