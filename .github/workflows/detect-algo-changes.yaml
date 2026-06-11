@@ -19,7 +19,7 @@ jobs:
           python - <<'PY'
           import json, os, pathlib
           import ware_ops_algos.algorithms as a
-          from ware_ops_algos.fingerprint import import_all, build_map
+          from ware_ops_algos.utils.fingerprint import import_all, build_map
           import_all(a)
           new = build_map(a.Algorithm)
           mf  = pathlib.Path("algo_manifest.json")
