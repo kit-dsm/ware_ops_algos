@@ -1,23 +1,25 @@
-name: detect-algo-changes.yaml
+name: detect-algo-changes
 on:
   push:
     branches: [ main ]
     paths-ignore: [ algo_manifest.json ]
 
+permissions:
+  contents: write              # manifest commit + push
+
 jobs:
   detect:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-        with:
-          python-version: '3.12'
+        with: { python-version: '3.12' }
       - run: uv sync
-      - run: uv run python -m ...
 
       - name: Fingerprint and diff
         id: fp
         run: |
-          python - <<'PY'
+          uv run python - <<'PY'
           import json, os, pathlib
           import ware_ops_algos.algorithms as a
           from ware_ops_algos.utils.fingerprint import import_all, build_map
