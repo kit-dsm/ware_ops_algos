@@ -1,8 +1,13 @@
 from datetime import timezone
+from matplotlib.patches import Patch
+from typing import Any, Callable
 
 import networkx as nx
 import pandas as pd
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+
+from ware_ops_algos.algorithms import ScheduledJob
 
 
 def render_graph(G, plot: bool = True, out_name=False, draw_edge_labels=False, with_labels=False, dpi=700, font_size=5, node_size=50, node_color='lightblue') -> None:
@@ -67,7 +72,7 @@ def plot_route_with_directions(network_graph: nx.Graph, route: list[tuple[int, i
         plt.arrow(x1 + offset_x, y1 + offset_y,
                   dx * 0.9, dy * 0.9,
                   length_includes_head=True,
-                  head_width=0.15,
+                  head_width=0.5,
                   head_length=0.2,
                   fc='red', ec='red')
 
@@ -124,3 +129,87 @@ def plot_picker_gantt(assignments, use_datetime=False, tz=timezone.utc, figsize=
         ax.set_xlim(left=min(x_start, df["_x_start"].min()), right=max(x_end, df["_x_end"].max()))
     fig.tight_layout()
     plt.show()
+
+
+def plot_gantt(
+        jobs: list[ScheduledJob],
+        *,
+        ax: Axes | None = None,
+        row_key: Callable[[Any], Any] = lambda j: j.picker_id,
+        color_key: Callable[[Any], str] | None = None,
+        row_label: Callable[[Any], str] = str,
+        time_scale: float = 1.0,
+        bar_height: float = 0.8,
+        title: str | None = None,
+        xlabel: str = "time",
+        ylabel: str = "picker",
+) -> Axes:
+    """Plot a Gantt chart of ScheduledJob instances.
+
+    Each job is drawn as a horizontal bar from start_time to end_time on the row
+    given by row_key(job). Default coloring marks tardy jobs red, on-time jobs green.
+
+    Parameters
+    ----------
+    jobs : sequence of ScheduledJob
+        Must expose start_time, end_time, and the attribute used by row_key/color_key.
+    ax : matplotlib Axes, optional
+        Axes to draw on. Created if None.
+    row_key : callable
+        Maps a job to its row identifier. Default: picker_id.
+    color_key : callable, optional
+        Maps a job to a matplotlib color. Default: red if tardiness > 0 else green.
+    row_label : callable
+        Formats a row identifier into a y-tick label.
+    time_scale : float
+        Divisor applied to start_time and end_time (e.g. 3600 for seconds -> hours).
+    bar_height : float
+        Bar thickness in axis units; rows are spaced 1 apart.
+    title, xlabel, ylabel : str
+        Plot annotations.
+    """
+    if color_key is None:
+        def color_key(j: Any) -> str:
+            return "tab:red" if getattr(j, "tardiness", 0.0) > 0 else "tab:green"
+
+    if ax is None:
+        _, ax = plt.subplots(figsize=(12, 6))
+
+    rows = sorted({row_key(j) for j in jobs}, key=lambda r: (r is None, r))
+    row_to_y = {r: i for i, r in enumerate(rows)}
+
+    for j in jobs:
+        y = row_to_y[row_key(j)]
+        x0 = j.start_time / time_scale
+        width = (j.end_time - j.start_time) / time_scale
+        ax.broken_barh(
+            [(x0, width)],
+            (y - bar_height / 2, bar_height),
+            facecolors=color_key(j),
+            edgecolors="black",
+            linewidth=0.5,
+        )
+
+    ax.set_yticks(list(row_to_y.values()))
+    ax.set_yticklabels([row_label(r) for r in rows])
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    if title:
+        ax.set_title(title)
+    ax.grid(True, axis="x", linestyle=":", alpha=0.5)
+    ax.invert_yaxis()
+
+    # Legend only meaningful with the default color_key
+    if color_key.__name__ == "color_key":
+        ax.legend(
+            handles=[
+                Patch(facecolor="tab:green", edgecolor="black", label="on time"),
+                Patch(facecolor="tab:red", edgecolor="black", label="tardy"),
+            ],
+            loc="upper right",
+        )
+
+    return ax
+
+
+

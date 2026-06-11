@@ -1,4 +1,4 @@
-model_name: SinglePosIA
+algo_name: SinglePosIA
 problem_type: item_assignment
 description: >
   ...
@@ -22,7 +22,7 @@ requirements:
     features:
   orders:
     type:
-      - standard
+      - any
     features:
       - amount
       - article_id

@@ -15,6 +15,10 @@ class Article:
     article_name: Optional[str] = None
     weight: Optional[float] = None
     volume: Optional[float] = None
+    length: Optional[float] = None
+    width: Optional[float] = None
+    height: Optional[float] = None
+    kolli_size: Optional[float] = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

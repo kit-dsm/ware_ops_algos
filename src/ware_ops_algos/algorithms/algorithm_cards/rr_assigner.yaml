@@ -1,4 +1,4 @@
-model_name: RRAssigner
+algo_name: RRAssigner
 problem_type: assignment
 description: >
 
@@ -15,7 +15,7 @@ requirements:
       -
   orders:
     type:
-      - standard
+      - any
     features:
       - due_date
 

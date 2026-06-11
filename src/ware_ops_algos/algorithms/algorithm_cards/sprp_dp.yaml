@@ -1,4 +1,4 @@
-model_name: RatliffRosenthal
+algo_name: RatliffRosenthal
 problem_type: routing
 description: >
   Dynamic programming approach for the single-picker routing
@@ -29,7 +29,7 @@ requirements:
       - any
   orders:
     type:
-      - standard
+      - any
   storage:
     type:
       - any

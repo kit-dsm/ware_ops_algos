@@ -2,7 +2,7 @@ from pathlib import Path
 import pytest
 
 from ware_ops_algos.algorithms import GreedyItemAssignment
-from ware_ops_algos.data_loaders import HesslerIrnichLoader
+from ware_ops_algos.data_loaders import HesslerIrnichLoader, IBRSPLoader
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
@@ -14,6 +14,14 @@ def _load_domain(instance_set: str, instance_file: str):
     loader = HesslerIrnichLoader(
         instances_dir=INSTANCES_DIR / instance_set,
         cache_dir=CACHE_DIR / instance_set,
+    )
+    return loader.load(instance_file)
+
+
+def _load_domain_kris(instance_set: str, instance_file: str):
+    loader = IBRSPLoader(
+        instances_dir=INSTANCES_DIR / instance_set,
+        cache_dir=str(CACHE_DIR / instance_set),
     )
     return loader.load(instance_file)
 
@@ -65,3 +73,13 @@ def henn_domain():
 @pytest.fixture(scope="session")
 def henn_resolved_orders(henn_domain):
     return _resolved_orders(henn_domain)
+
+
+# --- IBRSP ---
+@pytest.fixture(scope="session")
+def kris_domain():
+    return _load_domain_kris("KrisSmallDataCorrected", "instances_1_1.txt")
+
+@pytest.fixture(scope="session")
+def kris_resolved_orders(kris_domain):
+    return _resolved_orders(kris_domain)

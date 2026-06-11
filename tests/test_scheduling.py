@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-from _pytest.python_api import approx
 
 from ware_ops_algos.algorithms import ExactCombinedBatchingRouting, GreedyItemAssignment, CombinedRoutingSolution
 from ware_ops_algos.data_loaders import HesslerIrnichResultsLoader
@@ -46,4 +45,4 @@ def cbr_solution(bahceci_domain):
 
 def test_cbr_matches_literature_lb(cbr_solution, literature_lb):
     total_distance = sum(r.distance for r in cbr_solution.routes)
-    assert total_distance == approx(literature_lb)
+    assert total_distance == literature_lb

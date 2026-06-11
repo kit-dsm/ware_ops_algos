@@ -1,4 +1,4 @@
-model_name: NNIA
+algo_name: NNIA
 problem_type: item_assignment
 description: >
   ...
@@ -17,7 +17,7 @@ requirements:
     features:
   orders:
     type:
-      - standard
+      - any
     features:
       - amount
       - article_id

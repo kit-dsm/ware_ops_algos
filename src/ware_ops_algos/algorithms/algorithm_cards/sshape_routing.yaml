@@ -1,4 +1,4 @@
-model_name: SShape
+algo_name: SShape
 problem_type: routing
 description: >
   S-shape routing heuristic. Traverses aisles in an
@@ -22,7 +22,7 @@ requirements:
       - human
   orders:
     type:
-      - standard
+      - any
   storage:
     type:
       - any

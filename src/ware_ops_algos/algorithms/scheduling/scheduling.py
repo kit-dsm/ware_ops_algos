@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from ware_ops_algos.algorithms import Algorithm, I, O
-from ware_ops_algos.algorithms.algorithm import SchedulingSolution, Job, Route, AlgorithmSolution, PickList
+from ware_ops_algos.algorithms.algorithm import SchedulingSolution, Job, Route, AlgorithmSolution
 from ware_ops_algos.domain_models import OrdersDomain, Resources, Resource, Order
 
 

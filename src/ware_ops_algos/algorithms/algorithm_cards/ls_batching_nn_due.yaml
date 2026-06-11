@@ -1,4 +1,4 @@
-model_name: LSBatchingNNDueDate
+algo_name: LSBatchingNNDueDate
 problem_type: batching
 description: >
   Local search batching metaheuristic with Nearest Neighbourhood routing and due date initial batch construction
@@ -23,7 +23,7 @@ requirements:
       - dimensions_type
   orders:
     type:
-      - standard
+      - any
     features:
       - due_date
   storage:

@@ -1,4 +1,4 @@
-model_name: ExactSolving
+algo_name: ExactSolving
 problem_type: routing
 description: >
   Exact TSP-based routing algorithm using Gurobi for order picking,
@@ -18,7 +18,7 @@ requirements:
       - any
   orders:
     type:
-      - standard
+      - any
   storage:
     type:
       - any

@@ -1,4 +1,4 @@
-model_name: LSBatchingSShapeFiFo
+algo_name: LSBatchingSShapeFiFo
 problem_type: batching
 description: >
   Local search batching metaheuristic with SShape routing and due date initial batch construction
@@ -18,7 +18,7 @@ requirements:
       - dimensions_type
   orders:
     type:
-      - standard
+      - any
     features:
       - order_date
   storage:

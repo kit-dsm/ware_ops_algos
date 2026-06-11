@@ -13,7 +13,7 @@ from ware_ops_algos.algorithms import Algorithm
 from ware_ops_algos.algorithms.batching.batching_utils import CapacityChecker
 from ware_ops_algos.algorithms.routing.routing import Routing
 from ware_ops_algos.algorithms.algorithm import BatchingSolution, BatchObject, WarehouseOrder
-from ware_ops_algos.domain_models import Order, PickCart, Articles, DimensionType, Box
+from ware_ops_algos.domain_models import Order, PickCart, Articles
 
 
 class Batching(Algorithm[list[WarehouseOrder], BatchingSolution], ABC):
@@ -380,7 +380,8 @@ class LocalSearchBatching(Batching):
                  routing_class_kwargs: dict,
                  start_batching_class: type[Batching],
                  start_batching_kwargs: dict = None,
-                 time_limit: float = 120.0):
+                 time_limit: float = 120.0,
+                 verbose=False):
         super().__init__(pick_cart, articles)
         self.routing_class = routing_class
         self.routing_class_kwargs = routing_class_kwargs
@@ -391,6 +392,7 @@ class LocalSearchBatching(Batching):
         self._router = routing_class(**self.routing_class_kwargs)
         self._start_time = None
         self.algo_name = f"{self.routing_class.algo_name}_{self.start_batching_class.algo_name}_LocalSearchBatching"
+        self.verbose = verbose
 
     def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
         self.order_list = input_data
@@ -415,12 +417,13 @@ class LocalSearchBatching(Batching):
         self._start_time = time.time()
 
         initial_cost = sum(self._batch_cost_from_orders(b.orders) for b in batches)
-        print(f"\n{'=' * 60}")
-        print(f"Local Search Started")
-        print(f"{'=' * 60}")
-        print(f"Initial solution: {len(batches)} batches, cost: {initial_cost:.2f}")
-        print(f"Time limit: {self.time_limit}s")
-        print(f"{'=' * 60}\n")
+        if self.verbose:
+            print(f"\n{'=' * 60}")
+            print(f"Local Search Started")
+            print(f"{'=' * 60}")
+            print(f"Initial solution: {len(batches)} batches, cost: {initial_cost:.2f}")
+            print(f"Time limit: {self.time_limit}s")
+            print(f"{'=' * 60}\n")
 
         iteration = 0
         swap_improvements = 0
@@ -429,7 +432,8 @@ class LocalSearchBatching(Batching):
         while True:
             if self._time_limit_exceeded():
                 elapsed = time.time() - self._start_time
-                print(f"\n⏱️  Time limit exceeded after {elapsed:.2f}s")
+                if self.verbose:
+                    print(f"\nTime limit exceeded after {elapsed:.2f}s")
                 break
 
             iteration += 1
@@ -461,13 +465,14 @@ class LocalSearchBatching(Batching):
                 improvement = iter_start_cost - iter_end_cost
                 elapsed = time.time() - self._start_time
 
-                print(f"Iteration {iteration}: "
-                      f"swaps={swap_count}, shifts={shift_count} | "
-                      f"cost: {iter_end_cost:.2f} "
-                      f"(Δ {improvement:+.2f}) | "
-                      f"{len(batches)} batches | "
-                      f"cache: {len(self._route_cache)} | "
-                      f"{elapsed:.1f}s")
+                if self.verbose:
+                    print(f"Iteration {iteration}: "
+                          f"swaps={swap_count}, shifts={shift_count} | "
+                          f"cost: {iter_end_cost:.2f} "
+                          f"(Δ {improvement:+.2f}) | "
+                          f"{len(batches)} batches | "
+                          f"cache: {len(self._route_cache)} | "
+                          f"{elapsed:.1f}s")
 
             if not overall_improved:
                 break
@@ -477,19 +482,20 @@ class LocalSearchBatching(Batching):
         total_improvement = initial_cost - final_cost
         elapsed = time.time() - self._start_time
 
-        print(f"\n{'=' * 60}")
-        print(f"Local Search Completed")
-        print(f"{'=' * 60}")
-        print(f"Iterations: {iteration}")
-        print(f"Total improvements: {swap_improvements + shift_improvements} "
-              f"(swaps: {swap_improvements}, shifts: {shift_improvements})")
-        print(f"Initial cost: {initial_cost:.2f}")
-        print(f"Final cost: {final_cost:.2f}")
-        print(f"Total improvement: {total_improvement:.2f} ({100 * total_improvement / initial_cost:.1f}%)")
-        print(f"Final batches: {len(batches)}")
-        print(f"Route cache size: {len(self._route_cache)}")
-        print(f"Time elapsed: {elapsed:.2f}s")
-        print(f"{'=' * 60}\n")
+        if self.verbose:
+            print(f"\n{'=' * 60}")
+            print(f"Local Search Completed")
+            print(f"{'=' * 60}")
+            print(f"Iterations: {iteration}")
+            print(f"Total improvements: {swap_improvements + shift_improvements} "
+                  f"(swaps: {swap_improvements}, shifts: {shift_improvements})")
+            print(f"Initial cost: {initial_cost:.2f}")
+            print(f"Final cost: {final_cost:.2f}")
+            print(f"Total improvement: {total_improvement:.2f} ({100 * total_improvement / initial_cost:.1f}%)")
+            print(f"Final batches: {len(batches)}")
+            print(f"Route cache size: {len(self._route_cache)}")
+            print(f"Time elapsed: {elapsed:.2f}s")
+            print(f"{'=' * 60}\n")
 
         return batches
 

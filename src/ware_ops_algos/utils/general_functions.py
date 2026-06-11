@@ -1,41 +1,31 @@
 import importlib
+from importlib.resources import as_file, files
 import os
 from typing import List, Dict
 import yaml
-import pickle
 from pathlib import Path
 
-from ware_ops_algos.domain_models import (LayoutData,
-                                        LayoutType,
-                                        Articles,
-                                        ArticleType,
-                                        OrderType,
-                                        OrdersDomain,
-                                        Resources,
-                                        StorageLocations,
-                                        ResourceType,
-                                        StorageType,
-                                        BaseDomainObject)
-from ware_ops_algos.domain_models.base_domain import BaseWarehouseDomain
+from ware_ops_algos.domain_models import BaseDomainObject
 
-
-class ModelCard:
-    def __init__(self, model_name: str, problem_type: str, requirements: Dict, objective: str, implementation: Dict):
-        self.model_name = model_name
+class AlgorithmCard:
+    def __init__(self, algo_name: str, problem_type: str, requirements: Dict, objective: str, implementation: Dict):
+        self.algo_name = algo_name
         self.problem_type = problem_type
         self.requirements = requirements
         self.objective = objective
         self.implementation = implementation
 
     def __repr__(self):
-        return f"name={self.model_name} problem={self.problem_type}>"
+        return f"name={self.algo_name} problem={self.problem_type}>"
 
 
-def load_model_card(path: str | Path) -> ModelCard:
+def load_algo_card(path: str | Path) -> AlgorithmCard:
+    path = Path(path)
+    
     with open(path, 'r') as f:
         data = yaml.safe_load(f)
-    return ModelCard(
-        model_name=data["model_name"],
+    return AlgorithmCard(
+        algo_name=data["algo_name"],
         problem_type=data["problem_type"],
         requirements=data["requirements"],
         objective=data["objective"],
@@ -43,20 +33,20 @@ def load_model_card(path: str | Path) -> ModelCard:
     )
 
 
-def load_model_cards(directory: str | Path) -> List[ModelCard]:
-    model_cards = []
+def load_algo_cards(directory: str | Path) -> List[AlgorithmCard]:
+    algo_cards = []
     for filename in os.listdir(directory):
         if filename.endswith(".yaml") or filename.endswith(".yml"):
             full_path = os.path.join(directory, filename)
             try:
-                model_card = load_model_card(full_path)
-                model_cards.append(model_card)
+                model_card = load_algo_card(full_path)
+                algo_cards.append(model_card)
             except Exception as e:
                 print(f"Failed to load {filename}: {e}")
-    return model_cards
+    return algo_cards
 
 
-def import_model_class(cls_name: str, module_path: str | Path):
+def import_algo_class(cls_name: str, module_path: str | Path):
     module = importlib.import_module(module_path)
     return getattr(module, cls_name)
 
@@ -87,3 +77,13 @@ def create_domain_from_data_card(domain_class, type_enum, domain_data: Dict) -> 
     domain.get_features = lambda: features
 
     return domain
+
+
+def load_packaged_algo_cards() -> List[AlgorithmCard]:
+    cards_resource = files("ware_ops_algos").joinpath(
+        "algorithms",
+        "algorithm_cards",
+    )
+
+    with as_file(cards_resource) as cards_path:
+        return load_algo_cards(cards_path)

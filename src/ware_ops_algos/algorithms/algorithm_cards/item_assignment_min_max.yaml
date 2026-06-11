@@ -1,4 +1,4 @@
-model_name: MinMaxIA
+algo_name: MinMaxIA
 problem_type: item_assignment
 description: >
   ...
@@ -22,7 +22,7 @@ requirements:
     features:
   orders:
     type:
-      - standard
+      - any
     features:
       - amount
       - article_id

@@ -146,7 +146,9 @@ class HeuristicRouting(Routing, ABC):
         elif current_source[1] == self.max_aisle_position:
             return False
         else:
-            raise ValueError("Start node is not connected to the beginning or end of the aisle.")
+            raise ValueError(f"Start node is not connected to the beginning or end of the aisle. "
+                             f"Min aisle: {self.min_aisle_position}, Max aisle: {self.max_aisle_position},"
+                             f"Current source: {current_source}")
 
     def _walk_to_target(self, source: tuple, target: tuple, target_is_pick_node: bool = False, target_is_end_node: bool = False) -> tuple:
         if self.gen_tour:
@@ -625,10 +627,11 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
 
         # walk to the end node
         self._go_to_end_node(current_source)
-        route = Route(route=self.route,
-                      item_sequence=self.item_sequence,
+        route = Route(
+                      route=self.route,
                       distance=self.distance,
-                      annotated_route=self.annotated_route
+                      annotated_route=self.annotated_route,
+                      item_sequence=self.item_sequence
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
@@ -1538,15 +1541,6 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
         self._add_aisle_transitions_for(j=j, prev_states=equivalence_classes)
 
     def _add_aisle_transitions_for(self, j: int, prev_states: list):
-        """Generate all aisle action edges for aisle j.
-
-        For each previous equivalence class and each valid action type,
-        generates standard actions (one_pass, two_pass, void) and
-        parameterised SS actions (top(p), bottom(p), gap(h,i) for all
-        relevant p, h, i).
-
-        Applies feasibility pruning (Eq 1) and dominance pruning (Section 3).
-        """
         is_depot_aisle = (j == self.depot[0])
         depot_cost = 2 * self.dist_end if is_depot_aisle else 0
         relevant_y = self._get_relevant_y(j)
@@ -1554,7 +1548,7 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
         for prev_eq in prev_states:
             candidates = []
 
-            # --- Void (allowed even for non-empty aisles in SS) ---
+            # --- Void ---
             next_eq = self._next_state(prev_eq, 6)
             if next_eq:
                 candidates.append(self._make_candidate(
@@ -1580,40 +1574,64 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
                     [(0, self.n_pick_locations)],
                 ))
 
-            # --- Top(p): back cross-aisle to position p and back ---
+            # --- Top(p): increasing order, break on infeasibility (Eq 1) ---
             next_eq = self._next_state(prev_eq, 2)
             if next_eq and relevant_y:
                 for p in relevant_y:
-                    candidates.append(self._make_candidate(
+                    cand = self._make_candidate(
                         j, prev_eq, next_eq, "top", p,
                         self.top(p) + depot_cost,
                         [(p, self.n_pick_locations)],
-                    ))
+                    )
+                    if not self._is_edge_feasible(cand["supply"], j):
+                        break
+                    candidates.append(cand)
 
-            # --- Bottom(p): front cross-aisle to position p and back ---
+            # --- Bottom(p): decreasing order, break on infeasibility (Eq 1) ---
             next_eq = self._next_state(prev_eq, 3)
             if next_eq and relevant_y:
-                for p in relevant_y:
-                    candidates.append(self._make_candidate(
+                for p in reversed(relevant_y):
+                    cand = self._make_candidate(
                         j, prev_eq, next_eq, "bottom", p,
                         self.bottom(p) + depot_cost,
                         [(0, p)],
-                    ))
+                    )
+                    if not self._is_edge_feasible(cand["supply"], j):
+                        break
+                    candidates.append(cand)
 
-            # --- Gap(h, i): all pairs (not just largest gap) ---
+            # --- Gap(h, i): structured enumeration with monotone pruning (Eq 1) ---
             next_eq = self._next_state(prev_eq, 4)
             if next_eq and len(relevant_y) >= 2:
-                for h, i in combinations(relevant_y, 2):
-                    gap_distance = (i - h) * self.dist_pick_locations
-                    candidates.append(self._make_candidate(
-                        j, prev_eq, next_eq, "gap", (h, i),
-                        self.gap(gap_distance) + depot_cost,
-                        [(0, h), (i, self.n_pick_locations)],
-                    ))
+                n = len(relevant_y)
+                for h_idx in range(n - 1):
+                    h = relevant_y[h_idx]
+                    feasible_row = False
+                    for i_idx in range(h_idx + 1, n):
+                        i = relevant_y[i_idx]
+                        gap_distance = (i - h) * self.dist_pick_locations
+                        cand = self._make_candidate(
+                            j, prev_eq, next_eq, "gap", (h, i),
+                            self.gap(gap_distance) + depot_cost,
+                            [(0, h), (i, self.n_pick_locations)],
+                        )
+                        if not self._is_edge_feasible(cand["supply"], j):
+                            break
+                        feasible_row = True
+                        candidates.append(cand)
+                    if not feasible_row:
+                        break
 
-            # Prune and emit
-            for cand in self._prune_dominated(candidates, j):
-                self._emit_edge(cand)
+            # Dominance pruning (Section 2.3): skip if too many candidates
+            feasible = [c for c in candidates
+                        if self._is_edge_feasible(c["supply"], j)]
+
+            if len(feasible) > 5000:
+                for cand in feasible:
+                    self._emit_edge(cand)
+            else:
+                for cand in self._prune_dominated(feasible, j):
+                    self._emit_edge(cand)
 
     @staticmethod
     def _next_state(prev_eq, action_id) -> Optional[tuple]:
@@ -1704,63 +1722,26 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
 
     # Dominance pruning (Section 3)
     def _prune_dominated(self, candidates: list[dict], aisle_index: int) -> list[dict]:
-        feasible = [c for c in candidates
-                    if self._is_edge_feasible(c["supply"], aisle_index)]
-
         groups: dict[tuple, list[dict]] = defaultdict(list)
-        for c in feasible:
-            key = (c["from"], c["to"])  # group by state transition, not action type
+        for c in candidates:
+            key = (c["from"], c["to"])
             groups[key].append(c)
 
         result = []
         for key, group in groups.items():
-            # Singleton groups need no pruning
-            if len(group) <= 1:
-                result.extend(group)
-                continue
-
-            # Geometric pre-filter for gaps: remove candidates where another gap
-            # has wider coverage (higher h AND lower i) and therefore lower cost
-            # AND superset supply. Uses monotone stack on sorted gap boundaries.
-            gaps = [c for c in group if c["action_type"] == "gap"]
-            non_gaps = [c for c in group if c["action_type"] != "gap"]
-
-            if len(gaps) > 1:
-                # Sort by h ascending (bottom boundary of gap)
-                gaps.sort(key=lambda c: (c["action_node"][0], -c["action_node"][1]))
-                filtered_gaps = []
-                min_i_seen = float('inf')
-                # Sweep h ascending: if i >= min_i_seen, this gap is dominated
-                # (a previous gap with smaller h and smaller i covers a superset)
-                # Wait, we want h2 >= h1 AND i2 <= i1 for domination.
-                # Sort by h descending, track min i. If current i >= min_i_seen, dominated.
-                gaps.sort(key=lambda c: -c["action_node"][0])
-                for g in gaps:
-                    h, i = g["action_node"]
-                    if i >= min_i_seen:
-                        continue  # dominated: some gap with higher h has lower i
-                    min_i_seen = i
-                    filtered_gaps.append(g)
-                gaps = filtered_gaps
-
-            group = non_gaps + gaps
             group.sort(key=lambda c: c["weight"])
             survived: list[dict] = []
-
             for cand in group:
                 dominated = False
                 for surv in survived:
                     if surv["weight"] <= cand["weight"]:
-                        all_arts = set(cand["supply"]) | set(surv["supply"])
                         if all(surv["supply"].get(a, 0) >= cand["supply"].get(a, 0)
-                               for a in all_arts):
+                               for a in self.demand):
                             dominated = True
                             break
                 if not dominated:
                     survived.append(cand)
-
             result.extend(survived)
-
         return result
 
     # IP formulation (Eq 1a-1d)

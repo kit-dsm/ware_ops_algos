@@ -20,7 +20,7 @@ class AlgorithmSolution:
     provenance: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass
+@dataclass(frozen=True)
 class PickPosition:
     order_number: int
     article_id: int
@@ -28,76 +28,40 @@ class PickPosition:
     pick_node: tuple[int, int]
     in_store: int
     article_name: Optional[str] = None
-    # dynamic info
-    picked: Optional[bool] = None
 
 
 @dataclass(frozen=True)
 class WarehouseOrder:
     order_id: int
+    parent_order_id: Optional[int] = None
     due_date: Optional[float] = None
     order_date: Optional[float] = None
-    pick_positions: Optional[list[PickPosition]] = None
-    # dynamic info
-    fulfilled: Optional[bool] = None
+    pick_positions: tuple[PickPosition, ...] = ()
 
 
-@dataclass
-class ItemAssignmentSolution(AlgorithmSolution):
-    resolved_orders: list[WarehouseOrder] = field(default_factory=list)
-
-
-@dataclass
+@dataclass(frozen=True)
 class BatchObject:
     batch_id: int
     orders: list[WarehouseOrder]
 
-
-@dataclass
-class BatchingSolution(AlgorithmSolution):
-    batches: list[BatchObject] | None = None
-    # pick_lists: list[list[PickPosition]] = None
-    pick_lists: list[PickList] = None
-
-
-@dataclass
-class PickList:
-    pick_positions: list[PickPosition]
-    orders: list[WarehouseOrder]
-    release: Optional[float] = None
-    earliest_due_date: Optional[float] = None
-    id: int = field(default_factory=count().__next__)
-    service_time: Optional[float] = None
-    single_order_service_times: dict[int, float] = field(default_factory=dict)
+    @property
+    def pick_positions(self) -> list[PickPosition]:
+        return [pp for o in self.orders for pp in o.pick_positions]
 
     @property
-    def order_numbers(self) -> list[int]:
-        if self.pick_positions is None:
-            return []
-        return list({pp.order_number for pp in self.pick_positions})
+    def order_numbers(self) -> frozenset[int]:
+        return frozenset(o.order_id for o in self.orders)
 
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        # pick_positions and orders are immutable after creation
-        result.pick_positions = self.pick_positions  # shared ref
-        result.orders = self.orders  # shared ref
-        result.release = self.release
-        result.earliest_due_date = self.earliest_due_date
-        result.id = self.id
-        return result
+    @property
+    def earliest_due_date(self) -> float:
+        dues = [o.due_date for o in self.orders if o.due_date is not None]
+        return min(dues) if dues else float("inf")
 
-
-@dataclass
-class PickerAssignment:
-    picker: Resource
-    pick_list: PickList
-
-
-@dataclass
-class AssignmentSolution(AlgorithmSolution):
-    assignments: list[PickerAssignment] = field(default_factory=list)
+    @property
+    def arrival_time(self) -> float:
+        """The time at which all orders in this batch had arrived."""
+        dates = [o.order_date for o in self.orders if o.order_date is not None]
+        return max(dates) if dates else 0.0
 
 
 class NodeType(Enum):
@@ -109,138 +73,122 @@ class RouteNode(NamedTuple):
     position: tuple[int, int]
     node_type: NodeType
 
-
 @dataclass
 class Route:
-    route: list[tuple[int, int]] | None = None
-    item_sequence: list[tuple[int, int]] | None = None
-    distance: float = 0.0
-    pick_list: Optional[PickList] = None
+    distance: float
+    route: Optional[list[tuple[float, float]]] = None
+    item_sequence: Optional[list] = None
+    batch: Optional[BatchObject] = None
     annotated_route: Optional[list[RouteNode]] = None
+    service_time: Optional[float] = None
+
+    @property
+    def has_sequence(self) -> bool:
+        return self.annotated_route is not None
+
+    @property
+    def node_sequence(self) -> list[tuple[int, int]]:
+        if self.annotated_route is None:
+            raise ValueError("Route was not constructed with sequence information.")
+        return [n.position for n in self.annotated_route]
+
+    # @property
+    # def item_sequence(self) -> list[tuple[int, int]]:
+    #     if self.annotated_route is None:
+    #         raise ValueError("Route was not constructed with sequence information.")
+    #     return [n.position for n in self.annotated_route if n.node_type == NodeType.PICK]
+
+    # @property
+    # def n_picks(self):
+    #     return len(self.item_sequence)
+
+    @property
+    def earliest_due_date(self) -> float:
+        return self.batch.earliest_due_date
+
+    @property
+    def arrival_time(self) -> float:
+        return self.batch.arrival_time
+
+    @property
+    def order_numbers(self) -> frozenset[int]:
+        return self.batch.order_numbers
+
+
+@dataclass(frozen=True)
+class Job:
+    """
+    Scheduler input. Stores only what's new at this stage:
+    a stable id and the resource-dependent processing time.
+    Everything else is forwarded from the route.
+    """
+    job_id: int
+    processing_time: float
+    release_time: float
+    due_date: float
+    n_picks: int
+    route: Optional[Route] = None
+    batch: Optional[BatchObject] = None
+
+    @property
+    def distance(self) -> float:
+        return self.route.distance
+
+    @property
+    def order_numbers(self) -> frozenset[int]:
+        return self.route.order_numbers
+
+
+@dataclass(frozen=True)
+class ScheduledJob:
+    """
+    A Job placed on a picker at a concrete start/end time.
+    Performance metrics are properties.
+    """
+    job: Job
+    picker_id: str
+    start_time: float
+    end_time: float
+
+    @property
+    def tardiness(self) -> float:
+        return max(0.0, self.end_time - self.job.due_date)
+
+    @property
+    def lateness(self) -> float:
+        return self.end_time - self.job.due_date
+
+    @property
+    def is_on_time(self) -> bool:
+        return self.end_time <= self.job.due_date
+
+    @property
+    def order_numbers(self) -> frozenset[int]:
+        return self.job.order_numbers
 
 
 @dataclass
-class PickTour:
-    pick_list: PickList
-    route: Route
-    assigned_picker: Resource
-    starts_after: Optional[int] = None
-    starts_before: Optional[int] = None
-
-    planned_start: Optional[float] = None  # if scheduled
-    planned_end: Optional[float] = None
-
-Node = tuple[float, float]
-
-class TourStates(str, Enum):
-    PLANNED = "planned"  # PickList is generated
-    ASSIGNED = "assigned"  # Is assigned to a picker
-    SCHEDULED = "scheduled"  # Is scheduled for a point in time
-    PENDING = "pending"
-    STARTED = "started"  # Tour has started picking
-    DONE = "done"  # Tour is done
+class ItemAssignmentSolution(AlgorithmSolution):
+    resolved_orders: list[WarehouseOrder] = field(default_factory=list)
 
 
 @dataclass
-class TourPlanningState:
-    """
-    Thin wrapper around a Route object.
-    Keeps track of the planning state for a single tour.
-
-    - route_nodes / pick_sequence are copies from the plan (immutable intent).
-    - cursor / picks_left / version are the mutable execution state.
-    - original_route is kept only for debugging/inspection (do not mutate).
-    """
-    tour_id: int
-
-    # original plan (copied from Route)
-    order_numbers: list[int]
-    original_route: Route
-    pick_list: PickList
-    # pick_nodes: list[Node]
-    annotated_route: list[RouteNode]
-
-    assigned_resource: Optional[int] = None
-    start_time: Optional[float] = None
-    end_time: Optional[float] = None
-    end_time_planned: Optional[float] = None
-    # execution state, mutable during picking
-    cursor: int = 0                 # index into route_nodes
-    picks_left: Deque[Node] = field(default_factory=deque)
-    open_pick_positions: list = field(default_factory=list)
-    status: str = TourStates.PLANNED
-
-    def current_node(self) -> RouteNode:
-        return self.annotated_route[self.cursor]
-
-    def at_end(self) -> bool:
-        """True if cursor is on the final node (typically the depot)."""
-        return self.cursor >= len(self.annotated_route) - 1
-
-    def next_node(self) -> RouteNode:
-        return self.annotated_route[self.cursor + 1]
-
+class BatchingSolution(AlgorithmSolution):
+    batches: list[BatchObject] = field(default_factory=list)
 
 @dataclass
 class RoutingSolution(AlgorithmSolution):
-    route: Optional[Route] = None
+    route: Route = field(default_factory=Route)
 
 
 @dataclass
 class CombinedRoutingSolution(AlgorithmSolution):
-    routes: Optional[list[Route]] = None
-
-
-@dataclass
-class Sequencing:
-    pick_list_sequence: list[int]
-
-
-@dataclass
-class Assignment:
-    tour_id: int
-    picker_id: int
-
-
-@dataclass
-class Job:
-    batch_idx: int
-    picker_id: int
-    start_time: float
-    end_time: float
-    release_time: float
-    distance: float
-    n_picks: int
-    travel_time: float
-    handling_time: float
-    route: Route
+    routes: list[Route] = field(default_factory=list)
 
 
 @dataclass
 class SchedulingSolution(AlgorithmSolution):
-    jobs: list[Job] | None = None
-
-
-@dataclass
-class OrderSelectionSolution(AlgorithmSolution):
-    selected_orders: list[WarehouseOrder] = field(default_factory=list)
-
-
-@dataclass
-class PickListSelectionSolution(AlgorithmSolution):
-    selected_pick_lists: list[PickList] = field(default_factory=list)
-
-
-@dataclass
-class PlanningState:
-    item_assignment: Optional[ItemAssignmentSolution] = None
-    batching_solutions: Optional[BatchingSolution] = None
-    assignment_solutions: Optional[AssignmentSolution] = None
-    routing_solutions: Optional[list[RoutingSolution]] = field(default_factory=list)
-    sequencing_solutions: Optional[SchedulingSolution] = None
-    order_selection_solutions: Optional[OrderSelectionSolution] = None
-    pick_list_selection_solutions: Optional[PickListSelectionSolution] = None
-    provenance: dict[str, Any] = field(default_factory=dict)
+    jobs: list[ScheduledJob] = field(default_factory=list)
 
 
 class Algorithm(ABC, Generic[I, O]):

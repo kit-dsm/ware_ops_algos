@@ -1,4 +1,4 @@
-model_name: PLRouting
+algo_name: PLRouting
 problem_type: routing
 description: >
 
@@ -15,7 +15,7 @@ requirements:
     features:
   orders:
     type:
-      - standard
+      - any
     features:
     constraints:
       n_orders:

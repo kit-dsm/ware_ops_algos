@@ -11,7 +11,7 @@ from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPos
     RatliffRosenthalRouting, NearestNeighbourhoodRouting
 from ware_ops_algos.data_loaders import HesslerIrnichLoader
 from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, StorageLocations, Location
-from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
+# from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
 class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
@@ -63,16 +63,15 @@ class GreedyItemAssignment(ItemAssignment):
                         pick_node=(loc.x, loc.y),
                         in_store=pick_qty,
                         article_name=pos.article_name,
-                        picked=False
                     ))
                     remaining -= pick_qty
 
             warehouse_orders.append(WarehouseOrder(
                 order_id=order.order_id,
+                parent_order_id=order.parent_order_id,
                 due_date=order.due_date,
                 order_date=order.order_date,
                 pick_positions=resolved,
-                fulfilled=False,
             ))
 
         return ItemAssignmentSolution(resolved_orders=warehouse_orders)
@@ -127,10 +126,10 @@ class NearestNeighborItemAssignment(ItemAssignment):
         for order in orders:
             resolved = self._select_for_order(order)
             warehouse_orders.append(WarehouseOrder(order_id=order.order_id,
+                                                   parent_order_id=order.parent_order_id,
                                                    due_date=order.due_date,
                                                    order_date=order.order_date,
                                                    pick_positions=resolved,
-                                                   fulfilled=False,
                                                    ))
 
         return ItemAssignmentSolution(resolved_orders=warehouse_orders)
@@ -163,7 +162,6 @@ class NearestNeighborItemAssignment(ItemAssignment):
                         pick_node=(nearest.x, nearest.y),
                         in_store=pick_qty,
                         article_name=pos.article_name,
-                        picked=False
                     ))
 
                 fulfilled += pick_qty
@@ -201,10 +199,10 @@ class PriorityItemAssignment(ItemAssignment):
             pick_positions = self._select_for_order(order)
             warehouse_orders.append(WarehouseOrder(
                 order_id=order.order_id,
+                parent_order_id=order.parent_order_id,
                 due_date=order.due_date,
                 order_date=order.order_date,
                 pick_positions=pick_positions,
-                fulfilled=False
             ))
 
         return ItemAssignmentSolution(resolved_orders=warehouse_orders)
@@ -280,7 +278,6 @@ class PriorityItemAssignment(ItemAssignment):
                     pick_node=(loc.x, loc.y),
                     in_store=pick_qty,
                     article_name=order_pos.article_name,
-                    picked=False
                 ))
 
         return pick_positions
@@ -580,4 +577,4 @@ if __name__ == "__main__":
         routing_sol = nn_routing.solve(pick_list)
         nn_routing.reset_parameters()
         print(routing_sol.route.distance)
-        plot_route_with_directions(network_graph=layout_network.graph, route=routing_sol.route.route)
+        # plot_route_with_directions(network_graph=layout_network.graph, route=routing_sol.route.route)

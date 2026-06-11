@@ -1,8 +1,9 @@
 from typing import Any, Dict, List
 import operator
 
+from ware_ops_algos.domain_models import BaseWarehouseDomain
 from ware_ops_algos.domain_models.taxonomy import SUBPROBLEMS
-from ware_ops_algos.utils.general_functions import load_model_card
+from ware_ops_algos.utils.general_functions import load_algo_card, AlgorithmCard
 
 
 class ConstraintEvaluator:
@@ -89,8 +90,8 @@ class AlgorithmFilter:
         self.subproblems = subproblems
         self.evaluator = ConstraintEvaluator()
 
-    def filter(self, algorithms: List['ModelCard'], instance: 'BaseWarehouseDomain',
-               verbose: bool = False) -> List['ModelCard']:
+    def filter(self, algorithms: List['AlgorithmCard'], instance: 'BaseWarehouseDomain',
+               verbose: bool = False) -> List['AlgorithmCard']:
         """
         Filter algorithms to find those feasible for the given instance.
 
@@ -111,8 +112,8 @@ class AlgorithmFilter:
 
         return feasible_algorithms
 
-    def _filter_by_problem(self, algorithms: List['ModelCard'], problem_type: str,
-                           verbose: bool = False) -> List['ModelCard']:
+    def _filter_by_problem(self, algorithms: List['AlgorithmCard'], problem_type: str,
+                           verbose: bool = False) -> List['AlgorithmCard']:
         """
         Filter algorithms by problem type compatibility.
 
@@ -138,9 +139,9 @@ class AlgorithmFilter:
 
         return compatible_algorithms
 
-    def _filter_by_requirements(self, algorithms: List['ModelCard'],
+    def _filter_by_requirements(self, algorithms: List['AlgorithmCard'],
                                 instance: 'BaseWarehouseDomain',
-                                verbose: bool = False) -> List['ModelCard']:
+                                verbose: bool = False) -> List['AlgorithmCard']:
         """
         Filter algorithms by domain requirements.
 
@@ -170,7 +171,7 @@ class AlgorithmFilter:
 
         return feasible_algorithms
 
-    def _is_feasible(self, algorithm: 'ModelCard', instance: 'BaseWarehouseDomain',
+    def _is_feasible(self, algorithm: 'AlgorithmCard', instance: 'BaseWarehouseDomain',
                      verbose: bool = False) -> bool:
         """
         Check if an algorithm is feasible for the given instance.
@@ -184,14 +185,16 @@ class AlgorithmFilter:
             True if algorithm can be executed on this instance
         """
         if verbose:
-            print(f"\n  Checking: {algorithm.model_name}")
+            print(f"\n  Checking: {algorithm.algo_name}")
 
         # Check objective compatibility
-        if algorithm.objective != instance.objective:
-            if verbose:
-                print(f"    ✗ Objective mismatch: algorithm needs '{algorithm.objective}', "
-                      f"instance has '{instance.objective}'")
-            return False
+        # if algorithm.objective != instance.objective:
+        # objectives = SUBPROBLEMS[instance.problem_class]["objectives"]
+        # if algorithm.objective not in objectives:
+        #     if verbose:
+        #         print(f"    ✗ Objective mismatch: algorithm needs '{algorithm.objective}', "
+        #               f"instance has '{objectives}'")
+        #     return False
 
         # Check each domain requirement (layout, resources, orders, storage)
         for domain_name, requirements in algorithm.requirements.items():
@@ -266,8 +269,8 @@ class AlgorithmFilter:
 
 
 # Backward compatibility with old function names
-def match_instance_solver(models: List['ModelCard'], predicate_func: Dict,
-                          problem: str) -> List['ModelCard']:
+def match_instance_solver(models: List['AlgorithmCard'], predicate_func: Dict,
+                          problem: str) -> List['AlgorithmCard']:
     """
     Legacy function: Problem-based filtering only.
     Deprecated: Use AlgorithmFilter.filter() instead.
@@ -276,8 +279,8 @@ def match_instance_solver(models: List['ModelCard'], predicate_func: Dict,
     return filter._filter_by_problem(models, problem, verbose=False)
 
 
-def match_ontology(models: List['ModelCard'], instance: 'BaseWarehouseDomain',
-                   verbose: bool = False) -> List['ModelCard']:
+def match_ontology(models: List['AlgorithmCard'], instance: 'BaseWarehouseDomain',
+                   verbose: bool = False) -> List['AlgorithmCard']:
     """
     Legacy function: Requirement-based filtering only.
     Deprecated: Use AlgorithmFilter.filter() instead.
@@ -319,8 +322,8 @@ if __name__ == "__main__":
 
     evaluator = ConstraintEvaluator()
 
-    algo1 = load_model_card("../src/project_4D4L/algorithms/opt_model_cards/sprp_dp.yaml")
-    algo2 = load_model_card("../src/project_4D4L/algorithms/opt_model_cards/sshape_routing.yaml")
+    algo1 = load_algo_card("../src/project_4D4L/algorithms/opt_model_cards/sprp_dp.yaml")
+    algo2 = load_algo_card("../src/project_4D4L/algorithms/opt_model_cards/sshape_routing.yaml")
 
     algorithms = [algo1, algo2]
 

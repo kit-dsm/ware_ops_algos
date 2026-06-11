@@ -7,8 +7,8 @@ from gurobipy import *
 import gurobipy as gp
 
 from ware_ops_algos.algorithms.algorithm import RoutingSolution, Route, CombinedRoutingSolution, PickPosition, \
-    WarehouseOrder
-from ware_ops_algos.algorithms.batching.batching_utils import build_pick_lists
+    WarehouseOrder, BatchObject
+# from ware_ops_algos.algorithms.batching.batching_utils import build_pick_lists
 from ware_ops_algos.domain_models import Resource
 
 from ware_ops_algos.algorithms.routing import Routing
@@ -594,10 +594,8 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
         self.a = None   # batch-active indicator
         self.t = None   # MTZ position variables
 
-        self.orders: list[WarehouseOrder] | None = None  # for building batches later
-    # ------------------------------------------------------------------
-    # Main entry point
-    # ------------------------------------------------------------------
+        self.orders: list[WarehouseOrder] | None = None
+
     def _run(self, orders: list[WarehouseOrder] = None) -> CombinedRoutingSolution:
         pick_list = []
         self.orders = orders
@@ -655,9 +653,6 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
             o = self.list_order_numbers[i]
             self.items_of_order.setdefault(o, []).append(i)
 
-    # ------------------------------------------------------------------
-    # Decision variables
-    # ------------------------------------------------------------------
     def _set_decision_variables(self):
         n = self.len_item_numbers
         B = self.set_batch_numbers
@@ -745,7 +740,7 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
                         name=f"item_batch_link_{i}_{b}_{o}",
                     )
 
-        # (4) Capacity per batch is measured in total item units (sum of amount per order
+        # (4) Capacity per batch is measured in total item units (sum of amount per order)
         #  sum_o s_o * y[o,b] <= Q
         for b in B:
             self.mdl.addConstr(
@@ -829,15 +824,14 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
 
                     batch_orders = [orders_by_id[i] for i in batch_order_ids]
 
-                    pl = build_pick_lists(batch_orders)
-
+                    # pl = build_pick_lists(batch_orders)
+                    batch = BatchObject(batch_id=b, orders=batch_orders)
                     routes.append(
                         Route(
                             route=list(self.route),
-                            item_sequence=list(self.item_sequence),
                             distance=batch_distance,
-                            pick_list=pl,
-                            annotated_route=self.annotated_route
+                            annotated_route=self.annotated_route,
+                            batch=batch
                         )
                     )
 

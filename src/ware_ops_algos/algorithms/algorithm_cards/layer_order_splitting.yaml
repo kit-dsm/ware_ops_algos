@@ -1,5 +1,5 @@
-algo_name: GreedyIA
-problem_type: item_assignment
+algo_name: LayerPackingSplitting
+problem_type: order_splitting
 description: >
   ...
 
@@ -12,9 +12,10 @@ requirements:
     type:
       - any
     features:
+      - pallet_spec
   orders:
     type:
-      - any
+      - splittable
     features:
       - amount
       - article_id
@@ -24,11 +25,21 @@ requirements:
     features:
       - amount
       - article_id
+  articles:
+    type:
+      - any
+    features:
+      - article_id
+      - weight
+      - volume
+      - width
+      - length
+      - height
 
 objective: Distance
 
 implementation:
-  class_name: GreedyIA
+  class_name: LayerPackingSplitting
   component_name:
   solver:
   type: heuristic

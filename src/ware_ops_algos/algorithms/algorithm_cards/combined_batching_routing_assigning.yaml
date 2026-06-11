@@ -1,4 +1,4 @@
-model_name: CombinedBatchingRoutingAssigning
+algo_name: CombinedBatchingRoutingAssigning
 problem_type: batching_routing
 description: >
   Exact MIP for the joint order batching and picker routing
@@ -25,7 +25,7 @@ requirements:
         equals: [items]
   orders:
     type:
-      - standard
+      - any
   storage:
     type:
       - any

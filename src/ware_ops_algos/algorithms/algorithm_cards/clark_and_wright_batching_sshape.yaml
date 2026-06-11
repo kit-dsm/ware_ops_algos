@@ -1,4 +1,4 @@
-model_name: ClarkAndWrightSShape
+algo_name: ClarkAndWrightSShape
 problem_type: batching
 description: >
   Batching based on the clark and wright savings heuristic with sshape routing
@@ -23,7 +23,7 @@ requirements:
       - dimensions_type
   orders:
     type:
-      - standard
+      - any
     features:
   storage:
     type:

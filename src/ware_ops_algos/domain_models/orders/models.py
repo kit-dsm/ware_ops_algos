@@ -44,6 +44,7 @@ class Order:
     due_date: Optional[datetime.datetime | float] = None
     order_date: Optional[datetime.datetime | float] = None
     order_positions: list[OrderPosition] = field(default_factory=list)
+    parent_order_id: Optional[str] = None
 
     @staticmethod
     def from_dict(order_number: int, data: dict) -> "Order":

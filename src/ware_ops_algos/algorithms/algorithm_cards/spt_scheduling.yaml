@@ -1,4 +1,4 @@
-model_name: SPTScheduling
+algo_name: SPTScheduling
 problem_type: scheduling
 description: >
 
@@ -16,7 +16,7 @@ requirements:
       - time_per_pick
   orders:
     type:
-      - standard
+      - any
     features:
       - due_date
       - order_date
