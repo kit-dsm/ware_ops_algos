@@ -1,0 +1,39 @@
+name: detect-algo-changes.yaml
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: [ algo_manifest.json ]
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -e .
+
+      - name: Fingerprint and diff
+        id: fp
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          import ware_ops_algos.algorithms as a
+          from ware_ops_algos.fingerprint import import_all, build_map
+          import_all(a)
+          new = build_map(a.Algorithm)
+          mf  = pathlib.Path("algo_manifest.json")
+          old = json.loads(mf.read_text()) if mf.exists() else {}
+          changed = [k for k in new if old.get(k) != new[k]] + [k for k in old if k not in new]
+          mf.write_text(json.dumps(new, indent=2, sort_keys=True))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"changed={'true' if changed else 'false'}\n")
+          print("changed:", changed)
+          PY
+
+      - name: Commit updated manifest
+        if: steps.fp.outputs.changed == 'true'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -am "update algo fingerprints" && git push
