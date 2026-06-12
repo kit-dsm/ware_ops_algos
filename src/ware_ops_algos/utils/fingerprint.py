@@ -43,9 +43,9 @@ def inheritors(base: type) -> set[type]:
     return seen
 
 
-def build_map(base: type, *, epoch: str = "") -> dict[str, str]:
+def build_map(base: type) -> dict[str, str]:
     """{qualified name -> hash} for every subclass of `base`."""
     return {
-        f"{c.__module__}.{c.__qualname__}": fingerprint(c, epoch=epoch)
+        f"{c.__module__}.{c.__qualname__}": fingerprint(c)
         for c in sorted(inheritors(base), key=lambda c: (c.__module__, c.__qualname__))
     }
