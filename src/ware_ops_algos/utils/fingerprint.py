@@ -9,7 +9,8 @@ import textwrap
 
 def fingerprint(cls: type, *, length: int = 12) -> str:
     """Hash of a class: its source plus its in-package bases, so a change to an
-    inherited method counts too. Bases outside the algorithm's own top-level
+    inherited method counts too.
+    Bases outside the algorithm's own top-level
     package (object, abc.ABC, third-party) are skipped.
 
     `ast.unparse` regenerates canonical source from the AST, so comments and
