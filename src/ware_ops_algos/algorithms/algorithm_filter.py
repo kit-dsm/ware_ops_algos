@@ -2,8 +2,7 @@ from typing import Any, Dict, List
 import operator
 
 from ware_ops_algos.domain_models import BaseWarehouseDomain
-from ware_ops_algos.domain_models.taxonomy import SUBPROBLEMS
-from ware_ops_algos.utils.general_functions import load_algo_card, AlgorithmCard
+from ware_ops_algos.utils.general_functions import AlgorithmCard
 
 
 class ConstraintEvaluator:
@@ -61,11 +60,11 @@ class ConstraintEvaluator:
         return False
 
 
-class AlgorithmFilter:
+class DomainAlgorithmMapper:
     """
-    Filters algorithms by feasibility for a given warehouse problem instance.
+    Maps which algorithm are feasible for a given warehouse problem instance.
 
-    The filter checks whether algorithms can be executed on an instance by validating:
+    The mapper checks whether algorithms can be executed on an instance by validating:
     1. Problem type compatibility (e.g., routing, batching, storage)
     2. Domain requirements (layout, resources, orders, storage features)
     3. Feature constraints (e.g., n_blocks = 1, n_aisles > 2)
@@ -76,8 +75,8 @@ class AlgorithmFilter:
             "batching": ["order_batching", "wave_planning"]
         }
 
-        filter = AlgorithmFilter(subproblems)
-        feasible_algos = filter.filter(all_algorithms, warehouse_instance)
+        mapper = DomainAlgorithmMapper(subproblems)
+        feasible_algos = mapper.filter(all_algorithms, warehouse_instance)
     """
 
     def __init__(self, subproblems: Dict[str, List[str]]):
@@ -266,86 +265,3 @@ class AlgorithmFilter:
                 return False
 
         return True
-
-
-# Backward compatibility with old function names
-def match_instance_solver(models: List['AlgorithmCard'], predicate_func: Dict,
-                          problem: str) -> List['AlgorithmCard']:
-    """
-    Legacy function: Problem-based filtering only.
-    Deprecated: Use AlgorithmFilter.filter() instead.
-    """
-    filter = AlgorithmFilter(predicate_func)
-    return filter._filter_by_problem(models, problem, verbose=False)
-
-
-def match_ontology(models: List['AlgorithmCard'], instance: 'BaseWarehouseDomain',
-                   verbose: bool = False) -> List['AlgorithmCard']:
-    """
-    Legacy function: Requirement-based filtering only.
-    Deprecated: Use AlgorithmFilter.filter() instead.
-    """
-    filter = AlgorithmFilter({})
-    return filter._filter_by_requirements(models, instance, verbose)
-
-
-# Example usage
-if __name__ == "__main__":
-    print("AlgorithmFilter - Filters algorithms by feasibility for warehouse instances")
-    print("\nExample usage:")
-    print("-" * 60)
-    print("""
-    # 1. Define problem hierarchy
-    subproblems = {
-        "routing": ["single_picker_routing", "tsp"],
-        "batching": ["order_batching", "wave_planning"]
-    }
-
-    # 2. Create filter
-    filter = AlgorithmFilter(subproblems)
-
-    # 3. Load algorithms and instance
-    algorithms = load_model_cards("path/to/algorithms/")
-    warehouse = load_warehouse_instance("instance.yaml")
-
-    # 4. Filter for feasible algorithms
-    feasible = filter.filter(algorithms, warehouse, verbose=True)
-
-    # 5. Use feasible algorithms
-    for algo in feasible:
-        print(f"Can use: {algo.model_name}")
-    """)
-
-    print("\n" + "=" * 60)
-    print("ConstraintEvaluator Examples")
-    print("=" * 60)
-
-    evaluator = ConstraintEvaluator()
-
-    algo1 = load_algo_card("../src/project_4D4L/algorithms/opt_model_cards/sprp_dp.yaml")
-    algo2 = load_algo_card("../src/project_4D4L/algorithms/opt_model_cards/sshape_routing.yaml")
-
-    algorithms = [algo1, algo2]
-
-    layout_constraints = algo1.requirements["layout"]["constraints"]
-    n_blocks_constraint = layout_constraints["n_blocks"]  # {'equals': 1}
-
-    # Test against actual values
-    actual_value = 1
-    result = evaluator.evaluate(actual_value, n_blocks_constraint)
-    print(f"Value {actual_value} satisfies constraint {layout_constraints}: {result}")
-
-    actual_value = 2
-    result = evaluator.evaluate(actual_value, n_blocks_constraint)
-    print(f"Value {actual_value} satisfies constraint {layout_constraints}: {result}")
-    print("Layout constraints:")
-    for feature_name, constraint in layout_constraints.items():
-        print(f"  {feature_name}: {constraint}")
-
-    # domain = build_domain_from_order_files(order_list_path="../../../data/instances/IOPVRP/OrderList_LargeProblems_16_4.txt",
-    #                                        order_line_list_path="../../../data/instances/IOPVRP/OrderLineList_LargeProblems_16_4.txt")
-    #
-    # algo_filter = AlgorithmFilter(SUBPROBLEMS)
-    # feasible = algo_filter.filter(algorithms=algorithms, instance=domain, verbose=True)
-    # print(feasible)
-
