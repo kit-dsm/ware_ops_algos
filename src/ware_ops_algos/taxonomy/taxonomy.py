@@ -8,7 +8,7 @@ TAXONOMY = {
             "variables": ["item_assignment", "order_selection", "routing"]
         },
     "OBRP": {
-        "objectives": ["tardiness", "picking_time", "completion_time"],
+        "objectives": ["distance", "picking_time"],
         "variables": ["item_assignment", "batching", "routing", "batching_routing"]
     },
     "OBSRP": {
