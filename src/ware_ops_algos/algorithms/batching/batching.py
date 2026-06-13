@@ -12,7 +12,7 @@ import pandas as pd
 from ware_ops_algos.algorithms import Algorithm
 from ware_ops_algos.algorithms.batching.batching_utils import CapacityChecker
 from ware_ops_algos.algorithms.routing.routing import Routing
-from ware_ops_algos.algorithms.algorithm import BatchingSolution, BatchObject, WarehouseOrder
+from ware_ops_algos.algorithms.algorithm_interfaces import BatchingSolution, BatchObject, WarehouseOrder
 from ware_ops_algos.domain_models import Order, PickCart, Articles
 
 

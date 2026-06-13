@@ -1,4 +1,3 @@
-from itertools import combinations
 from typing import Optional
 from collections import defaultdict
 
@@ -10,10 +9,10 @@ from gurobipy import GRB
 from matplotlib import pyplot as plt
 import gurobipy as gp
 
-from ware_ops_algos.algorithms.algorithm import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
+from ware_ops_algos.algorithms.algorithm_interfaces import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
     CombinedRoutingSolution
 from ware_ops_algos.domain_models import Resource, OrderPosition, Article, StorageLocations
-from ware_ops_algos.utils.dynamic_programming_helpers import (
+from ware_ops_algos.algorithms.routing.dynamic_programming_helpers import (
     equivalence_classes,
     cross_aisle_mapping,
     table_I,

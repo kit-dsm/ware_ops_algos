@@ -6,7 +6,7 @@ from copy import copy
 from dataclasses import dataclass, field
 
 from ware_ops_algos.algorithms import Algorithm
-from ware_ops_algos.algorithms.algorithm import AlgorithmSolution
+from ware_ops_algos.algorithms.algorithm_interfaces import AlgorithmSolution
 from ware_ops_algos.domain_models import (
     Articles, Order, OrderPosition, Pallet, PalletSpec,
 )

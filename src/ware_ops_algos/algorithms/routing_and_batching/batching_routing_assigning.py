@@ -6,7 +6,7 @@ from abc import ABC
 from gurobipy import *
 import gurobipy as gp
 
-from ware_ops_algos.algorithms.algorithm import RoutingSolution, Route, CombinedRoutingSolution, PickPosition, \
+from ware_ops_algos.algorithms.algorithm_interfaces import RoutingSolution, Route, CombinedRoutingSolution, PickPosition, \
     WarehouseOrder, BatchObject
 # from ware_ops_algos.algorithms.batching.batching_utils import build_pick_lists
 from ware_ops_algos.domain_models import Resource

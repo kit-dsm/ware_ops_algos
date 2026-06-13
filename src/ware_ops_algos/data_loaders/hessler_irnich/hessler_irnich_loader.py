@@ -63,7 +63,7 @@ class HesslerIrnichLoader(DataLoader):
             cache_path = self.cache_dir / f"{filepath.stem}_domain.pkl"
             self.cache_path = cache_path
             if cache_path.exists():
-                from ware_ops_algos.utils.io_helpers import load_pickle
+                from ware_ops_algos.data_loaders.io_helpers import load_pickle
                 return load_pickle(str(cache_path))
 
         # Parse and build
@@ -72,7 +72,7 @@ class HesslerIrnichLoader(DataLoader):
 
         # Save cache
         if use_cache and self.cache_dir:
-            from ware_ops_algos.utils.io_helpers import dump_pickle
+            from ware_ops_algos.data_loaders.io_helpers import dump_pickle
             cache_path = self.cache_dir / f"{filepath.stem}_domain.pkl"
             dump_pickle(str(cache_path), domain)
 
@@ -178,7 +178,7 @@ class HesslerIrnichLoader(DataLoader):
         Returns:
             BaseWarehouseDomain instance
         """
-        from ware_ops_algos.generators import ShelfStorageGraphGenerator
+        from ware_ops_algos.data_loaders.generators import ShelfStorageGraphGenerator
 
         header = parsed["header"]
 

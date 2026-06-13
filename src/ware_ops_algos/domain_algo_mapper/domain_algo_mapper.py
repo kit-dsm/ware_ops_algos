@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 import operator
 
 from ware_ops_algos.domain_models import BaseWarehouseDomain
-from ware_ops_algos.utils.general_functions import AlgorithmCard
+from ware_ops_algos.algorithms.algorithm_cards import AlgorithmCard
 
 
 class ConstraintEvaluator:

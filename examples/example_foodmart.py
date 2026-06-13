@@ -1,5 +1,4 @@
 from pathlib import Path
-import random
 
 from ware_ops_algos.algorithms import (GreedyItemAssignment,
                                        OrderNrFifoBatching,
@@ -7,7 +6,7 @@ from ware_ops_algos.algorithms import (GreedyItemAssignment,
                                        NearestNeighbourhoodRouting,
                                        SShapeRouting)
 from ware_ops_algos.data_loaders import FoodmartLoader
-from ware_ops_algos.utils.visualization import plot_route
+from ware_ops_algos.algorithms.visualization import plot_route
 
 instance_set = "FoodmartData"
 

@@ -2,9 +2,8 @@ import pandas as pd
 import pytest
 from _pytest.python_api import approx
 
-from ware_ops_algos.algorithms import ExactCombinedBatchingRouting, GreedyItemAssignment, CombinedRoutingSolution
-from ware_ops_algos.data_loaders import HesslerIrnichResultsLoader
-from ware_ops_algos.utils.io_helpers import find_project_root
+from ware_ops_algos.algorithms import ExactCombinedBatchingRouting, GreedyItemAssignment
+from tests.conftest import find_project_root
 
 PROJECT_ROOT = find_project_root()
 DATA_DIR = PROJECT_ROOT / "data"

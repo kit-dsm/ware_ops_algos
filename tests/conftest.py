@@ -10,6 +10,15 @@ INSTANCES_DIR = DATA_DIR / "instances"
 CACHE_DIR = INSTANCES_DIR / "caches"
 
 
+def find_project_root() -> Path:
+    """Find project root by looking for a marker file."""
+    current = Path().resolve()
+    for parent in [current] + list(current.parents):
+        if (parent / "pyproject.toml").exists():  # or setup.py, .git, etc.
+            return parent
+    raise FileNotFoundError("Could not find project root")
+
+
 def _load_domain(instance_set: str, instance_file: str):
     loader = HesslerIrnichLoader(
         instances_dir=INSTANCES_DIR / instance_set,

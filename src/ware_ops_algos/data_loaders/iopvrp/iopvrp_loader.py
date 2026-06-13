@@ -140,7 +140,7 @@ class IOPVRPLoader(DataLoader):
         if use_cache and self.cache_dir:
             cache_path = self.cache_dir / f"{cache_key}_domain.pkl"
             if cache_path.exists():
-                from ware_ops_algos.utils.io_helpers import load_pickle
+                from ware_ops_algos.data_loaders.io_helpers import load_pickle
                 self.cache_path = cache_path
                 return load_pickle(str(cache_path))
 
@@ -150,7 +150,7 @@ class IOPVRPLoader(DataLoader):
 
         # Save cache
         if use_cache and self.cache_dir:
-            from ware_ops_algos.utils.io_helpers import dump_pickle
+            from ware_ops_algos.data_loaders.io_helpers import dump_pickle
             cache_path = self.cache_dir / f"{cache_key}_domain.pkl"
             dump_pickle(str(cache_path), domain)
             self.cache_path = cache_path
@@ -221,7 +221,7 @@ class IOPVRPLoader(DataLoader):
         Returns:
             BaseWarehouseDomain instance
         """
-        from ware_ops_algos.generators import MultiBlockShelfStorageGraphGenerator
+        from ware_ops_algos.data_loaders.generators import MultiBlockShelfStorageGraphGenerator
 
         order_df = parsed["orders"]
         line_df = parsed["order_lines"]

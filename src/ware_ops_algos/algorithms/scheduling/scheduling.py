@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import Callable
 
 from ware_ops_algos.algorithms import Algorithm
-from ware_ops_algos.algorithms.algorithm import (
+from ware_ops_algos.algorithms.algorithm_interfaces import (
     Route,
     SchedulingSolution,
     Job,

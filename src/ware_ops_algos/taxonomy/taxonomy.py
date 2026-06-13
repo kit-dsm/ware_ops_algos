@@ -1,4 +1,4 @@
-SUBPROBLEMS = {
+TAXONOMY = {
     "SPRP": {
         "objectives": ["distance", "picking_time"],
         "variables": ["item_assignment", "order_selection", "routing"]

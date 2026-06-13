@@ -14,7 +14,7 @@ from ware_ops_algos.domain_models import (
     DimensionType, WarehouseInfo, WarehouseInfoType
 )
 from ware_ops_algos.domain_models.base_domain import BaseWarehouseDomain
-from ware_ops_algos.utils.io_helpers import dump_pickle, load_pickle
+from ware_ops_algos.data_loaders.io_helpers import dump_pickle, load_pickle
 
 
 class FoodmartLoader(DataLoader):
@@ -249,7 +249,7 @@ class FoodmartLoader(DataLoader):
         Returns:
             BaseWarehouseDomain instance
         """
-        from ware_ops_algos.generators import (
+        from ware_ops_algos.data_loaders.generators import (
             ExplicitGraphGenerator,
             distance_matrix_generator_from_shortest_paths
         )

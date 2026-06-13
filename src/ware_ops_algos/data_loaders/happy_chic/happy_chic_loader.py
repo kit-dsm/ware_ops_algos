@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from copy import deepcopy
 from pathlib import Path
-from typing import Dict, List, Tuple, Any
+from typing import Dict, Any
 
 import networkx as nx
-import pandas as pd
 from scipy.sparse.csgraph import floyd_warshall
 
 from ware_ops_algos.data_loaders.base_data_loader import DataLoader
@@ -62,7 +60,7 @@ class HappyChicLoader(DataLoader):
         if use_cache and self.cache_dir:
             cache_path = self.cache_dir / f"{filepath.stem}_domain.pkl"
             if cache_path.exists():
-                from ware_ops_algos.utils.io_helpers import load_pickle
+                from ware_ops_algos.data_loaders.io_helpers import load_pickle
                 return load_pickle(str(cache_path))
 
         # Parse and build
@@ -71,7 +69,7 @@ class HappyChicLoader(DataLoader):
 
         # Save cache
         if use_cache and self.cache_dir:
-            from ware_ops_algos.utils.io_helpers import dump_pickle
+            from ware_ops_algos.data_loaders.io_helpers import dump_pickle
             cache_path = self.cache_dir / f"{filepath.stem}_domain.pkl"
             dump_pickle(str(cache_path), domain)
 
@@ -297,7 +295,7 @@ class HappyChicLoader(DataLoader):
         Returns:
             BaseWarehouseDomain instance
         """
-        from ware_ops_algos.generators import (
+        from ware_ops_algos.data_loaders.generators import (
             ExplicitGraphGenerator,
             distance_matrix_generator_from_shortest_paths
         )

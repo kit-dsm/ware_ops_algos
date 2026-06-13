@@ -7,7 +7,7 @@ from ware_ops_algos.data_loaders import DataLoader
 from ware_ops_algos.domain_models import BaseWarehouseDomain, Order, Location, Article, PickCart, DimensionType, \
     ResourceType, Resource, Resources, OrdersDomain, OrderType, Articles, ArticleType, StorageLocations, StorageType, \
     LayoutData, LayoutType, LayoutNetwork, LayoutParameters, WarehouseInfo, WarehouseInfoType
-from ware_ops_algos.utils.io_helpers import load_pickle, dump_pickle
+from ware_ops_algos.data_loaders.io_helpers import load_pickle, dump_pickle
 
 
 class IBRSPLoader(DataLoader):
@@ -212,7 +212,7 @@ class IBRSPLoader(DataLoader):
         }
 
     def _build(self, parsed: dict[str, Any]) -> BaseWarehouseDomain:
-        from ware_ops_algos.generators import (
+        from ware_ops_algos.data_loaders.generators import (
             ExplicitGraphGenerator,
             distance_matrix_generator_from_shortest_paths
         )

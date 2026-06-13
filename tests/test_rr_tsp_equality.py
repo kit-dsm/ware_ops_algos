@@ -1,13 +1,10 @@
 import unittest
 
-import networkx as nx
 import pandas as pd
 
 from ware_ops_algos.algorithms import RatliffRosenthalRouting, GreedyItemAssignment, ExactTSPRoutingDistance
 from ware_ops_algos.data_loaders import HesslerIrnichLoader
-from ware_ops_algos.domain_models import Resource, Location, StorageLocations, StorageType, OrderPosition, Order, \
-    OrdersDomain, OrderType
-from ware_ops_algos.utils.io_helpers import find_project_root
+from tests.conftest import find_project_root
 
 
 class RRTSPEquality(unittest.TestCase):
