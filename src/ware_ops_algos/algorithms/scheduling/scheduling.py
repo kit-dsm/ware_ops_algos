@@ -23,6 +23,7 @@ def _processing_time(route: Route, picker: Resource) -> float:
 def build_jobs(
     routes: list[Route],
     resources: Resources,
+    release_time: float | None = None,
 ) -> list[Job]:
     ref_picker = resources.resources[0]
     return [
@@ -30,7 +31,7 @@ def build_jobs(
             job_id=i,
             route=route,
             processing_time=_processing_time(route, ref_picker),
-            release_time=route.arrival_time,
+            release_time=route.arrival_time if release_time is None else release_time,
             due_date=route.earliest_due_date,
             n_picks=len(route.item_sequence)
         )
