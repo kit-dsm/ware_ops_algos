@@ -666,6 +666,174 @@ class NearestNeighbourhoodRouting(HeuristicRouting):
         return self._current_pick_nodes[distances.argmin()]
 
 
+class UShapeRouting(HeuristicRouting):
+    """U-shaped routing for ladder shaped layout.
+
+    Rule:
+    - enter a physical aisle on the right side at the bottom,
+    - pick the right side bottom-up,
+    - cross at the top rung,
+    - pick the left side top-down,
+    - leave the aisle at the bottom.
+    """
+
+    algo_name = "UShapeRouting"
+
+    def __init__(
+        self,
+        start_node: tuple[int, int],
+        end_node: tuple[int, int],
+        closest_node_to_start: tuple[int, int],
+        min_aisle_position: int,
+        max_aisle_position: int,
+        distance_matrix,
+        predecessor_matrix,
+        picker,
+        fixed_depot=True,
+        **kwargs,
+    ):
+        super().__init__(
+            start_node=start_node,
+            end_node=end_node,
+            closest_node_to_start=closest_node_to_start,
+            min_aisle_position=min_aisle_position,
+            max_aisle_position=max_aisle_position,
+            distance_matrix=distance_matrix,
+            predecessor_matrix=predecessor_matrix,
+            picker=picker,
+            fixed_depot=fixed_depot,
+            **kwargs,
+        )
+
+    def _rail_x_values(self) -> list[float]:
+        nodes = list(self.distance_matrix.index)
+
+        rail_x_values = []
+
+        for node in nodes:
+            if not isinstance(node, tuple) or len(node) != 2:
+                continue
+
+            x, y = node
+
+            if y != self.min_aisle_position:
+                continue
+
+            if (x, self.max_aisle_position) in self._node_to_idx:
+                rail_x_values.append(x)
+
+        return sorted(set(rail_x_values))
+
+    def _physical_aisle_pairs(self) -> list[tuple[float, float]]:
+        rails = self._rail_x_values()
+
+        if len(rails) % 2 != 0:
+            raise ValueError(f"Expected an even number of rails, got {len(rails)}: {rails}")
+
+        return [
+            (rails[i], rails[i + 1])  # left_x, right_x
+            for i in range(0, len(rails), 2)
+        ]
+
+    def _pick_y_values(self, rail_x: float, reverse: bool) -> list[float]:
+        y_values = [
+            pos.pick_node[1]
+            for pos in self.current_order
+            if pos.pick_node[0] == rail_x
+        ]
+
+        return sorted(set(y_values), reverse=reverse)
+
+    def _pick_along_rail(
+        self,
+        current_source: tuple[float, float],
+        rail_x: float,
+        y_values: list[float],
+    ) -> tuple[float, float]:
+        for y in y_values:
+            current_source = self._walk_to_target(
+                current_source,
+                (rail_x, y),
+                target_is_pick_node=True,
+            )
+
+        return current_source
+
+    def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
+        self.reset_parameters()
+
+        self.pick_list = list(pick_list)
+        self.current_order = list(pick_list)
+
+        current_source = self._walk_to_target(
+            self.start_node,
+            self.closest_node_to_start,
+        )
+
+        if not self.current_order:
+            self._go_to_end_node(current_source)
+
+            return RoutingSolution(
+                algo_name=self.algo_name,
+                route=Route(
+                    route=self.route,
+                    item_sequence=self.item_sequence,
+                    distance=self.distance,
+                    annotated_route=self.annotated_route,
+                ),
+            )
+
+        rails_with_picks = {
+            pos.pick_node[0]
+            for pos in self.current_order
+        }
+
+        for left_x, right_x in self._physical_aisle_pairs():
+            if left_x not in rails_with_picks and right_x not in rails_with_picks:
+                continue
+
+            right_bottom = (right_x, self.min_aisle_position)
+            right_top = (right_x, self.max_aisle_position)
+            left_top = (left_x, self.max_aisle_position)
+            left_bottom = (left_x, self.min_aisle_position)
+
+            # Enter aisle on the right side.
+            current_source = self._walk_to_target(current_source, right_bottom)
+
+            # Right side: bottom -> top.
+            current_source = self._pick_along_rail(
+                current_source,
+                right_x,
+                self._pick_y_values(right_x, reverse=False),
+            )
+
+            # U-turn at the top.
+            current_source = self._walk_to_target(current_source, right_top)
+            current_source = self._walk_to_target(current_source, left_top)
+
+            # Left side: top -> bottom.
+            current_source = self._pick_along_rail(
+                current_source,
+                left_x,
+                self._pick_y_values(left_x, reverse=True),
+            )
+
+            # Exit at bottom left.
+            current_source = self._walk_to_target(current_source, left_bottom)
+
+        self._go_to_end_node(current_source)
+
+        return RoutingSolution(
+            algo_name=self.algo_name,
+            route=Route(
+                route=self.route,
+                item_sequence=self.item_sequence,
+                distance=self.distance,
+                annotated_route=self.annotated_route,
+            ),
+        )
+
+
 class PickListRouting(HeuristicRouting):
     algo_name = "PickListRouting"
 
