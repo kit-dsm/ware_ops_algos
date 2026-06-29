@@ -27,10 +27,10 @@ class PickPosition:
     amount: int
     pick_node: tuple[int, int]
     in_store: int
-    article_name: Optional[str] = None
+    article_name: Optional[str] = None,
 
 
-@dataclass(frozen=True)
+@dataclass
 class WarehouseOrder:
     order_id: int
     parent_order_id: Optional[int] = None
@@ -39,7 +39,7 @@ class WarehouseOrder:
     pick_positions: tuple[PickPosition, ...] = ()
 
 
-@dataclass(frozen=True)
+@dataclass
 class BatchObject:
     batch_id: int
     orders: list[WarehouseOrder]
