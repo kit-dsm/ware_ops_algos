@@ -101,6 +101,7 @@ class Resource:
     tpe: ResourceType = ResourceType.HUMAN
     tour_setup_time: float = None
     # Dynamic Information
+    available: Optional[bool] = None # "stronger" compared to occupied -> E.g a picker is not available for a shift
     occupied: Optional[bool] = None
     current_location: Optional[tuple[float, float]] = None
 
