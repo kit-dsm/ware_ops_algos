@@ -33,7 +33,8 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: LSBatchingNNDueDate
+  class_name: LocalSearchBatching
+  component_name: LSBatchingNNDueDate
   routing_class: NearestNeighbourhoodRouting
   start_batching_class: DueDateBatching
   type: metaheuristic

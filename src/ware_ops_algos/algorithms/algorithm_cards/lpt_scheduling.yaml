@@ -1,4 +1,4 @@
-algo_name: LPTScheduling
+algo_name: LPTScheduler
 problem_type: scheduling
 description: >
 
@@ -30,5 +30,6 @@ objective: Distance
 
 implementation:
   class_name: LPTScheduling
+  component_name: LPTScheduler
   solver:
   type: heuristic

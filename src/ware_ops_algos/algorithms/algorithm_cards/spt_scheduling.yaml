@@ -1,4 +1,4 @@
-algo_name: SPTScheduling
+algo_name: SPTScheduler
 problem_type: scheduling
 description: >
 
@@ -31,5 +31,6 @@ objective: Distance
 
 implementation:
   class_name: SPTScheduling
+  component_name: SPTScheduling
   solver:
   type: heuristic

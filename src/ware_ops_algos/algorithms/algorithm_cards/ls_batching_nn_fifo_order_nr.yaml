@@ -29,7 +29,8 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: LSBatchingNNFiFoOrderNr
+  class_name: LocalSearchBatching
+  component_name: LSBatchingNNFiFoOrderNr
   routing_class: NearestNeighbourhoodRouting
   start_batching_class: OrderNrFifoBatching
   type: metaheuristic

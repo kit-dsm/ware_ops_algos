@@ -1,4 +1,4 @@
-algo_name: EDDScheduling
+algo_name: EDDScheduler
 problem_type: scheduling
 description: >
 
@@ -31,5 +31,6 @@ objective: Distance
 
 implementation:
   class_name: EDDScheduling
+  component_name: EDDScheduler
   solver:
   type: heuristic

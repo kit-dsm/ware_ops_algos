@@ -36,6 +36,7 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: ClarkAndWrightBatchingRR
+  class_name: ClarkAndWrightBatching
+  component_name: ClarkAndWrightRR
   routing_class: RatliffRosenthalRouting
   type: heuristic

@@ -37,6 +37,7 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: RatliffRosenthal
+  class_name: RatliffRosenthalRouting
+  component_name: RatliffRosenthal
   solver:
   type: exact

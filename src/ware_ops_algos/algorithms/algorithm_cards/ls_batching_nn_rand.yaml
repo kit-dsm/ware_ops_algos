@@ -28,7 +28,8 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: LSBatchingNNRand
+  class_name: LocalSearchBatching
+  component_name: LSBatchingNNRand
   routing_class: NearestNeighbourhoodRouting
   start_batching_class: RandomBatching
   type: metaheuristic
