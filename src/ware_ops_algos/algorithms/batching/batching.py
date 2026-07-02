@@ -99,7 +99,7 @@ class RandomBatching(PriorityBatching):
     """
     algo_name = "RandomBatching"
 
-    def __init__(self, pick_cart: PickCart, articles: Articles, seed=44):
+    def __init__(self, pick_cart: PickCart, articles: Articles, seed=42):
         super().__init__(pick_cart, articles)
 
         self.seed = seed
