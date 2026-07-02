@@ -1,37 +1,106 @@
 name: detect-algo-changes
+
 on:
   push:
-    branches: [ main ]
-    paths-ignore: [ algo_manifest.json ]
+    branches: [main]
+    paths-ignore:
+      - algo_manifest.json
 
 permissions:
-  contents: write              # manifest commit + push
+  contents: write
 
 jobs:
   detect:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-        with: { python-version: '3.12' }
-      - run: uv sync
+        with:
+          fetch-depth: 0
 
-      - name: Fingerprint and diff
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync
+
+      - name: Fingerprint algorithms and cards
         id: fp
         run: |
           uv run python - <<'PY'
-          import json, os, pathlib
+          import hashlib
+          import json
+          import os
+          import pathlib
+
           import ware_ops_algos.algorithms as a
           from ware_ops_algos.utils.fingerprint import import_all, build_map
+
           import_all(a)
-          new = build_map(a.Algorithm)
-          mf  = pathlib.Path("algo_manifest.json")
-          old = json.loads(mf.read_text()) if mf.exists() else {}
-          changed = [k for k in new if old.get(k) != new[k]] + [k for k in old if k not in new]
-          mf.write_text(json.dumps(new, indent=2, sort_keys=True))
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+
+          new = {
+              "algorithms": build_map(a.Algorithm),
+              "algorithm_cards": {},
+          }
+
+          card_dirs = [
+              pathlib.Path("src/ware_ops_algos/algorithms/algorithm_cards"),
+              pathlib.Path("src/ware_ops_algos/algorithms/algo_cards"),
+          ]
+
+          for card_dir in card_dirs:
+              if not card_dir.exists():
+                  continue
+
+              for path in sorted(card_dir.glob("*.y*ml")):
+                  rel = path.as_posix()
+                  digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                  new["algorithm_cards"][rel] = digest
+
+          mf = pathlib.Path("algo_manifest.json")
+          old = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+
+          changed = old != new
+
+          mf.write_text(
+              json.dumps(new, indent=2, sort_keys=True),
+              encoding="utf-8",
+          )
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"changed={'true' if changed else 'false'}\n")
+
           print("changed:", changed)
+          if changed:
+              old_algos = old.get("algorithms", {})
+              new_algos = new.get("algorithms", {})
+
+              changed_algos = [
+                  k for k in new_algos
+                  if old_algos.get(k) != new_algos[k]
+              ] + [
+                  k for k in old_algos
+                  if k not in new_algos
+              ]
+
+              old_cards = old.get("algorithm_cards", {})
+              new_cards = new.get("algorithm_cards", {})
+
+              changed_cards = [
+                  k for k in new_cards
+                  if old_cards.get(k) != new_cards[k]
+              ] + [
+                  k for k in old_cards
+                  if k not in new_cards
+              ]
+
+              print("changed algorithms:", changed_algos)
+              print("changed cards:", changed_cards)
           PY
 
       - name: Commit updated manifest
@@ -39,4 +108,24 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git commit -am "update algo fingerprints" && git push
+
+          git add algo_manifest.json
+
+          if git diff --cached --quiet; then
+            echo "No manifest changes to commit."
+          else
+            git commit -m "update algo fingerprints"
+            git push
+          fi
+
+      - name: Dispatch benchmark run in pipes
+        if: steps.fp.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            repos/kit-dsm/ware_ops_pipes/dispatches \
+            -f event_type=algos-changed \
+            -F client_payload[sha]="$GITHUB_SHA" \
+            -F client_payload[source_repo]="$GITHUB_REPOSITORY"
