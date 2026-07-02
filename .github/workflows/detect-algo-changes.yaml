@@ -125,7 +125,7 @@ jobs:
         run: |
           gh api \
             --method POST \
-            repos/kit-dsm/ware_ops_pipes/dispatches \
+            repos/kit-dsm/ware_pipes_cosy/dispatches \
             -f event_type=algos-changed \
             -F client_payload[sha]="$GITHUB_SHA" \
             -F client_payload[source_repo]="$GITHUB_REPOSITORY"
