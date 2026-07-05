@@ -55,6 +55,29 @@ class AlgorithmCard:
         return f"name={self.algo_name} problem={self.problem_type}>"
 
 
+def _normalize_requirements(requirements: Dict, source: str = "") -> Dict:
+    """Drop None/empty entries from type/features lists (stray YAML dashes).
+
+    Warns with the card source so authoring errors surface instead of silently
+    propagating a 'null' feature into the mapper.
+    """
+    out = {}
+    for section, spec in (requirements or {}).items():
+        spec = dict(spec or {})
+        for key in ("type", "features"):
+            if key in spec:
+                raw = spec[key] or []
+                cleaned = [x for x in raw if x]
+                if len(cleaned) != len(raw):
+                    print(f"{source}: dropped empty entry in {section}.{key}")
+                if cleaned:
+                    spec[key] = cleaned
+                else:
+                    spec.pop(key)
+        out[section] = spec
+    return out
+
+
 def load_algo_card(path: str | Path) -> AlgorithmCard:
     path = Path(path)
 
@@ -63,7 +86,7 @@ def load_algo_card(path: str | Path) -> AlgorithmCard:
     return AlgorithmCard(
         algo_name=data["algo_name"],
         problem_type=data["problem_type"],
-        requirements=data.get("requirements", {}),
+        requirements=_normalize_requirements(data.get("requirements", {}), source=path.name),
         objective=data.get("objective"),
         implementation=data.get("implementation", {}),
         description=data.get("description"),
@@ -100,7 +123,8 @@ _ANY = "any"
 
 
 def _merge_types(a: list, b: list) -> list:
-    a, b = a or [_ANY], b or [_ANY]
+    a = [t for t in (a or []) if t] or [_ANY]
+    b = [t for t in (b or []) if t] or [_ANY]
     if _ANY in a:
         return sorted(set(b))
     if _ANY in b:
@@ -114,6 +138,8 @@ def _merge_types(a: list, b: list) -> list:
 def _merge_features(a: list, b: list) -> list:
     seen, out = set(), []
     for f in list(a or []) + list(b or []):
+        if not f:  # drop None / empty entries from stray YAML dashes
+            continue
         if f not in seen:
             seen.add(f)
             out.append(f)
@@ -209,6 +235,11 @@ def resolve_configuration(
             comp = cards_by_name.get(bound_to)
             if comp is None:
                 raise RequirementConflict(f"{name}: no card named '{bound_to}' for slot '{slot}'")
+            if comp.is_configurable:
+                raise RequirementConflict(
+                    f"{name}: slot '{slot}' bound to configurable card '{bound_to}' "
+                    f"with unresolved slots {sorted(comp.configuration)}; "
+                    f"bind to a resolved configuration instead")
             if comp.problem_type != spec["problem_type"]:
                 raise RequirementConflict(
                     f"{name}: slot '{slot}' expects problem_type={spec['problem_type']}, "
