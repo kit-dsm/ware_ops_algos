@@ -1,0 +1,36 @@
+algo_name: SeedBatching
+problem_type: batching
+description: >
+  Seed batching
+requirements:
+  resources:
+    type: [any]
+    features: [capacities, dimensions_type]
+  orders:
+    type: [any]
+  storage:
+    type: [any]
+objective: Distance
+configuration:
+  seed_criterion:
+    options:
+      CLOSEST_TO_DEPOT:
+        requirements:
+          layout:
+            type: [any]
+            features: [distance_matrix, start_node]
+  similarity_measure:
+    options:
+      MIN_DISTANCE:
+        requirements:
+          layout:
+            type: [any]
+            features: [distance_matrix]
+      SHARED_ARTICLES:
+        requirements:
+          articles:
+            type: [any]
+            features: [article_id]
+implementation:
+  class_name: SeedBatching
+  type: heuristic

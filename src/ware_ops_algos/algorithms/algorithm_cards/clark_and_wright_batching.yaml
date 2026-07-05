@@ -1,0 +1,19 @@
+algo_name: ClarkAndWright
+problem_type: batching
+description: >
+  Batching based on the Clark and Wright savings heuristic
+requirements:
+  resources:
+    type: [human]
+    features: [capacities, dimensions_type]
+  orders:
+    type: [any]
+  storage:
+    type: [any]
+objective: Distance
+configuration:
+  routing_class:
+    problem_type: routing
+implementation:
+  class_name: ClarkAndWrightBatching
+  type: heuristic

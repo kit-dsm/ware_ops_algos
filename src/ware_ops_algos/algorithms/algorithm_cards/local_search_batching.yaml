@@ -1,0 +1,25 @@
+algo_name: LSBatching
+problem_type: batching
+description: >
+  Local search batching metaheuristic
+requirements:
+  resources:
+    type: [any]
+    features: [capacities, dimensions_type]
+  orders:
+    type: [any]
+    features: [order_id]
+    constraints:
+      n_orders:
+        greater_than: 1
+  storage:
+    type: [any]
+objective: Distance
+configuration:
+  routing_class:
+    problem_type: routing
+  start_batching_class:
+    problem_type: batching
+implementation:
+  class_name: LocalSearchBatching
+  type: metaheuristic
