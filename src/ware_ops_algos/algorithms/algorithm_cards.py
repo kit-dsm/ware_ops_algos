@@ -249,8 +249,7 @@ def resolve_configuration(
 
         else:
             raise RequirementConflict(
-                f"{base.algo_name}: option '{option}' declares neither 'problem_type' nor 'options'")
-
+                f"{base.algo_name}: option '{option}' declares neither 'problem_type' nor 'values'")
     implementation = {
         "class_name": base.implementation["class_name"],
         "component_name": name,

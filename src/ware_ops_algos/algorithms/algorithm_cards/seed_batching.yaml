@@ -13,14 +13,14 @@ requirements:
 objective: Distance
 configuration:
   seed_criterion:
-    options:
+    values:
       CLOSEST_TO_DEPOT:
         requirements:
           layout:
             type: [any]
             features: [distance_matrix, start_node]
   similarity_measure:
-    options:
+    values:
       MIN_DISTANCE:
         requirements:
           layout:
