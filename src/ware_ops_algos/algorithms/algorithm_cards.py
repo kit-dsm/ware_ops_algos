@@ -42,15 +42,6 @@ class AlgorithmCard:
         self.description = description
         self.configuration = configuration or {}
 
-    @property
-    def is_configurable(self) -> bool:
-        return bool(self.configuration)
-
-    @property
-    def is_runnable(self) -> bool:
-        """Directly runnable = empty configuration space."""
-        return not self.is_configurable
-
     def __repr__(self):
         return f"name={self.algo_name} problem={self.problem_type}>"
 
@@ -200,26 +191,26 @@ def merge_requirements(a: Dict, b: Dict) -> Dict:
 
 def resolve_configuration(
     base: AlgorithmCard,
-    bind: Dict[str, str],
+    configuration: Dict[str, str],
     name: str,
     cards_by_name: Dict[str, AlgorithmCard],
 ) -> AlgorithmCard:
-    """Resolve one named point in a card's configuration space into a runnable card.
+    """Resolve a configuration (an assignment of the card's slots) into an executable card.
 
-    bind maps slot name -> card algo_name (component slots) or option value (value slots).
+    configuration maps slot name -> card algo_name (component slots) or option value (value slots).
     """
     requirements = base.requirements or {}
     impl_bindings: Dict[str, str] = {}
 
-    unknown = set(bind) - set(base.configuration)
+    unknown = set(configuration) - set(base.configuration)
     if unknown:
         raise RequirementConflict(
             f"{name}: unknown slot(s) {sorted(unknown)} (declared: {sorted(base.configuration)})")
-    unbound = set(base.configuration) - set(bind)
+    unbound = set(base.configuration) - set(configuration)
     if unbound:
         raise RequirementConflict(f"{name}: unbound slot(s): {sorted(unbound)}")
 
-    for slot, bound_to in bind.items():
+    for slot, bound_to in configuration.items():
         spec = base.configuration[slot]
 
         if "options" in spec:  # value slot
@@ -235,18 +226,17 @@ def resolve_configuration(
             comp = cards_by_name.get(bound_to)
             if comp is None:
                 raise RequirementConflict(f"{name}: no card named '{bound_to}' for slot '{slot}'")
-            if comp.is_configurable:
+            if comp.configuration:
                 raise RequirementConflict(
-                    f"{name}: slot '{slot}' bound to configurable card '{bound_to}' "
-                    f"with unresolved slots {sorted(comp.configuration)}; "
-                    f"bind to a resolved configuration instead")
+                    f"{name}: slot '{slot}' refers to card '{bound_to}' with unresolved "
+                    f"slots {sorted(comp.configuration)}; refer to a resolved configuration instead")
             if comp.problem_type != spec["problem_type"]:
                 raise RequirementConflict(
                     f"{name}: slot '{slot}' expects problem_type={spec['problem_type']}, "
                     f"got {comp.problem_type}")
-            # if base.objective and comp.objective and comp.objective != base.objective:
-            #     raise RequirementConflict(
-            #         f"{name}: objective mismatch: base={base.objective}, {comp.algo_name}={comp.objective}")
+            if base.objective and comp.objective and comp.objective != base.objective:
+                raise RequirementConflict(
+                    f"{name}: objective mismatch: base={base.objective}, {comp.algo_name}={comp.objective}")
             requirements = merge_requirements(requirements, comp.requirements)
             impl_bindings[slot] = comp.implementation["class_name"]
 
@@ -264,7 +254,7 @@ def resolve_configuration(
     description = (
         (base.description or "").strip()
         + " configured with "
-        + ", ".join(f"{s}={v}" for s, v in bind.items())
+        + ", ".join(f"{s}={v}" for s, v in configuration.items())
     )
 
     return AlgorithmCard(
@@ -286,7 +276,7 @@ def resolve_configured_cards(
     resolved = []
     for cfg in configurations:
         base = by_name[cfg["base"]]
-        resolved.append(resolve_configuration(base, cfg["bind"], cfg["name"], by_name))
+        resolved.append(resolve_configuration(base, cfg["configuration"], cfg["name"], by_name))
     return resolved
 
 
@@ -346,8 +336,8 @@ def load_packaged_algo_cards() -> List[AlgorithmCard]:
         configurations = load_configurations(cards_path)
 
     resolved = resolve_configured_cards(all_cards, configurations)
-    runnable = [c for c in all_cards if c.is_runnable]
-    return runnable + resolved
+    fully_specified = [c for c in all_cards if not c.configuration]
+    return fully_specified + resolved
 
 
 if __name__ == "__main__":

@@ -2,47 +2,47 @@ configurations:
   # ---- Local search: 3 routings x 3 constructive starts ----
   - name: LSBatchingNNFiFo
     base: LSBatching
-    bind: {routing_class: NearestNeighbourhood, start_batching_class: FiFo}
+    configuration: {routing_class: NearestNeighbourhood, start_batching_class: FiFo}
   - name: LSBatchingNNFiFoOrderNr
     base: LSBatching
-    bind: {routing_class: NearestNeighbourhood, start_batching_class: OrderNrFiFo}
+    configuration: {routing_class: NearestNeighbourhood, start_batching_class: OrderNrFiFo}
   - name: LSBatchingNNDueDate
     base: LSBatching
-    bind: {routing_class: NearestNeighbourhood, start_batching_class: DueDate}
+    configuration: {routing_class: NearestNeighbourhood, start_batching_class: DueDate}
   - name: LSBatchingRRFiFo
     base: LSBatching
-    bind: {routing_class: RatliffRosenthal, start_batching_class: FiFo}
+    configuration: {routing_class: RatliffRosenthal, start_batching_class: FiFo}
   - name: LSBatchingRR   # existing name: RR + OrderNrFiFo
     base: LSBatching
-    bind: {routing_class: RatliffRosenthal, start_batching_class: OrderNrFiFo}
+    configuration: {routing_class: RatliffRosenthal, start_batching_class: OrderNrFiFo}
   - name: LSBatchingRRDueDate
     base: LSBatching
-    bind: {routing_class: RatliffRosenthal, start_batching_class: DueDate}
+    configuration: {routing_class: RatliffRosenthal, start_batching_class: DueDate}
   - name: LSBatchingSShapeFiFo
     base: LSBatching
-    bind: {routing_class: SShape, start_batching_class: FiFo}
+    configuration: {routing_class: SShape, start_batching_class: FiFo}
   - name: LSBatchingSShapeFiFoOrderNr
     base: LSBatching
-    bind: {routing_class: SShape, start_batching_class: OrderNrFiFo}
+    configuration: {routing_class: SShape, start_batching_class: OrderNrFiFo}
   - name: LSBatchingSShapeDueDate
     base: LSBatching
-    bind: {routing_class: SShape, start_batching_class: DueDate}
+    configuration: {routing_class: SShape, start_batching_class: DueDate}
 
   # ---- Clark & Wright savings: 3 routings ----
   - name: ClarkAndWrightNN
     base: ClarkAndWright
-    bind: {routing_class: NearestNeighbourhood}
+    configuration: {routing_class: NearestNeighbourhood}
   - name: ClarkAndWrightRR
     base: ClarkAndWright
-    bind: {routing_class: RatliffRosenthal}
+    configuration: {routing_class: RatliffRosenthal}
   - name: ClarkAndWrightSShape
     base: ClarkAndWright
-    bind: {routing_class: SShape}
+    configuration: {routing_class: SShape}
 
   # ---- Seed batching ----
   - name: ClosestDepotMinDistanceSeedBatching
     base: SeedBatching
-    bind: {seed_criterion: CLOSEST_TO_DEPOT, similarity_measure: MIN_DISTANCE}
+    configuration: {seed_criterion: CLOSEST_TO_DEPOT, similarity_measure: MIN_DISTANCE}
   - name: ClosestDepotMaxSharedArticlesSeedBatching
     base: SeedBatching
-    bind: {seed_criterion: CLOSEST_TO_DEPOT, similarity_measure: SHARED_ARTICLES}
+    configuration: {seed_criterion: CLOSEST_TO_DEPOT, similarity_measure: SHARED_ARTICLES}
