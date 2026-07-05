@@ -15,13 +15,20 @@ class RequirementConflict(Exception):
 
 
 class AlgorithmCard:
-    """An algorithm card = implementation class + requirements + configuration space.
+    """An algorithm card describes an algorithm's subproblem, objective, requirements,
+    and implementation. A card may additionally declare an optional configuration.
 
-    The configuration space may be empty (atomic algorithm, directly runnable) or
-    declare slots. Two slot kinds:
-      - component slot: {"problem_type": <pt>} — domain is all cards of that problem_type
-      - value slot:     {"options": {VALUE: {"requirements": {...}}, ...}} — enum domain,
-                        each option may contribute additional requirements
+    A configuration consists of one or more configuration options. Each option
+    takes a value:
+      - component option: {"problem_type": <subproblem>} — the value is an
+        algorithm card of that subproblem (e.g., any routing card)
+      - value option: {"values": {VALUE: {"requirements": {...}}, ...}} — the
+        value is one of a fixed set declared on the card; values may carry
+        requirements of their own
+
+    Resolving a configuration (see resolve_configuration) selects one value per
+    option and produces an ordinary algorithm card whose requirements combine
+    those of this card and of every selected value.
     """
 
     def __init__(
@@ -195,59 +202,59 @@ def resolve_configuration(
     name: str,
     cards_by_name: Dict[str, AlgorithmCard],
 ) -> AlgorithmCard:
-    """Resolve a configuration (an assignment of the card's slots) into an executable card.
+    """Resolve a configuration (an assignment of the card's options) into an executable card.
 
-    configuration maps slot name -> card algo_name (component slots) or option value (value slots).
+    configuration maps option name -> card algo_name (component options) or option value (value options).
     """
     requirements = base.requirements or {}
-    impl_bindings: Dict[str, str] = {}
+    selected_values: Dict[str, str] = {}
 
     unknown = set(configuration) - set(base.configuration)
     if unknown:
         raise RequirementConflict(
-            f"{name}: unknown slot(s) {sorted(unknown)} (declared: {sorted(base.configuration)})")
-    unbound = set(base.configuration) - set(configuration)
-    if unbound:
-        raise RequirementConflict(f"{name}: unbound slot(s): {sorted(unbound)}")
+            f"{name}: unknown option(s) {sorted(unknown)} (declared: {sorted(base.configuration)})")
+    missing = set(base.configuration) - set(configuration)
+    if missing:
+        raise RequirementConflict(f"{name}: no value selected for option(s): {sorted(missing)}")
 
-    for slot, bound_to in configuration.items():
-        spec = base.configuration[slot]
+    for option, value in configuration.items():
+        spec = base.configuration[option]
 
-        if "options" in spec:  # value slot
-            if bound_to not in spec["options"]:
+        if "values" in spec:  # value option
+            if value not in spec["values"]:
                 raise RequirementConflict(
-                    f"{name}: '{bound_to}' not a valid option for slot '{slot}' "
-                    f"(options: {sorted(spec['options'])})")
-            option = spec["options"][bound_to] or {}
-            requirements = merge_requirements(requirements, option.get("requirements", {}))
-            impl_bindings[slot] = bound_to
+                    f"{name}: '{value}' not a valid value for option '{option}' "
+                    f"(values: {sorted(spec['values'])})")
+            value_spec = spec["values"][value] or {}
+            requirements = merge_requirements(requirements, value_spec.get("requirements", {}))
+            selected_values[option] = value
 
-        elif "problem_type" in spec:  # component slot
-            comp = cards_by_name.get(bound_to)
+        elif "problem_type" in spec:  # component option
+            comp = cards_by_name.get(value)
             if comp is None:
-                raise RequirementConflict(f"{name}: no card named '{bound_to}' for slot '{slot}'")
+                raise RequirementConflict(f"{name}: no card named '{value}' for option '{option}'")
             if comp.configuration:
                 raise RequirementConflict(
-                    f"{name}: slot '{slot}' refers to card '{bound_to}' with unresolved "
-                    f"slots {sorted(comp.configuration)}; refer to a resolved configuration instead")
+                    f"{name}: option '{option}' refers to card '{value}' with unresolved "
+                    f"options {sorted(comp.configuration)}; refer to a resolved configuration instead")
             if comp.problem_type != spec["problem_type"]:
                 raise RequirementConflict(
-                    f"{name}: slot '{slot}' expects problem_type={spec['problem_type']}, "
+                    f"{name}: option '{option}' expects problem_type={spec['problem_type']}, "
                     f"got {comp.problem_type}")
             if base.objective and comp.objective and comp.objective != base.objective:
                 raise RequirementConflict(
                     f"{name}: objective mismatch: base={base.objective}, {comp.algo_name}={comp.objective}")
             requirements = merge_requirements(requirements, comp.requirements)
-            impl_bindings[slot] = comp.implementation["class_name"]
+            selected_values[option] = comp.implementation["class_name"]
 
         else:
             raise RequirementConflict(
-                f"{base.algo_name}: slot '{slot}' declares neither 'problem_type' nor 'options'")
+                f"{base.algo_name}: option '{option}' declares neither 'problem_type' nor 'options'")
 
     implementation = {
         "class_name": base.implementation["class_name"],
         "component_name": name,
-        **impl_bindings,
+        **selected_values,
         "type": base.implementation.get("type", "heuristic"),
     }
 
@@ -287,9 +294,6 @@ def load_configurations(directory: str | Path) -> List[Dict]:
     with open(path, 'r') as f:
         data = yaml.safe_load(f) or {}
     return data.get("configurations", [])
-
-
-# ---------------------------------------------------------------------------
 
 
 def import_algo_class(cls_name: str, module_path: str | Path):
