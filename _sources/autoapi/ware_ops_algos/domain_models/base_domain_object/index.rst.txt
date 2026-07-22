@@ -1,0 +1,46 @@
+ware_ops_algos.domain_models.base_domain_object
+===============================================
+
+.. py:module:: ware_ops_algos.domain_models.base_domain_object
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.base_domain_object.T
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.base_domain_object.BaseDomainObject
+
+
+Module Contents
+---------------
+
+.. py:data:: T
+
+.. py:class:: BaseDomainObject
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`T`\ ]
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  T
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+   .. py:method:: get_type_value() -> str
+
+

@@ -1,0 +1,174 @@
+ware_ops_algos.algorithms.item_assignment.item_assignment
+=========================================================
+
+.. py:module:: ware_ops_algos.algorithms.item_assignment.item_assignment
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.item_assignment.item_assignment.PROJECT_ROOT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.item_assignment.item_assignment.ItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.GreedyItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.NearestNeighborItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.PriorityItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.SinglePositionItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.MinMaxItemAssignment
+   ware_ops_algos.algorithms.item_assignment.item_assignment.MinMinItemAssignment
+
+
+Module Contents
+---------------
+
+.. py:class:: ItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.domain_models.Order`\ ]\ , :py:obj:`ware_ops_algos.algorithms.ItemAssignmentSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: storage_locations
+
+
+.. py:class:: GreedyItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Greedy item assignment heuristic. Assigns items from locations with the highest inventory level first
+   until demand is satisfied.
+
+
+   .. py:attribute:: algo_name
+      :value: 'GIA'
+
+
+
+.. py:class:: NearestNeighborItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[int, int] = (0, 0), **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Simple nearest neighborhood based item assignment heuristic. Selects closest to the current location until demand
+   is satisfied.
+
+   Based on:
+       Weidinger, F., Boysen, N., & Schneider, M. (2019). Picker routing
+       in the mixed-shelves warehouses of e-commerce retailers. European
+       Journal of Operational Research, 274(2), 501-515.
+       https://doi.org/10.1016/j.ejor.2018.10.021
+
+
+   .. py:attribute:: algo_name
+      :value: 'NNIA'
+
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: start_node
+      :value: (0, 0)
+
+
+
+.. py:class:: PriorityItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Base class for Weidinger item assignment algorithms.
+
+   Based on:
+       Weidinger, F. (2018). Picker routing in rectangular mixed shelves
+       warehouses. Computers & Operations Research, 95, 139-150.
+       https://doi.org/10.1016/j.cor.2018.03.012
+
+
+   .. py:attribute:: storage_locations
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: q_max
+
+
+.. py:class:: SinglePositionItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, routing_class: Type[ware_ops_algos.algorithms.Routing], routing_class_kwargs: dict, **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Base class for Weidinger item assignment algorithms.
+
+   Based on:
+       Weidinger, F. (2018). Picker routing in rectangular mixed shelves
+       warehouses. Computers & Operations Research, 95, 139-150.
+       https://doi.org/10.1016/j.cor.2018.03.012
+
+
+   .. py:attribute:: algo_name
+      :value: 'SPIA'
+
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMaxItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMax
+
+   Process SKUs by fewest locations first.
+   Priority = MAX distance to any already-selected position.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MinMaxIA'
+
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMinItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMin
+
+   Process SKUs by fewest locations first.
+   Priority = MIN distance to any already-selected position.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MinMinIA'
+
+
+
+   .. py:attribute:: start_node
+
+
+.. py:data:: PROJECT_ROOT
+

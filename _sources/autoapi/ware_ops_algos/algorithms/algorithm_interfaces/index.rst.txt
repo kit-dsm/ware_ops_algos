@@ -1,0 +1,440 @@
+ware_ops_algos.algorithms.algorithm_interfaces
+==============================================
+
+.. py:module:: ware_ops_algos.algorithms.algorithm_interfaces
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_interfaces.I
+   ware_ops_algos.algorithms.algorithm_interfaces.O
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.PickPosition
+   ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder
+   ware_ops_algos.algorithms.algorithm_interfaces.BatchObject
+   ware_ops_algos.algorithms.algorithm_interfaces.NodeType
+   ware_ops_algos.algorithms.algorithm_interfaces.RouteNode
+   ware_ops_algos.algorithms.algorithm_interfaces.Route
+   ware_ops_algos.algorithms.algorithm_interfaces.Job
+   ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob
+   ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution
+   ware_ops_algos.algorithms.algorithm_interfaces.Algorithm
+
+
+Module Contents
+---------------
+
+.. py:data:: I
+
+.. py:data:: O
+
+.. py:class:: AlgorithmSolution
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: execution_time
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: provenance
+      :type:  dict[str, Any]
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: (None,)
+
+
+
+.. py:class:: WarehouseOrder
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_positions
+      :type:  tuple[PickPosition, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: BatchObject
+
+   .. py:attribute:: batch_id
+      :type:  int
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+   .. py:property:: pick_positions
+      :type: list[PickPosition]
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+      The time at which all orders in this batch had arrived.
+
+
+.. py:class:: NodeType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Create a collection of name/value pairs.
+
+   Example enumeration:
+
+   >>> class Color(Enum):
+   ...     RED = 1
+   ...     BLUE = 2
+   ...     GREEN = 3
+
+   Access them by:
+
+   - attribute access:
+
+     >>> Color.RED
+     <Color.RED: 1>
+
+   - value lookup:
+
+     >>> Color(1)
+     <Color.RED: 1>
+
+   - name lookup:
+
+     >>> Color['RED']
+     <Color.RED: 1>
+
+   Enumerations can be iterated over, and know how many members they have:
+
+   >>> len(Color)
+   3
+
+   >>> list(Color)
+   [<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+   Methods can be added to enumerations, and members can have their own
+   attributes -- see the documentation for details.
+
+
+   .. py:attribute:: PICK
+
+
+   .. py:attribute:: ROUTE
+
+
+.. py:class:: RouteNode
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   .. py:attribute:: position
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: node_type
+      :type:  NodeType
+
+
+.. py:class:: Route
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Optional[list[tuple[float, float]]]
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  Optional[list]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+   .. py:attribute:: service_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:property:: has_sequence
+      :type: bool
+
+
+
+   .. py:property:: node_sequence
+      :type: list[tuple[int, int]]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: Job
+
+   Scheduler input. Stores only what's new at this stage:
+   a stable id and the resource-dependent processing time.
+   Everything else is forwarded from the route.
+
+
+   .. py:attribute:: job_id
+      :type:  int
+
+
+   .. py:attribute:: processing_time
+      :type:  float
+
+
+   .. py:attribute:: release_time
+      :type:  float
+
+
+   .. py:attribute:: due_date
+      :type:  float
+
+
+   .. py:attribute:: n_picks
+      :type:  int
+
+
+   .. py:attribute:: route
+      :type:  Optional[Route]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:property:: distance
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: ScheduledJob
+
+   A Job placed on a picker at a concrete start/end time.
+   Performance metrics are properties.
+
+
+   .. py:attribute:: job
+      :type:  Job
+
+
+   .. py:attribute:: picker_id
+      :type:  str
+
+
+   .. py:attribute:: start_time
+      :type:  float
+
+
+   .. py:attribute:: end_time
+      :type:  float
+
+
+   .. py:property:: tardiness
+      :type: float
+
+
+
+   .. py:property:: lateness
+      :type: float
+
+
+
+   .. py:property:: is_on_time
+      :type: bool
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: ItemAssignmentSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: resolved_orders
+      :type:  list[WarehouseOrder]
+      :value: []
+
+
+
+.. py:class:: BatchingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: batches
+      :type:  list[BatchObject]
+      :value: []
+
+
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  list[Route]
+      :value: []
+
+
+
+.. py:class:: SchedulingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: jobs
+      :type:  list[ScheduledJob]
+      :value: []
+
+
+
+.. py:class:: Algorithm(seed: Optional[int] = None)
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`I`\ , :py:obj:`O`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: 'Algorithm'
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: solve(input_data: I) -> O
+
+

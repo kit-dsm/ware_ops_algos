@@ -1,0 +1,62 @@
+ware_ops_algos.algorithms.order_splitting.order_splitting
+=========================================================
+
+.. py:module:: ware_ops_algos.algorithms.order_splitting.order_splitting
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.order_splitting.order_splitting.OrderSplittingSolution
+   ware_ops_algos.algorithms.order_splitting.order_splitting.OrderSplitting
+   ware_ops_algos.algorithms.order_splitting.order_splitting.LayerPackingSplitting
+
+
+Module Contents
+---------------
+
+.. py:class:: OrderSplittingSolution
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution`
+
+
+   .. py:attribute:: orders
+      :type:  list[ware_ops_algos.domain_models.Order]
+      :value: []
+
+
+
+.. py:class:: OrderSplitting(articles: ware_ops_algos.domain_models.Articles, pallet_spec: ware_ops_algos.domain_models.PalletSpec = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.domain_models.Order`\ ]\ , :py:obj:`OrderSplittingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: pallet_spec
+
+
+   .. py:attribute:: article_map
+
+
+.. py:class:: LayerPackingSplitting(articles: ware_ops_algos.domain_models.Articles, pallet_spec: ware_ops_algos.domain_models.PalletSpec = None, **kwargs)
+
+   Bases: :py:obj:`OrderSplitting`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'LayerPackingSplitting'
+
+
+

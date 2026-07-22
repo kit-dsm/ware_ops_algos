@@ -1,0 +1,929 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="prefetch" href="../../../../_static/favicon.png" as="image">
+
+    <link rel="shortcut icon" href="../../../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>ware_ops_algos.algorithms.algorithm_interfaces - ware_ops_algos: Algorithms for warehouse operations</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #0080c0;
+  --color-brand-content: #0080c0;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #00b4d8;
+  --color-brand-content: #00b4d8;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">ware_ops_algos: Algorithms for warehouse operations</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/favicon.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../_sources/autoapi/ware_ops_algos/algorithms/algorithm_interfaces/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-ware_ops_algos.algorithms.algorithm_interfaces">
+<span id="ware-ops-algos-algorithms-algorithm-interfaces"></span><h1>ware_ops_algos.algorithms.algorithm_interfaces<a class="headerlink" href="#module-ware_ops_algos.algorithms.algorithm_interfaces" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.I" title="ware_ops_algos.algorithms.algorithm_interfaces.I"><code class="xref py py-obj docutils literal notranslate"><span class="pre">I</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.O" title="ware_ops_algos.algorithms.algorithm_interfaces.O"><code class="xref py py-obj docutils literal notranslate"><span class="pre">O</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition" title="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickPosition</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder" title="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WarehouseOrder</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject" title="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BatchObject</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType" title="ware_ops_algos.algorithms.algorithm_interfaces.NodeType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodeType</span></code></a></p></td>
+<td><p>Create a collection of name/value pairs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode" title="ware_ops_algos.algorithms.algorithm_interfaces.RouteNode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RouteNode</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route" title="ware_ops_algos.algorithms.algorithm_interfaces.Route"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Route</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job" title="ware_ops_algos.algorithms.algorithm_interfaces.Job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Job</span></code></a></p></td>
+<td><p>Scheduler input. Stores only what's new at this stage:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob" title="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScheduledJob</span></code></a></p></td>
+<td><p>A Job placed on a picker at a concrete start/end time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemAssignmentSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BatchingSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RoutingSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CombinedRoutingSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SchedulingSolution</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm" title="ware_ops_algos.algorithms.algorithm_interfaces.Algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Algorithm</span></code></a></p></td>
+<td><p>Abstract base class for all algorithms (routing, batching, etc.).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.I">
+<span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">I</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#I"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.I" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.O">
+<span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">O</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#O"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.O" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">AlgorithmSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#AlgorithmSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#AlgorithmSolution.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.execution_time">
+<span class="sig-name descname"><span class="pre">execution_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#AlgorithmSolution.execution_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.execution_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.provenance">
+<span class="sig-name descname"><span class="pre">provenance</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#AlgorithmSolution.provenance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.provenance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">PickPosition</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.order_number">
+<span class="sig-name descname"><span class="pre">order_number</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.order_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.order_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_id">
+<span class="sig-name descname"><span class="pre">article_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.article_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.amount">
+<span class="sig-name descname"><span class="pre">amount</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.amount" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.pick_node">
+<span class="sig-name descname"><span class="pre">pick_node</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.pick_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.pick_node" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.in_store">
+<span class="sig-name descname"><span class="pre">in_store</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.in_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.in_store" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_name">
+<span class="sig-name descname"><span class="pre">article_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(None,)</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#PickPosition.article_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">WarehouseOrder</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_id">
+<span class="sig-name descname"><span class="pre">order_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder.order_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.parent_order_id">
+<span class="sig-name descname"><span class="pre">parent_order_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder.parent_order_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.parent_order_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.due_date">
+<span class="sig-name descname"><span class="pre">due_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder.due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.due_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_date">
+<span class="sig-name descname"><span class="pre">order_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder.order_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.pick_positions">
+<span class="sig-name descname"><span class="pre">pick_positions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition" title="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition"><span class="pre">PickPosition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ellipsis</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#WarehouseOrder.pick_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.pick_positions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">BatchObject</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.batch_id">
+<span class="sig-name descname"><span class="pre">batch_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.batch_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.batch_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.orders">
+<span class="sig-name descname"><span class="pre">orders</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder" title="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder"><span class="pre">WarehouseOrder</span></a><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.orders" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.pick_positions">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pick_positions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition" title="ware_ops_algos.algorithms.algorithm_interfaces.PickPosition"><span class="pre">PickPosition</span></a><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.pick_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.pick_positions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.order_numbers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">order_numbers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.order_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.order_numbers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.earliest_due_date">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">earliest_due_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.earliest_due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.earliest_due_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.arrival_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">arrival_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchObject.arrival_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.arrival_time" title="Link to this definition">¶</a></dt>
+<dd><p>The time at which all orders in this batch had arrived.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.NodeType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">NodeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#NodeType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">BLUE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">... </span>    <span class="n">GREEN</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Access them by:</p>
+<ul>
+<li><p>attribute access:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>value lookup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>name lookup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="p">[</span><span class="s1">&#39;RED&#39;</span><span class="p">]</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+<span class="go">[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]</span>
+</pre></div>
+</div>
+<p>Methods can be added to enumerations, and members can have their own
+attributes – see the documentation for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.NodeType.PICK">
+<span class="sig-name descname"><span class="pre">PICK</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#NodeType.PICK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType.PICK" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.NodeType.ROUTE">
+<span class="sig-name descname"><span class="pre">ROUTE</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#NodeType.ROUTE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType.ROUTE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.RouteNode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">RouteNode</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#RouteNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.position">
+<span class="sig-name descname"><span class="pre">position</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#RouteNode.position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.position" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.node_type">
+<span class="sig-name descname"><span class="pre">node_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType" title="ware_ops_algos.algorithms.algorithm_interfaces.NodeType"><span class="pre">NodeType</span></a></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#RouteNode.node_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.node_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">Route</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.distance">
+<span class="sig-name descname"><span class="pre">distance</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.distance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.route">
+<span class="sig-name descname"><span class="pre">route</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.item_sequence">
+<span class="sig-name descname"><span class="pre">item_sequence</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.item_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.item_sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject" title="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject"><span class="pre">BatchObject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.batch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.annotated_route">
+<span class="sig-name descname"><span class="pre">annotated_route</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode" title="ware_ops_algos.algorithms.algorithm_interfaces.RouteNode"><span class="pre">RouteNode</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.annotated_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.annotated_route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.service_time">
+<span class="sig-name descname"><span class="pre">service_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.service_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.service_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.has_sequence">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_sequence</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.has_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.has_sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.node_sequence">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">node_sequence</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.node_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.node_sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.earliest_due_date">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">earliest_due_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.earliest_due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.earliest_due_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.arrival_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">arrival_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.arrival_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.arrival_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Route.order_numbers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">order_numbers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Route.order_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.order_numbers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job" title="Link to this definition">¶</a></dt>
+<dd><p>Scheduler input. Stores only what’s new at this stage:
+a stable id and the resource-dependent processing time.
+Everything else is forwarded from the route.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.job_id">
+<span class="sig-name descname"><span class="pre">job_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.job_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.job_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.processing_time">
+<span class="sig-name descname"><span class="pre">processing_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.processing_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.processing_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.release_time">
+<span class="sig-name descname"><span class="pre">release_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.release_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.release_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.due_date">
+<span class="sig-name descname"><span class="pre">due_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.due_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.n_picks">
+<span class="sig-name descname"><span class="pre">n_picks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.n_picks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.n_picks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.route">
+<span class="sig-name descname"><span class="pre">route</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route" title="ware_ops_algos.algorithms.algorithm_interfaces.Route"><span class="pre">Route</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject" title="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject"><span class="pre">BatchObject</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.batch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.distance">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">distance</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.distance" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Job.order_numbers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">order_numbers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Job.order_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.order_numbers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">ScheduledJob</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob" title="Link to this definition">¶</a></dt>
+<dd><p>A Job placed on a picker at a concrete start/end time.
+Performance metrics are properties.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.job">
+<span class="sig-name descname"><span class="pre">job</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job" title="ware_ops_algos.algorithms.algorithm_interfaces.Job"><span class="pre">Job</span></a></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.job" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.picker_id">
+<span class="sig-name descname"><span class="pre">picker_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.picker_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.picker_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.start_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.start_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.end_time">
+<span class="sig-name descname"><span class="pre">end_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.end_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.end_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.tardiness">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tardiness</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.tardiness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.tardiness" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.lateness">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lateness</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.lateness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.lateness" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.is_on_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_on_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.is_on_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.is_on_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.order_numbers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">order_numbers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ScheduledJob.order_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.order_numbers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">ItemAssignmentSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ItemAssignmentSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution.resolved_orders">
+<span class="sig-name descname"><span class="pre">resolved_orders</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder" title="ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder"><span class="pre">WarehouseOrder</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#ItemAssignmentSolution.resolved_orders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution.resolved_orders" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">BatchingSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchingSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution.batches">
+<span class="sig-name descname"><span class="pre">batches</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject" title="ware_ops_algos.algorithms.algorithm_interfaces.BatchObject"><span class="pre">BatchObject</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#BatchingSolution.batches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution.batches" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">RoutingSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#RoutingSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution.route">
+<span class="sig-name descname"><span class="pre">route</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route" title="ware_ops_algos.algorithms.algorithm_interfaces.Route"><span class="pre">Route</span></a></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#RoutingSolution.route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution.route" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">CombinedRoutingSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#CombinedRoutingSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution.routes">
+<span class="sig-name descname"><span class="pre">routes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route" title="ware_ops_algos.algorithms.algorithm_interfaces.Route"><span class="pre">Route</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#CombinedRoutingSolution.routes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution.routes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">SchedulingSolution</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#SchedulingSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution" title="ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution.jobs">
+<span class="sig-name descname"><span class="pre">jobs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob" title="ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob"><span class="pre">ScheduledJob</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#SchedulingSolution.jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution.jobs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Algorithm">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ware_ops_algos.algorithms.algorithm_interfaces.</span></span><span class="sig-name descname"><span class="pre">Algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Algorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.I" title="ware_ops_algos.algorithms.algorithm_interfaces.I"><code class="xref py py-obj docutils literal notranslate"><span class="pre">I</span></code></a>, <a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.O" title="ware_ops_algos.algorithms.algorithm_interfaces.O"><code class="xref py py-obj docutils literal notranslate"><span class="pre">O</span></code></a>]</p>
+<p>Abstract base class for all algorithms (routing, batching, etc.).
+Handles timing, algo naming, and ensures consistent result metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.algo_name">
+<span class="sig-name descname"><span class="pre">algo_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Algorithm'</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Algorithm.algo_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.algo_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Algorithm.logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.I" title="ware_ops_algos.algorithms.algorithm_interfaces.I"><span class="pre">I</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.O" title="ware_ops_algos.algorithms.algorithm_interfaces.O"><span class="pre">O</span></a></span></span><a class="reference internal" href="../../../../_modules/ware_ops_algos/algorithms/algorithm_interfaces.html#Algorithm.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.solve" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ware_ops_algos.algorithms.algorithm_interfaces</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.I"><code class="docutils literal notranslate"><span class="pre">I</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.O"><code class="docutils literal notranslate"><span class="pre">O</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution"><code class="docutils literal notranslate"><span class="pre">AlgorithmSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.algo_name"><code class="docutils literal notranslate"><span class="pre">AlgorithmSolution.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.execution_time"><code class="docutils literal notranslate"><span class="pre">AlgorithmSolution.execution_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.AlgorithmSolution.provenance"><code class="docutils literal notranslate"><span class="pre">AlgorithmSolution.provenance</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition"><code class="docutils literal notranslate"><span class="pre">PickPosition</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.order_number"><code class="docutils literal notranslate"><span class="pre">PickPosition.order_number</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_id"><code class="docutils literal notranslate"><span class="pre">PickPosition.article_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.amount"><code class="docutils literal notranslate"><span class="pre">PickPosition.amount</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.pick_node"><code class="docutils literal notranslate"><span class="pre">PickPosition.pick_node</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.in_store"><code class="docutils literal notranslate"><span class="pre">PickPosition.in_store</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.PickPosition.article_name"><code class="docutils literal notranslate"><span class="pre">PickPosition.article_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_id"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder.order_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.parent_order_id"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder.parent_order_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.due_date"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder.due_date</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.order_date"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder.order_date</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder.pick_positions"><code class="docutils literal notranslate"><span class="pre">WarehouseOrder.pick_positions</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject"><code class="docutils literal notranslate"><span class="pre">BatchObject</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.batch_id"><code class="docutils literal notranslate"><span class="pre">BatchObject.batch_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.orders"><code class="docutils literal notranslate"><span class="pre">BatchObject.orders</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.pick_positions"><code class="docutils literal notranslate"><span class="pre">BatchObject.pick_positions</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.order_numbers"><code class="docutils literal notranslate"><span class="pre">BatchObject.order_numbers</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.earliest_due_date"><code class="docutils literal notranslate"><span class="pre">BatchObject.earliest_due_date</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchObject.arrival_time"><code class="docutils literal notranslate"><span class="pre">BatchObject.arrival_time</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType"><code class="docutils literal notranslate"><span class="pre">NodeType</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType.PICK"><code class="docutils literal notranslate"><span class="pre">NodeType.PICK</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.NodeType.ROUTE"><code class="docutils literal notranslate"><span class="pre">NodeType.ROUTE</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode"><code class="docutils literal notranslate"><span class="pre">RouteNode</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.position"><code class="docutils literal notranslate"><span class="pre">RouteNode.position</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RouteNode.node_type"><code class="docutils literal notranslate"><span class="pre">RouteNode.node_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route"><code class="docutils literal notranslate"><span class="pre">Route</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.distance"><code class="docutils literal notranslate"><span class="pre">Route.distance</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.route"><code class="docutils literal notranslate"><span class="pre">Route.route</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.item_sequence"><code class="docutils literal notranslate"><span class="pre">Route.item_sequence</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.batch"><code class="docutils literal notranslate"><span class="pre">Route.batch</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.annotated_route"><code class="docutils literal notranslate"><span class="pre">Route.annotated_route</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.service_time"><code class="docutils literal notranslate"><span class="pre">Route.service_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.has_sequence"><code class="docutils literal notranslate"><span class="pre">Route.has_sequence</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.node_sequence"><code class="docutils literal notranslate"><span class="pre">Route.node_sequence</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.earliest_due_date"><code class="docutils literal notranslate"><span class="pre">Route.earliest_due_date</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.arrival_time"><code class="docutils literal notranslate"><span class="pre">Route.arrival_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Route.order_numbers"><code class="docutils literal notranslate"><span class="pre">Route.order_numbers</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job"><code class="docutils literal notranslate"><span class="pre">Job</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.job_id"><code class="docutils literal notranslate"><span class="pre">Job.job_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.processing_time"><code class="docutils literal notranslate"><span class="pre">Job.processing_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.release_time"><code class="docutils literal notranslate"><span class="pre">Job.release_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.due_date"><code class="docutils literal notranslate"><span class="pre">Job.due_date</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.n_picks"><code class="docutils literal notranslate"><span class="pre">Job.n_picks</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.route"><code class="docutils literal notranslate"><span class="pre">Job.route</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.batch"><code class="docutils literal notranslate"><span class="pre">Job.batch</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.distance"><code class="docutils literal notranslate"><span class="pre">Job.distance</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Job.order_numbers"><code class="docutils literal notranslate"><span class="pre">Job.order_numbers</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob"><code class="docutils literal notranslate"><span class="pre">ScheduledJob</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.job"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.job</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.picker_id"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.picker_id</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.start_time"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.start_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.end_time"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.end_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.tardiness"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.tardiness</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.lateness"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.lateness</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.is_on_time"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.is_on_time</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob.order_numbers"><code class="docutils literal notranslate"><span class="pre">ScheduledJob.order_numbers</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution"><code class="docutils literal notranslate"><span class="pre">ItemAssignmentSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.ItemAssignmentSolution.resolved_orders"><code class="docutils literal notranslate"><span class="pre">ItemAssignmentSolution.resolved_orders</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution"><code class="docutils literal notranslate"><span class="pre">BatchingSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution.batches"><code class="docutils literal notranslate"><span class="pre">BatchingSolution.batches</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution"><code class="docutils literal notranslate"><span class="pre">RoutingSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution.route"><code class="docutils literal notranslate"><span class="pre">RoutingSolution.route</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution"><code class="docutils literal notranslate"><span class="pre">CombinedRoutingSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.CombinedRoutingSolution.routes"><code class="docutils literal notranslate"><span class="pre">CombinedRoutingSolution.routes</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution"><code class="docutils literal notranslate"><span class="pre">SchedulingSolution</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution.jobs"><code class="docutils literal notranslate"><span class="pre">SchedulingSolution.jobs</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm"><code class="docutils literal notranslate"><span class="pre">Algorithm</span></code></a><ul>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.algo_name"><code class="docutils literal notranslate"><span class="pre">Algorithm.algo_name</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.logger"><code class="docutils literal notranslate"><span class="pre">Algorithm.logger</span></code></a></li>
+<li><a class="reference internal" href="#ware_ops_algos.algorithms.algorithm_interfaces.Algorithm.solve"><code class="docutils literal notranslate"><span class="pre">Algorithm.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

@@ -1,0 +1,71 @@
+ware_ops_algos.algorithms.visualization
+=======================================
+
+.. py:module:: ware_ops_algos.algorithms.visualization
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.visualization.render_graph
+   ware_ops_algos.algorithms.visualization.plot_route
+   ware_ops_algos.algorithms.visualization.plot_route_with_directions
+   ware_ops_algos.algorithms.visualization.plot_picker_gantt
+   ware_ops_algos.algorithms.visualization.plot_gantt
+
+
+Module Contents
+---------------
+
+.. py:function:: render_graph(G, plot: bool = True, out_name=False, draw_edge_labels=False, with_labels=False, dpi=700, font_size=5, node_size=50, node_color='lightblue') -> None
+
+.. py:function:: plot_route(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route
+
+
+.. py:function:: plot_route_with_directions(network_graph: networkx.Graph, route: list[tuple[int, int]])
+
+   Visualizes a picker route with direction arrows, including repeated edges.
+
+
+.. py:function:: plot_picker_gantt(assignments, use_datetime=False, tz=timezone.utc, figsize=(12, 6))
+
+   Visualize batch assignments per picker as a Gantt chart.
+   - assignments: list of dicts (output from schedule_routing_batches) or a DataFrame
+                  required keys/cols: picker_id, batch_idx, start_time, end_time
+   - use_datetime: if True, convert epoch seconds to datetimes for the x-axis
+   - tz: timezone for datetime display when use_datetime=True
+
+
+.. py:function:: plot_gantt(jobs: list[ware_ops_algos.algorithms.ScheduledJob], *, ax: matplotlib.axes.Axes | None = None, row_key: Callable[[Any], Any] = lambda j: j.picker_id, color_key: Callable[[Any], str] | None = None, row_label: Callable[[Any], str] = str, time_scale: float = 1.0, bar_height: float = 0.8, title: str | None = None, xlabel: str = 'time', ylabel: str = 'picker') -> matplotlib.axes.Axes
+
+   Plot a Gantt chart of ScheduledJob instances.
+
+   Each job is drawn as a horizontal bar from start_time to end_time on the row
+   given by row_key(job). Default coloring marks tardy jobs red, on-time jobs green.
+
+   :param jobs: Must expose start_time, end_time, and the attribute used by row_key/color_key.
+   :type jobs: sequence of ScheduledJob
+   :param ax: Axes to draw on. Created if None.
+   :type ax: matplotlib Axes, optional
+   :param row_key: Maps a job to its row identifier. Default: picker_id.
+   :type row_key: callable
+   :param color_key: Maps a job to a matplotlib color. Default: red if tardiness > 0 else green.
+   :type color_key: callable, optional
+   :param row_label: Formats a row identifier into a y-tick label.
+   :type row_label: callable
+   :param time_scale: Divisor applied to start_time and end_time (e.g. 3600 for seconds -> hours).
+   :type time_scale: float
+   :param bar_height: Bar thickness in axis units; rows are spaced 1 apart.
+   :type bar_height: float
+   :param title: Plot annotations.
+   :type title: str
+   :param xlabel: Plot annotations.
+   :type xlabel: str
+   :param ylabel: Plot annotations.
+   :type ylabel: str
+
+

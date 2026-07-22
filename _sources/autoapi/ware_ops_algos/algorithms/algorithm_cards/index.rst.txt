@@ -1,0 +1,134 @@
+ware_ops_algos.algorithms.algorithm_cards
+=========================================
+
+.. py:module:: ware_ops_algos.algorithms.algorithm_cards
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_cards.CONFIGS_FILENAME
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_cards.RequirementConflict
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_cards.AlgorithmCard
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.algorithm_cards.load_algo_card
+   ware_ops_algos.algorithms.algorithm_cards.load_algo_cards
+   ware_ops_algos.algorithms.algorithm_cards.merge_requirements
+   ware_ops_algos.algorithms.algorithm_cards.resolve_configuration
+   ware_ops_algos.algorithms.algorithm_cards.resolve_configured_cards
+   ware_ops_algos.algorithms.algorithm_cards.load_configurations
+   ware_ops_algos.algorithms.algorithm_cards.import_algo_class
+   ware_ops_algos.algorithms.algorithm_cards.flatten_data_card
+   ware_ops_algos.algorithms.algorithm_cards.create_domain_from_data_card
+   ware_ops_algos.algorithms.algorithm_cards.load_packaged_algo_cards
+
+
+Module Contents
+---------------
+
+.. py:data:: CONFIGS_FILENAME
+   :value: 'configs.yaml'
+
+
+.. py:exception:: RequirementConflict
+
+   Bases: :py:obj:`Exception`
+
+
+   Raised when a configuration's requirements are mutually unsatisfiable or invalid.
+
+
+.. py:class:: AlgorithmCard(algo_name: str, problem_type: str, requirements: Dict, objective: Optional[str], implementation: Dict, description: Optional[str] = None, configuration: Optional[Dict] = None)
+
+   An algorithm card describes an algorithm's subproblem, objective, requirements,
+   and implementation. A card may additionally declare an optional configuration.
+
+   A configuration consists of one or more configuration options. Each option
+   takes a value:
+     - component option: {"problem_type": <subproblem>} — the value is an
+       algorithm card of that subproblem (e.g., any routing card)
+     - value option: {"values": {VALUE: {"requirements": {...}}, ...}} — the
+       value is one of a fixed set declared on the card; values may carry
+       requirements of their own
+
+   Resolving a configuration (see resolve_configuration) selects one value per
+   option and produces an ordinary algorithm card whose requirements combine
+   those of this card and of every selected value.
+
+
+   .. py:attribute:: algo_name
+
+
+   .. py:attribute:: problem_type
+
+
+   .. py:attribute:: requirements
+
+
+   .. py:attribute:: objective
+
+
+   .. py:attribute:: implementation
+
+
+   .. py:attribute:: description
+      :value: None
+
+
+
+   .. py:attribute:: configuration
+
+
+.. py:function:: load_algo_card(path: str | pathlib.Path) -> AlgorithmCard
+
+.. py:function:: load_algo_cards(directory: str | pathlib.Path) -> List[AlgorithmCard]
+
+.. py:function:: merge_requirements(a: Dict, b: Dict) -> Dict
+
+.. py:function:: resolve_configuration(base: AlgorithmCard, configuration: Dict[str, str], name: str, cards_by_name: Dict[str, AlgorithmCard]) -> AlgorithmCard
+
+   Resolve a configuration (an assignment of the card's options) into an executable card.
+
+   configuration maps option name -> card algo_name (component options) or option value (value options).
+
+
+.. py:function:: resolve_configured_cards(cards: List[AlgorithmCard], configurations: List[Dict]) -> List[AlgorithmCard]
+
+   Resolve all manifest entries against the card library.
+
+
+.. py:function:: load_configurations(directory: str | pathlib.Path) -> List[Dict]
+
+.. py:function:: import_algo_class(cls_name: str, module_path: str | pathlib.Path)
+
+.. py:function:: flatten_data_card(domain: dict) -> dict
+
+.. py:function:: create_domain_from_data_card(domain_class, type_enum, domain_data: Dict) -> ware_ops_algos.domain_models.BaseDomainObject
+
+   Factory to create domain object from data card.
+
+
+.. py:function:: load_packaged_algo_cards() -> List[AlgorithmCard]
+

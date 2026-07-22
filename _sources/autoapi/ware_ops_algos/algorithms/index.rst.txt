@@ -1,0 +1,3353 @@
+ware_ops_algos.algorithms
+=========================
+
+.. py:module:: ware_ops_algos.algorithms
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/algorithms/algorithm_cards/index
+   /autoapi/ware_ops_algos/algorithms/algorithm_interfaces/index
+   /autoapi/ware_ops_algos/algorithms/batching/index
+   /autoapi/ware_ops_algos/algorithms/item_assignment/index
+   /autoapi/ware_ops_algos/algorithms/order_splitting/index
+   /autoapi/ware_ops_algos/algorithms/routing/index
+   /autoapi/ware_ops_algos/algorithms/routing_and_batching/index
+   /autoapi/ware_ops_algos/algorithms/scheduling/index
+   /autoapi/ware_ops_algos/algorithms/visualization/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.I
+   ware_ops_algos.algorithms.O
+   ware_ops_algos.algorithms.equivalence_classes
+   ware_ops_algos.algorithms.cross_aisle_mapping
+   ware_ops_algos.algorithms.table_I
+   ware_ops_algos.algorithms.table_II
+   ware_ops_algos.algorithms.aisle_mapping
+   ware_ops_algos.algorithms.PROJECT_ROOT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.Order
+   ware_ops_algos.algorithms.ResolvedOrderPosition
+   ware_ops_algos.algorithms.OrderPosition
+   ware_ops_algos.algorithms.Resource
+   ware_ops_algos.algorithms.AlgorithmSolution
+   ware_ops_algos.algorithms.PickPosition
+   ware_ops_algos.algorithms.WarehouseOrder
+   ware_ops_algos.algorithms.BatchObject
+   ware_ops_algos.algorithms.NodeType
+   ware_ops_algos.algorithms.RouteNode
+   ware_ops_algos.algorithms.Route
+   ware_ops_algos.algorithms.Job
+   ware_ops_algos.algorithms.ScheduledJob
+   ware_ops_algos.algorithms.ItemAssignmentSolution
+   ware_ops_algos.algorithms.BatchingSolution
+   ware_ops_algos.algorithms.RoutingSolution
+   ware_ops_algos.algorithms.CombinedRoutingSolution
+   ware_ops_algos.algorithms.SchedulingSolution
+   ware_ops_algos.algorithms.Algorithm
+   ware_ops_algos.algorithms.Algorithm
+   ware_ops_algos.algorithms.RoutingSolution
+   ware_ops_algos.algorithms.Route
+   ware_ops_algos.algorithms.PickPosition
+   ware_ops_algos.algorithms.RouteNode
+   ware_ops_algos.algorithms.NodeType
+   ware_ops_algos.algorithms.CombinedRoutingSolution
+   ware_ops_algos.algorithms.Resource
+   ware_ops_algos.algorithms.OrderPosition
+   ware_ops_algos.algorithms.Article
+   ware_ops_algos.algorithms.StorageLocations
+   ware_ops_algos.algorithms.Routing
+   ware_ops_algos.algorithms.HeuristicRouting
+   ware_ops_algos.algorithms.SShapeRouting
+   ware_ops_algos.algorithms.ReturnRouting
+   ware_ops_algos.algorithms.MidpointRouting
+   ware_ops_algos.algorithms.LargestGapRouting
+   ware_ops_algos.algorithms.NearestNeighbourhoodRouting
+   ware_ops_algos.algorithms.UShapeRouting
+   ware_ops_algos.algorithms.PickListRouting
+   ware_ops_algos.algorithms.ExactRouting
+   ware_ops_algos.algorithms.ExactTSPRouting
+   ware_ops_algos.algorithms.ExactTSPRoutingDistance
+   ware_ops_algos.algorithms.ExactTSPRoutingDistanceWithWeightPrecedence
+   ware_ops_algos.algorithms.ExactTSPRoutingTime
+   ware_ops_algos.algorithms.ExactTSPRoutingMaxCompletionTime
+   ware_ops_algos.algorithms.RatliffRosenthalRouting
+   ware_ops_algos.algorithms.RatliffRosenthalScatteredRouting
+   ware_ops_algos.algorithms.CapacityChecker
+   ware_ops_algos.algorithms.Routing
+   ware_ops_algos.algorithms.BatchingSolution
+   ware_ops_algos.algorithms.BatchObject
+   ware_ops_algos.algorithms.WarehouseOrder
+   ware_ops_algos.algorithms.Order
+   ware_ops_algos.algorithms.PickCart
+   ware_ops_algos.algorithms.Articles
+   ware_ops_algos.algorithms.Batching
+   ware_ops_algos.algorithms.PriorityBatching
+   ware_ops_algos.algorithms.OrderNrFifoBatching
+   ware_ops_algos.algorithms.FifoBatching
+   ware_ops_algos.algorithms.RandomBatching
+   ware_ops_algos.algorithms.DueDateBatching
+   ware_ops_algos.algorithms.SavingsBatching
+   ware_ops_algos.algorithms.ClarkAndWrightBatching
+   ware_ops_algos.algorithms.SeedCriteria
+   ware_ops_algos.algorithms.SimilarityMeasure
+   ware_ops_algos.algorithms.SeedBatching
+   ware_ops_algos.algorithms.LocalSearchBatching
+   ware_ops_algos.algorithms.Order
+   ware_ops_algos.algorithms.ResolvedOrderPosition
+   ware_ops_algos.algorithms.StorageLocations
+   ware_ops_algos.algorithms.Location
+   ware_ops_algos.algorithms.ItemAssignment
+   ware_ops_algos.algorithms.GreedyItemAssignment
+   ware_ops_algos.algorithms.NearestNeighborItemAssignment
+   ware_ops_algos.algorithms.PriorityItemAssignment
+   ware_ops_algos.algorithms.SinglePositionItemAssignment
+   ware_ops_algos.algorithms.MinMaxItemAssignment
+   ware_ops_algos.algorithms.MinMinItemAssignment
+   ware_ops_algos.algorithms.Route
+   ware_ops_algos.algorithms.SchedulingSolution
+   ware_ops_algos.algorithms.Job
+   ware_ops_algos.algorithms.ScheduledJob
+   ware_ops_algos.algorithms.Resource
+   ware_ops_algos.algorithms.Resources
+   ware_ops_algos.algorithms.Scheduler
+   ware_ops_algos.algorithms.PriorityScheduler
+   ware_ops_algos.algorithms.SPTScheduling
+   ware_ops_algos.algorithms.LPTScheduling
+   ware_ops_algos.algorithms.EDDScheduling
+   ware_ops_algos.algorithms.ERDScheduling
+   ware_ops_algos.algorithms.FIFOScheduling
+   ware_ops_algos.algorithms.MSScheduling
+   ware_ops_algos.algorithms.MDDScheduling
+   ware_ops_algos.algorithms.EDDThenSPTScheduling
+   ware_ops_algos.algorithms.RoutingSolution
+   ware_ops_algos.algorithms.Route
+   ware_ops_algos.algorithms.CombinedRoutingSolution
+   ware_ops_algos.algorithms.PickPosition
+   ware_ops_algos.algorithms.WarehouseOrder
+   ware_ops_algos.algorithms.BatchObject
+   ware_ops_algos.algorithms.Resource
+   ware_ops_algos.algorithms.Routing
+   ware_ops_algos.algorithms.RoutingBatchingAssigning
+   ware_ops_algos.algorithms.ExactTSPBatchingAndRoutingDistance
+   ware_ops_algos.algorithms.ExactTSPBatchingAndRoutingMaxCompletionTime
+   ware_ops_algos.algorithms.ExactCombinedBatchingRouting
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   ware_ops_algos.algorithms.build_jobs
+   ware_ops_algos.algorithms.earliest_free_assignment
+
+
+Package Contents
+----------------
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: ResolvedOrderPosition
+
+   .. py:attribute:: position
+      :type:  OrderPosition
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: OrderPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> OrderPosition
+      :staticmethod:
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: available
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:data:: I
+
+.. py:data:: O
+
+.. py:class:: AlgorithmSolution
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: execution_time
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: provenance
+      :type:  dict[str, Any]
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: (None,)
+
+
+
+.. py:class:: WarehouseOrder
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_positions
+      :type:  tuple[PickPosition, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: BatchObject
+
+   .. py:attribute:: batch_id
+      :type:  int
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+   .. py:property:: pick_positions
+      :type: list[PickPosition]
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+      The time at which all orders in this batch had arrived.
+
+
+.. py:class:: NodeType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Create a collection of name/value pairs.
+
+   Example enumeration:
+
+   >>> class Color(Enum):
+   ...     RED = 1
+   ...     BLUE = 2
+   ...     GREEN = 3
+
+   Access them by:
+
+   - attribute access:
+
+     >>> Color.RED
+     <Color.RED: 1>
+
+   - value lookup:
+
+     >>> Color(1)
+     <Color.RED: 1>
+
+   - name lookup:
+
+     >>> Color['RED']
+     <Color.RED: 1>
+
+   Enumerations can be iterated over, and know how many members they have:
+
+   >>> len(Color)
+   3
+
+   >>> list(Color)
+   [<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+   Methods can be added to enumerations, and members can have their own
+   attributes -- see the documentation for details.
+
+
+   .. py:attribute:: PICK
+
+
+   .. py:attribute:: ROUTE
+
+
+.. py:class:: RouteNode
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   .. py:attribute:: position
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: node_type
+      :type:  NodeType
+
+
+.. py:class:: Route
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Optional[list[tuple[float, float]]]
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  Optional[list]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+   .. py:attribute:: service_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:property:: has_sequence
+      :type: bool
+
+
+
+   .. py:property:: node_sequence
+      :type: list[tuple[int, int]]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: Job
+
+   Scheduler input. Stores only what's new at this stage:
+   a stable id and the resource-dependent processing time.
+   Everything else is forwarded from the route.
+
+
+   .. py:attribute:: job_id
+      :type:  int
+
+
+   .. py:attribute:: processing_time
+      :type:  float
+
+
+   .. py:attribute:: release_time
+      :type:  float
+
+
+   .. py:attribute:: due_date
+      :type:  float
+
+
+   .. py:attribute:: n_picks
+      :type:  int
+
+
+   .. py:attribute:: route
+      :type:  Optional[Route]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:property:: distance
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: ScheduledJob
+
+   A Job placed on a picker at a concrete start/end time.
+   Performance metrics are properties.
+
+
+   .. py:attribute:: job
+      :type:  Job
+
+
+   .. py:attribute:: picker_id
+      :type:  str
+
+
+   .. py:attribute:: start_time
+      :type:  float
+
+
+   .. py:attribute:: end_time
+      :type:  float
+
+
+   .. py:property:: tardiness
+      :type: float
+
+
+
+   .. py:property:: lateness
+      :type: float
+
+
+
+   .. py:property:: is_on_time
+      :type: bool
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: ItemAssignmentSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: resolved_orders
+      :type:  list[WarehouseOrder]
+      :value: []
+
+
+
+.. py:class:: BatchingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: batches
+      :type:  list[BatchObject]
+      :value: []
+
+
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  list[Route]
+      :value: []
+
+
+
+.. py:class:: SchedulingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: jobs
+      :type:  list[ScheduledJob]
+      :value: []
+
+
+
+.. py:class:: Algorithm(seed: Optional[int] = None)
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`I`\ , :py:obj:`O`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: 'Algorithm'
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: solve(input_data: I) -> O
+
+
+.. py:class:: Algorithm(seed: Optional[int] = None)
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`Generic`\ [\ :py:obj:`I`\ , :py:obj:`O`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :type:  str
+      :value: 'Algorithm'
+
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: solve(input_data: I) -> O
+
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+.. py:class:: Route
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Optional[list[tuple[float, float]]]
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  Optional[list]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+   .. py:attribute:: service_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:property:: has_sequence
+      :type: bool
+
+
+
+   .. py:property:: node_sequence
+      :type: list[tuple[int, int]]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: (None,)
+
+
+
+.. py:class:: RouteNode
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   .. py:attribute:: position
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: node_type
+      :type:  NodeType
+
+
+.. py:class:: NodeType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Create a collection of name/value pairs.
+
+   Example enumeration:
+
+   >>> class Color(Enum):
+   ...     RED = 1
+   ...     BLUE = 2
+   ...     GREEN = 3
+
+   Access them by:
+
+   - attribute access:
+
+     >>> Color.RED
+     <Color.RED: 1>
+
+   - value lookup:
+
+     >>> Color(1)
+     <Color.RED: 1>
+
+   - name lookup:
+
+     >>> Color['RED']
+     <Color.RED: 1>
+
+   Enumerations can be iterated over, and know how many members they have:
+
+   >>> len(Color)
+   3
+
+   >>> list(Color)
+   [<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+   Methods can be added to enumerations, and members can have their own
+   attributes -- see the documentation for details.
+
+
+   .. py:attribute:: PICK
+
+
+   .. py:attribute:: ROUTE
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  list[Route]
+      :value: []
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: available
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: OrderPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> OrderPosition
+      :staticmethod:
+
+
+
+.. py:class:: Article
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: weight
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: volume
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: length
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: width
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: height
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: kolli_size
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:method:: to_dict() -> dict[str, Any]
+
+
+.. py:class:: StorageLocations
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  StorageType
+
+
+   .. py:attribute:: locations
+      :type:  Optional[list[Location]]
+      :value: None
+
+
+
+   .. py:attribute:: storage_slots
+      :type:  Optional[list[StorageLocation]]
+      :value: None
+
+
+
+   .. py:attribute:: article_location_mapping
+      :type:  Optional[dict[int, list[Location]]]
+
+
+   .. py:attribute:: location_article_mapping
+      :type:  Optional[dict[tuple[int | float, int | float], int]]
+
+
+   .. py:method:: build_article_location_mapping()
+
+
+   .. py:method:: get_locations_by_article_id(article_id: int) -> list[Location]
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:data:: equivalence_classes
+   :value: [('U', 'U', '1C'), ('E', '0', '1C'), ('0', 'E', '1C'), ('E', 'E', '1C'), ('E', 'E', '2C'), ('0',...
+
+
+.. py:data:: cross_aisle_mapping
+
+.. py:data:: table_I
+
+.. py:data:: table_II
+
+.. py:data:: aisle_mapping
+
+.. py:class:: Routing(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, node_list: list[tuple[float, float]] = None, node_to_idx: dict = None, idx_to_node: dict = None, distance_matrix: pandas.DataFrame | None = None, predecessor_matrix: numpy.array = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.PickPosition`\ ]\ :py:obj:`| list`\ [\ :py:obj:`ware_ops_algos.domain_models.OrderPosition`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: start_node
+
+
+   .. py:attribute:: end_node
+
+
+   .. py:attribute:: closest_node_to_start
+
+
+   .. py:attribute:: min_aisle_position
+
+
+   .. py:attribute:: max_aisle_position
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: distance_matrix
+      :value: None
+
+
+
+   .. py:attribute:: predecessor_matrix
+      :value: None
+
+
+
+   .. py:attribute:: node_list
+      :type:  list[tuple[float, float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_to_idx
+      :value: None
+
+
+
+   .. py:attribute:: idx_to_node
+      :value: None
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[ware_ops_algos.algorithms.algorithm_interfaces.RouteNode]
+      :value: []
+
+
+
+   .. py:attribute:: distance
+      :value: 0
+
+
+
+   .. py:attribute:: current_order
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: picker
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:method:: reset_parameters()
+
+
+.. py:class:: HeuristicRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for heuristic routing algorithms.
+
+
+   .. py:attribute:: fixed_depot
+      :value: True
+
+
+
+.. py:class:: SShapeRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements S-shape routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'SShapeRouting'
+
+
+
+.. py:class:: ReturnRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Return routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ReturnRouting'
+
+
+
+.. py:class:: MidpointRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Midpoint routing.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MidpointRouting'
+
+
+
+   .. py:method:: split_orders_by_pickzone(resolved_positions, mid_point: int) -> tuple[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition], list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :staticmethod:
+
+
+
+.. py:class:: LargestGapRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Implements Largest Gap Routing for order picking in a warehouse.
+
+
+   .. py:attribute:: algo_name
+      :value: 'LargestGapRouting'
+
+
+
+.. py:class:: NearestNeighbourhoodRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   A class to perform nearest neighbourhood routing for order picking in a warehouse using Dijkstra's algorithm.
+
+
+   .. py:attribute:: algo_name
+      :value: 'NearestNeighbourhoodRouting'
+
+
+
+.. py:class:: UShapeRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, fixed_depot=True, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   U-shaped routing for ladder shaped layout.
+
+   Rule:
+   - enter a physical aisle on the right side at the bottom,
+   - pick the right side bottom-up,
+   - cross at the top rung,
+   - pick the left side top-down,
+   - leave the aisle at the bottom.
+
+
+   .. py:attribute:: algo_name
+      :value: 'UShapeRouting'
+
+
+
+.. py:class:: PickListRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, distance_matrix, predecessor_matrix, picker, **kwargs)
+
+   Bases: :py:obj:`HeuristicRouting`
+
+
+   Base class for heuristic routing algorithms.
+
+
+   .. py:attribute:: algo_name
+      :value: 'PickListRouting'
+
+
+
+.. py:class:: ExactRouting(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for exact routing algorithms.
+
+
+   .. py:attribute:: big_m
+
+
+   .. py:attribute:: time_limit
+
+
+   .. py:attribute:: length
+      :value: None
+
+
+
+   .. py:attribute:: pick_nodes
+      :value: None
+
+
+
+   .. py:attribute:: mdl
+      :value: None
+
+
+
+   .. py:attribute:: amount_at_pick_nodes
+      :value: None
+
+
+
+.. py:class:: ExactTSPRouting(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`ExactRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP).
+
+
+   .. py:attribute:: T
+      :value: None
+
+
+
+   .. py:attribute:: C_max
+      :value: None
+
+
+
+   .. py:attribute:: x
+      :value: None
+
+
+
+   .. py:attribute:: x_start
+      :value: None
+
+
+
+   .. py:attribute:: x_end
+      :value: None
+
+
+
+   .. py:method:: construct_route_and_item_sequence()
+
+      Generates the route for the exact routing algorithm from solution variables.
+
+
+
+.. py:class:: ExactTSPRoutingDistance(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, big_m=1000, set_time_limit=300, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using distance as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingDistance'
+
+
+
+.. py:class:: ExactTSPRoutingDistanceWithWeightPrecedence(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, articles: list[ware_ops_algos.domain_models.Article], big_m=1000, set_time_limit=300, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for TSP with weight-based precedence constraints.
+   Heavy items must be picked before lighter items.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingDistanceWithWeightPrecedence'
+
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: weights
+      :value: []
+
+
+
+.. py:class:: ExactTSPRoutingTime(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: dict, picker: list[ware_ops_algos.domain_models.Resource], gen_tour, gen_item_sequence, big_m, set_time_limit, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using time as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRouting'
+
+
+
+   .. py:attribute:: travel_time_matrix
+
+
+.. py:class:: ExactTSPRoutingMaxCompletionTime(batched_list, distance_matrix, tour_matrix, picker, big_m, objective, **kwargs)
+
+   Bases: :py:obj:`ExactTSPRouting`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) using maximum completion time as the objective.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPRoutingMaxCompletionTime'
+
+
+
+.. py:class:: RatliffRosenthalRouting(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, picker: list[ware_ops_algos.domain_models.Resource], n_aisles: int, n_pick_locations: int, dist_aisle: float, dist_pick_locations: float, dist_aisle_location: float, dist_start: float, dist_end: float, gen_tour: bool = False, gen_item_sequence: bool = False, **kwargs)
+
+   Bases: :py:obj:`Routing`
+
+
+   Dynamic Programming based approach to solve the picker routing problem in a single-block, parallel-aisle warehouse.
+
+   Based on:
+       Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+       INFORMS Journal on Computing 36(6):1417-1435.
+       https://doi.org/10.1287/ijoc.2023.0075
+
+
+
+
+   .. py:attribute:: algo_name
+      :value: 'RatliffRosenthalRouting'
+
+
+
+   .. py:attribute:: state_graph
+
+
+   .. py:attribute:: n_aisles
+
+
+   .. py:attribute:: n_pick_locations
+
+
+   .. py:attribute:: dist_aisle
+
+
+   .. py:attribute:: dist_pick_locations
+
+
+   .. py:attribute:: dist_aisle_location
+
+
+   .. py:attribute:: dist_start
+
+
+   .. py:attribute:: dist_end
+
+
+   .. py:attribute:: depot
+
+
+   .. py:method:: build_state_space()
+
+
+   .. py:method:: largest_gap(order_list: list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition])
+      :staticmethod:
+
+
+
+   .. py:method:: one_pass()
+
+
+   .. py:method:: two_pass()
+
+
+   .. py:method:: top(pick_node_y: int)
+
+
+   .. py:method:: bottom(pick_node_y: int)
+
+
+   .. py:method:: gap(gap_size: int)
+
+
+   .. py:method:: void()
+
+
+   .. py:method:: cross_aisle_cost(cross_aisle_action: tuple[int, int])
+
+
+   .. py:method:: cost_fn_wrapper(order_subset: list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition], transition: str, node=None)
+
+
+   .. py:method:: get_item_sequence_from_path() -> list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]
+
+      Extracts the ordered pick sequence from the dynamic programming path (self.path).
+      :returns: ordered item sequence along the optimal tour.
+      :rtype: list[PickPosition]
+
+
+
+   .. py:method:: plot_picker_tour(T: networkx.MultiGraph)
+
+      Visualizes the picker tour graph T as a 2D warehouse layout.
+      Nodes are (aisle, pick_y) positions.
+
+
+
+.. py:class:: RatliffRosenthalScatteredRouting(storage_locations: ware_ops_algos.domain_models.StorageLocations, *args, **kwargs)
+
+   Bases: :py:obj:`RatliffRosenthalRouting`
+
+
+   Dynamic Programming based approach to solve the picker routing problem in a single-block,
+   parallel-aisle warehouse with scattered storage.
+
+   Based on:
+       Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+       INFORMS Journal on Computing 36(6):1417-1435.
+       https://doi.org/10.1287/ijoc.2023.0075
+
+
+   .. py:attribute:: algo_name
+      :value: 'RatliffRosenthalScattered'
+
+
+
+   .. py:attribute:: storage_locations
+
+
+   .. py:attribute:: state_graph
+      :type:  networkx.MultiDiGraph
+
+
+   .. py:attribute:: demand
+      :type:  dict[int, int]
+
+
+   .. py:attribute:: aisle_content
+      :type:  dict[int, list[dict]]
+
+
+   .. py:attribute:: total_warehouse_supply
+      :type:  dict[int, int]
+
+
+   .. py:attribute:: aisle_total_supply
+      :type:  dict[int, dict[int, int]]
+
+
+.. py:class:: CapacityChecker(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles)
+
+   .. py:attribute:: pick_cart
+
+
+   .. py:method:: can_add_order(current_batch: list[ware_ops_algos.algorithms.WarehouseOrder], new_order: ware_ops_algos.algorithms.WarehouseOrder) -> bool
+
+
+   .. py:method:: orders_fit(orders: list[ware_ops_algos.algorithms.WarehouseOrder]) -> bool
+
+
+   .. py:method:: get_item_consumption(article_id: int, quantity: int = 1) -> list[float]
+
+      Get consumption for an article.
+
+      :param article_id: Article ID
+      :param quantity: Number of units (default: 1)
+
+      :returns: Consumption vector [dim0, dim1, ...]
+
+
+
+.. py:class:: Routing(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, node_list: list[tuple[float, float]] = None, node_to_idx: dict = None, idx_to_node: dict = None, distance_matrix: pandas.DataFrame | None = None, predecessor_matrix: numpy.array = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.PickPosition`\ ]\ :py:obj:`| list`\ [\ :py:obj:`ware_ops_algos.domain_models.OrderPosition`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: start_node
+
+
+   .. py:attribute:: end_node
+
+
+   .. py:attribute:: closest_node_to_start
+
+
+   .. py:attribute:: min_aisle_position
+
+
+   .. py:attribute:: max_aisle_position
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: distance_matrix
+      :value: None
+
+
+
+   .. py:attribute:: predecessor_matrix
+      :value: None
+
+
+
+   .. py:attribute:: node_list
+      :type:  list[tuple[float, float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_to_idx
+      :value: None
+
+
+
+   .. py:attribute:: idx_to_node
+      :value: None
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[ware_ops_algos.algorithms.algorithm_interfaces.RouteNode]
+      :value: []
+
+
+
+   .. py:attribute:: distance
+      :value: 0
+
+
+
+   .. py:attribute:: current_order
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: picker
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:method:: reset_parameters()
+
+
+.. py:class:: BatchingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: batches
+      :type:  list[BatchObject]
+      :value: []
+
+
+
+.. py:class:: BatchObject
+
+   .. py:attribute:: batch_id
+      :type:  int
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+   .. py:property:: pick_positions
+      :type: list[PickPosition]
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+      The time at which all orders in this batch had arrived.
+
+
+.. py:class:: WarehouseOrder
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_positions
+      :type:  tuple[PickPosition, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: PickCart
+
+   .. py:attribute:: n_dimension
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: capacities
+      :type:  Optional[list[float]]
+      :value: None
+
+
+
+   .. py:attribute:: dimensions
+      :type:  Optional[list[DimensionType]]
+      :value: None
+
+
+
+   .. py:attribute:: n_boxes
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: box_can_mix_orders
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: Articles
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.base_domain_object.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  ArticleType
+
+
+   .. py:attribute:: articles
+      :type:  Optional[list[Article]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:class:: Batching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.BatchingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Batching class to batch orders
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+
+
+   .. py:attribute:: articles
+
+
+   .. py:attribute:: capacity_checker
+
+
+.. py:class:: PriorityBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`Batching`
+
+
+   Priority batching class to batch orders based on sorting criterion.
+
+
+.. py:class:: OrderNrFifoBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching based on order number.
+
+
+   .. py:attribute:: algo_name
+      :value: 'OrderNrFiFoBatching'
+
+
+
+.. py:class:: FifoBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, **kwargs)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'FiFoBatching'
+
+
+
+.. py:class:: RandomBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, seed=44)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'RandomBatching'
+
+
+
+   .. py:attribute:: seed
+      :value: 44
+
+
+
+   .. py:attribute:: batch_number
+      :value: 0
+
+
+
+.. py:class:: DueDateBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles)
+
+   Bases: :py:obj:`PriorityBatching`
+
+
+   First in First out batching class to batch orders
+
+
+   .. py:attribute:: algo_name
+      :value: 'DueDateBatching'
+
+
+
+.. py:class:: SavingsBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: Type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs, time_limit: float | None = None)
+
+   Bases: :py:obj:`Batching`, :py:obj:`abc.ABC`
+
+
+   Base class for savings-based batching algorithms.
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: time_limit
+      :value: None
+
+
+
+   .. py:attribute:: algo_name
+
+
+.. py:class:: ClarkAndWrightBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: Type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs, time_limit: float | None = None)
+
+   Bases: :py:obj:`SavingsBatching`
+
+
+   Base class for savings-based batching algorithms.
+
+
+.. py:class:: SeedCriteria
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: RANDOM
+      :value: 'random'
+
+
+
+   .. py:attribute:: FEWEST_POSITIONS
+      :value: 'fewest_positions'
+
+
+
+   .. py:attribute:: MOST_POSITIONS
+      :value: 'most_positions'
+
+
+
+   .. py:attribute:: CLOSEST_TO_DEPOT
+      :value: 'closest_to_depot'
+
+
+
+.. py:class:: SimilarityMeasure
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: SHARED_ARTICLES
+      :value: 'shared_articles'
+
+
+
+   .. py:attribute:: MIN_DISTANCE
+      :value: 'min_distance'
+
+
+
+.. py:class:: SeedBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, distance_matrix: Optional[pandas.DataFrame] = None, seed_criterion: SeedCriteria = SeedCriteria.RANDOM, similarity_measure: SimilarityMeasure = SimilarityMeasure.SHARED_ARTICLES, start_node: Optional[tuple[int, int]] = None)
+
+   Bases: :py:obj:`Batching`
+
+
+   Batching class to batch orders
+
+
+   .. py:attribute:: distance_matrix
+      :value: None
+
+
+
+   .. py:attribute:: similarity_measure
+
+
+   .. py:attribute:: seed_criterion
+
+
+   .. py:attribute:: start_node
+      :value: None
+
+
+
+   .. py:attribute:: algo_name
+      :value: 'random_shared_articles_SeedBatching'
+
+
+
+   .. py:method:: shared_article_similarity(seed_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder)
+      :staticmethod:
+
+
+
+   .. py:method:: min_distance_similarity(seed_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder)
+
+
+   .. py:method:: rand_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: most_positions_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: fewest_positions_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder
+      :staticmethod:
+
+
+
+   .. py:method:: closest_to_depot_seed_order(candidate_orders: list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder]) -> ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder
+
+
+   .. py:method:: similarity(seed_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder, other_order: ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder)
+
+
+   .. py:method:: get_seed_order(seed_criterion: SeedCriteria, candidate_orders: list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder])
+
+
+.. py:class:: LocalSearchBatching(pick_cart: ware_ops_algos.domain_models.PickCart, articles: ware_ops_algos.domain_models.Articles, routing_class: type[ware_ops_algos.algorithms.routing.routing.Routing], routing_class_kwargs: dict, start_batching_class: type[Batching], start_batching_kwargs: dict = None, time_limit: float = 120.0, verbose=False)
+
+   Bases: :py:obj:`Batching`
+
+
+   Order batching via local search with swap and shift neighborhoods.
+
+   Generates an initial solution using a configurable start batching algorithm,
+   then iteratively improves it by swapping orders between batches and shifting
+   orders from one batch to another until no improvement is found or the time
+   limit is exceeded.
+
+   Based on:
+       Henn, S., Koch, S., Doerner, K.F. et al.
+       Metaheuristics for the Order Batching Problem in Manual Order Picking Systems.
+       Bus Res 3, 82–105 (2010). https://doi.org/10.1007/BF03342717
+
+   Note: While Henn et al. present an iterated local search approach, we only implemented the local search component.
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: start_batching_class
+
+
+   .. py:attribute:: start_batching_kwargs
+
+
+   .. py:attribute:: time_limit
+      :value: 120.0
+
+
+
+   .. py:attribute:: algo_name
+
+
+   .. py:attribute:: verbose
+      :value: False
+
+
+
+.. py:class:: Order
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[datetime.datetime | float]
+      :value: None
+
+
+
+   .. py:attribute:: order_positions
+      :type:  list[OrderPosition]
+      :value: []
+
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:method:: from_dict(order_number: int, data: dict) -> Order
+      :staticmethod:
+
+
+
+.. py:class:: ResolvedOrderPosition
+
+   .. py:attribute:: position
+      :type:  OrderPosition
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: fulfilled
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: picked
+      :type:  Optional[bool]
+      :value: None
+
+
+
+.. py:class:: StorageLocations
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  StorageType
+
+
+   .. py:attribute:: locations
+      :type:  Optional[list[Location]]
+      :value: None
+
+
+
+   .. py:attribute:: storage_slots
+      :type:  Optional[list[StorageLocation]]
+      :value: None
+
+
+
+   .. py:attribute:: article_location_mapping
+      :type:  Optional[dict[int, list[Location]]]
+
+
+   .. py:attribute:: location_article_mapping
+      :type:  Optional[dict[tuple[int | float, int | float], int]]
+
+
+   .. py:method:: build_article_location_mapping()
+
+
+   .. py:method:: get_locations_by_article_id(article_id: int) -> list[Location]
+
+
+   .. py:method:: get_features() -> dict[str, Any]
+
+
+.. py:class:: Location
+
+   .. py:attribute:: x
+      :type:  int | float
+
+
+   .. py:attribute:: y
+      :type:  int | float
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int | float
+
+
+.. py:class:: ItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.domain_models.Order`\ ]\ , :py:obj:`ware_ops_algos.algorithms.ItemAssignmentSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: storage_locations
+
+
+.. py:class:: GreedyItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Greedy item assignment heuristic. Assigns items from locations with the highest inventory level first
+   until demand is satisfied.
+
+
+   .. py:attribute:: algo_name
+      :value: 'GIA'
+
+
+
+.. py:class:: NearestNeighborItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[int, int] = (0, 0), **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Simple nearest neighborhood based item assignment heuristic. Selects closest to the current location until demand
+   is satisfied.
+
+   Based on:
+       Weidinger, F., Boysen, N., & Schneider, M. (2019). Picker routing
+       in the mixed-shelves warehouses of e-commerce retailers. European
+       Journal of Operational Research, 274(2), 501-515.
+       https://doi.org/10.1016/j.ejor.2018.10.021
+
+
+   .. py:attribute:: algo_name
+      :value: 'NNIA'
+
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: start_node
+      :value: (0, 0)
+
+
+
+.. py:class:: PriorityItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, **kwargs)
+
+   Bases: :py:obj:`ItemAssignment`
+
+
+   Base class for Weidinger item assignment algorithms.
+
+   Based on:
+       Weidinger, F. (2018). Picker routing in rectangular mixed shelves
+       warehouses. Computers & Operations Research, 95, 139-150.
+       https://doi.org/10.1016/j.cor.2018.03.012
+
+
+   .. py:attribute:: storage_locations
+
+
+   .. py:attribute:: distance_matrix
+
+
+   .. py:attribute:: q_max
+
+
+.. py:class:: SinglePositionItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, routing_class: Type[ware_ops_algos.algorithms.Routing], routing_class_kwargs: dict, **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Base class for Weidinger item assignment algorithms.
+
+   Based on:
+       Weidinger, F. (2018). Picker routing in rectangular mixed shelves
+       warehouses. Computers & Operations Research, 95, 139-150.
+       https://doi.org/10.1016/j.cor.2018.03.012
+
+
+   .. py:attribute:: algo_name
+      :value: 'SPIA'
+
+
+
+   .. py:attribute:: routing_class
+
+
+   .. py:attribute:: routing_class_kwargs
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMaxItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMax
+
+   Process SKUs by fewest locations first.
+   Priority = MAX distance to any already-selected position.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MinMaxIA'
+
+
+
+   .. py:attribute:: start_node
+
+
+.. py:class:: MinMinItemAssignment(storage_locations: ware_ops_algos.domain_models.StorageLocations, distance_matrix: pandas.DataFrame, start_node: tuple[float, float], **kwargs)
+
+   Bases: :py:obj:`PriorityItemAssignment`
+
+
+   Algorithm 1: MinMin
+
+   Process SKUs by fewest locations first.
+   Priority = MIN distance to any already-selected position.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MinMinIA'
+
+
+
+   .. py:attribute:: start_node
+
+
+.. py:data:: PROJECT_ROOT
+
+.. py:class:: Route
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Optional[list[tuple[float, float]]]
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  Optional[list]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+   .. py:attribute:: service_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:property:: has_sequence
+      :type: bool
+
+
+
+   .. py:property:: node_sequence
+      :type: list[tuple[int, int]]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: SchedulingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: jobs
+      :type:  list[ScheduledJob]
+      :value: []
+
+
+
+.. py:class:: Job
+
+   Scheduler input. Stores only what's new at this stage:
+   a stable id and the resource-dependent processing time.
+   Everything else is forwarded from the route.
+
+
+   .. py:attribute:: job_id
+      :type:  int
+
+
+   .. py:attribute:: processing_time
+      :type:  float
+
+
+   .. py:attribute:: release_time
+      :type:  float
+
+
+   .. py:attribute:: due_date
+      :type:  float
+
+
+   .. py:attribute:: n_picks
+      :type:  int
+
+
+   .. py:attribute:: route
+      :type:  Optional[Route]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:property:: distance
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: ScheduledJob
+
+   A Job placed on a picker at a concrete start/end time.
+   Performance metrics are properties.
+
+
+   .. py:attribute:: job
+      :type:  Job
+
+
+   .. py:attribute:: picker_id
+      :type:  str
+
+
+   .. py:attribute:: start_time
+      :type:  float
+
+
+   .. py:attribute:: end_time
+      :type:  float
+
+
+   .. py:property:: tardiness
+      :type: float
+
+
+
+   .. py:property:: lateness
+      :type: float
+
+
+
+   .. py:property:: is_on_time
+      :type: bool
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: available
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Resources
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: resources
+      :type:  Optional[list[Resource]]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+
+.. py:function:: build_jobs(routes: list[ware_ops_algos.algorithms.algorithm_interfaces.Route], resources: ware_ops_algos.domain_models.Resources, release_time: float | None = None) -> list[ware_ops_algos.algorithms.algorithm_interfaces.Job]
+
+.. py:function:: earliest_free_assignment(ordered_jobs: list[ware_ops_algos.algorithms.algorithm_interfaces.Job], resources: ware_ops_algos.domain_models.Resources) -> list[ware_ops_algos.algorithms.algorithm_interfaces.ScheduledJob]
+
+.. py:class:: Scheduler(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.Job`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.SchedulingSolution`\ ]
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: resources
+
+
+.. py:class:: PriorityScheduler(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`Scheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+.. py:class:: SPTScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'SPTScheduler'
+
+
+
+.. py:class:: LPTScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'LPTScheduler'
+
+
+
+.. py:class:: EDDScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'EDDScheduler'
+
+
+
+.. py:class:: ERDScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ERDScheduler'
+
+
+
+.. py:class:: FIFOScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: algo_name
+      :value: 'FIFOScheduler'
+
+
+
+.. py:class:: MSScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Minimum Slack: due_date - processing_time. Urgency weighted by workload.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MSScheduler'
+
+
+
+.. py:class:: MDDScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   Modified Due Date: behaves like EDD when slack exists, SPT-ish when late.
+
+
+   .. py:attribute:: algo_name
+      :value: 'MDDScheduler'
+
+
+
+.. py:class:: EDDThenSPTScheduling(resources: ware_ops_algos.domain_models.Resources, **kwargs)
+
+   Bases: :py:obj:`PriorityScheduler`
+
+
+   EDD with SPT tie-break.
+
+
+   .. py:attribute:: algo_name
+      :value: 'EDDThenSPTScheduler'
+
+
+
+.. py:class:: RoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: route
+      :type:  Route
+
+
+.. py:class:: Route
+
+   .. py:attribute:: distance
+      :type:  float
+
+
+   .. py:attribute:: route
+      :type:  Optional[list[tuple[float, float]]]
+      :value: None
+
+
+
+   .. py:attribute:: item_sequence
+      :type:  Optional[list]
+      :value: None
+
+
+
+   .. py:attribute:: batch
+      :type:  Optional[BatchObject]
+      :value: None
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  Optional[list[RouteNode]]
+      :value: None
+
+
+
+   .. py:attribute:: service_time
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:property:: has_sequence
+      :type: bool
+
+
+
+   .. py:property:: node_sequence
+      :type: list[tuple[int, int]]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+.. py:class:: CombinedRoutingSolution
+
+   Bases: :py:obj:`AlgorithmSolution`
+
+
+   .. py:attribute:: routes
+      :type:  list[Route]
+      :value: []
+
+
+
+.. py:class:: PickPosition
+
+   .. py:attribute:: order_number
+      :type:  int
+
+
+   .. py:attribute:: article_id
+      :type:  int
+
+
+   .. py:attribute:: amount
+      :type:  int
+
+
+   .. py:attribute:: pick_node
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: in_store
+      :type:  int
+
+
+   .. py:attribute:: article_name
+      :type:  Optional[str]
+      :value: (None,)
+
+
+
+.. py:class:: WarehouseOrder
+
+   .. py:attribute:: order_id
+      :type:  int
+
+
+   .. py:attribute:: parent_order_id
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: due_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: order_date
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_positions
+      :type:  tuple[PickPosition, Ellipsis]
+      :value: ()
+
+
+
+.. py:class:: BatchObject
+
+   .. py:attribute:: batch_id
+      :type:  int
+
+
+   .. py:attribute:: orders
+      :type:  list[WarehouseOrder]
+
+
+   .. py:property:: pick_positions
+      :type: list[PickPosition]
+
+
+
+   .. py:property:: order_numbers
+      :type: frozenset[int]
+
+
+
+   .. py:property:: earliest_due_date
+      :type: float
+
+
+
+   .. py:property:: arrival_time
+      :type: float
+
+
+      The time at which all orders in this batch had arrived.
+
+
+.. py:class:: Resource
+
+   .. py:attribute:: id
+      :type:  int
+
+
+   .. py:attribute:: capacity
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: speed
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: time_per_pick
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: pick_cart
+      :type:  Optional[PickCart]
+      :value: None
+
+
+
+   .. py:attribute:: tpe
+      :type:  ResourceType
+
+
+   .. py:attribute:: tour_setup_time
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: available
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: occupied
+      :type:  Optional[bool]
+      :value: None
+
+
+
+   .. py:attribute:: current_location
+      :type:  Optional[tuple[float, float]]
+      :value: None
+
+
+
+.. py:class:: Routing(start_node: tuple[int, int], end_node: tuple[int, int], closest_node_to_start: tuple[int, int], min_aisle_position: int, max_aisle_position: int, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, node_list: list[tuple[float, float]] = None, node_to_idx: dict = None, idx_to_node: dict = None, distance_matrix: pandas.DataFrame | None = None, predecessor_matrix: numpy.array = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.Algorithm`\ [\ :py:obj:`list`\ [\ :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.PickPosition`\ ]\ :py:obj:`| list`\ [\ :py:obj:`ware_ops_algos.domain_models.OrderPosition`\ ]\ , :py:obj:`ware_ops_algos.algorithms.algorithm_interfaces.RoutingSolution`\ ], :py:obj:`abc.ABC`
+
+
+   Abstract base class for all algorithms (routing, batching, etc.).
+   Handles timing, algo naming, and ensures consistent result metadata.
+
+
+   .. py:attribute:: start_node
+
+
+   .. py:attribute:: end_node
+
+
+   .. py:attribute:: closest_node_to_start
+
+
+   .. py:attribute:: min_aisle_position
+
+
+   .. py:attribute:: max_aisle_position
+
+
+   .. py:attribute:: pick_list
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: distance_matrix
+      :value: None
+
+
+
+   .. py:attribute:: predecessor_matrix
+      :value: None
+
+
+
+   .. py:attribute:: node_list
+      :type:  list[tuple[float, float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_to_idx
+      :value: None
+
+
+
+   .. py:attribute:: idx_to_node
+      :value: None
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: annotated_route
+      :type:  list[ware_ops_algos.algorithms.algorithm_interfaces.RouteNode]
+      :value: []
+
+
+
+   .. py:attribute:: distance
+      :value: 0
+
+
+
+   .. py:attribute:: current_order
+      :type:  Optional[list[ware_ops_algos.algorithms.algorithm_interfaces.PickPosition]]
+      :value: None
+
+
+
+   .. py:attribute:: picker
+
+
+   .. py:attribute:: execution_time
+      :value: None
+
+
+
+   .. py:method:: reset_parameters()
+
+
+.. py:class:: RoutingBatchingAssigning(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.array, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, time_limit: int | None = None, **kwargs)
+
+   Bases: :py:obj:`ware_ops_algos.algorithms.routing.Routing`, :py:obj:`abc.ABC`
+
+
+   Base class for routing algorithms.
+   :param network_graph: the network graph
+   :param order_list: list of orders or just one order, each order is a dictionary with at least keys 'batch_number' or 'order_number'
+   :param distance_matrix: the distance matrix
+   :param picker_list: list[{'id': int, 'speed': m/sec, 'time_to_pick': sec, 'capacity': int}], can be a list of pickers or a single picker
+   :param kwargs: additional keyword arguments
+
+
+   .. py:attribute:: item_sequence
+      :value: []
+
+
+
+   .. py:attribute:: route
+      :value: []
+
+
+
+   .. py:attribute:: distance_per_batch
+      :value: None
+
+
+
+   .. py:attribute:: solution
+      :value: None
+
+
+
+   .. py:attribute:: current_order
+      :value: None
+
+
+
+   .. py:attribute:: pick_list
+      :value: None
+
+
+
+   .. py:attribute:: routing_algo
+      :value: None
+
+
+
+   .. py:attribute:: list_item_pick_locations
+      :value: None
+
+
+
+   .. py:attribute:: list_item_numbers
+      :value: None
+
+
+
+   .. py:attribute:: list_item_amounts
+      :value: None
+
+
+
+   .. py:attribute:: list_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: x_start
+      :value: None
+
+
+
+   .. py:attribute:: x_end
+      :value: None
+
+
+
+   .. py:attribute:: x
+      :value: None
+
+
+
+   .. py:attribute:: w
+      :value: None
+
+
+
+   .. py:attribute:: T
+      :value: None
+
+
+
+   .. py:attribute:: y
+      :value: None
+
+
+
+   .. py:attribute:: z
+      :value: None
+
+
+
+   .. py:attribute:: C_bp
+      :value: None
+
+
+
+   .. py:attribute:: C_max
+      :value: None
+
+
+
+   .. py:attribute:: C_max_p
+      :value: None
+
+
+
+   .. py:attribute:: range_item_number
+      :value: None
+
+
+
+   .. py:attribute:: set_order_numbers
+      :value: None
+
+
+
+   .. py:attribute:: set_batch_numbers
+      :value: None
+
+
+
+   .. py:attribute:: gen_tour
+      :value: False
+
+
+
+   .. py:attribute:: gen_item_sequence
+      :value: False
+
+
+
+   .. py:attribute:: time_limit
+      :value: None
+
+
+
+   .. py:method:: construct_route_and_sequence(b)
+
+      Generates the route and/or item sequence from solution variables.
+
+
+
+.. py:class:: ExactTSPBatchingAndRoutingDistance(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`, :py:obj:`abc.ABC`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: big_m
+
+
+   .. py:attribute:: routing_algo
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+.. py:class:: ExactTSPBatchingAndRoutingMaxCompletionTime(start_node, end_node, distance_matrix, predecessor_matrix, picker, gen_tour, gen_item_sequence, big_m: int, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`
+
+
+   Implements the exact routing algorithm for the Traveling Salesman Problem (TSP) with batching.
+   This class extends ExactTSPRouting to handle batching of orders.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactTSPBatchingAndRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+   .. py:attribute:: big_m
+
+
+.. py:class:: ExactCombinedBatchingRouting(start_node: tuple[int, int], end_node: tuple[int, int], distance_matrix: pandas.DataFrame, predecessor_matrix: numpy.ndarray, picker: list[ware_ops_algos.domain_models.Resource], gen_tour: bool = False, gen_item_sequence: bool = False, time_limit: int | None = None, **kwargs)
+
+   Bases: :py:obj:`RoutingBatchingAssigning`
+
+
+   Exact MIP for the joint Order-Batching and Picker-Routing Problem (OBRP)
+   with homogeneous pickers.
+
+
+   .. py:attribute:: algo_name
+      :value: 'ExactCombinedBatchingRouting'
+
+
+
+   .. py:attribute:: mdl
+
+
+   .. py:attribute:: a
+      :value: None
+
+
+
+   .. py:attribute:: t
+      :value: None
+
+
+
+   .. py:attribute:: orders
+      :type:  list[ware_ops_algos.algorithms.algorithm_interfaces.WarehouseOrder] | None
+      :value: None
+
+
+

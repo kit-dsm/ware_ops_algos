@@ -1,0 +1,234 @@
+ware_ops_algos.domain_models.layout
+===================================
+
+.. py:module:: ware_ops_algos.domain_models.layout
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/ware_ops_algos/domain_models/layout/models/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.layout.Coord
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ware_ops_algos.domain_models.layout.LayoutType
+   ware_ops_algos.domain_models.layout.LayoutParameters
+   ware_ops_algos.domain_models.layout.LayoutNetwork
+   ware_ops_algos.domain_models.layout.LayoutData
+
+
+Package Contents
+----------------
+
+.. py:data:: Coord
+
+.. py:class:: LayoutType
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   str(object='') -> str
+   str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+   Create a new string object from the given object. If encoding or
+   errors is specified, then the object must expose a data buffer
+   that will be decoded using the given encoding and error handler.
+   Otherwise, returns the result of object.__str__() (if defined)
+   or repr(object).
+   encoding defaults to sys.getdefaultencoding().
+   errors defaults to 'strict'.
+
+
+   .. py:attribute:: CONVENTIONAL
+      :value: 'conventional'
+
+
+
+   .. py:attribute:: UNCONVENTIONAL
+      :value: 'unconventional'
+
+
+
+.. py:class:: LayoutParameters
+
+   .. py:attribute:: n_aisles
+      :type:  int
+
+
+   .. py:attribute:: n_pick_locations
+      :type:  int
+
+
+   .. py:attribute:: n_blocks
+      :type:  int
+
+
+   .. py:attribute:: dist_top_to_pick_location
+      :type:  float
+
+
+   .. py:attribute:: dist_bottom_to_pick_location
+      :type:  float
+
+
+   .. py:attribute:: dist_pick_locations
+      :type:  float
+
+
+   .. py:attribute:: dist_aisle
+      :type:  float
+
+
+   .. py:attribute:: dist_start
+      :type:  float
+
+
+   .. py:attribute:: start_location
+      :type:  tuple[int, int]
+
+
+   .. py:attribute:: dist_end
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: dist_change_aisle
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: dist_cross_aisle
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: end_location
+      :type:  Optional[tuple[int, int]]
+      :value: None
+
+
+
+   .. py:attribute:: start_connection_point
+      :type:  Optional[tuple[int, int]]
+      :value: None
+
+
+
+   .. py:attribute:: end_connection_point
+      :type:  Optional[tuple[int, int]]
+      :value: (None,)
+
+
+
+   .. py:attribute:: depot_location
+      :type:  Optional[str]
+      :value: None
+
+
+
+.. py:class:: LayoutNetwork
+
+   .. py:attribute:: graph
+      :type:  networkx.Graph
+
+
+   .. py:attribute:: distance_matrix
+      :type:  Optional[pandas.DataFrame]
+      :value: None
+
+
+
+   .. py:attribute:: predecessor_matrix
+      :type:  Optional[numpy.ndarray]
+      :value: None
+
+
+
+   .. py:attribute:: shortest_paths
+      :type:  Optional[dict]
+      :value: None
+
+
+
+   .. py:attribute:: closest_node_to_start
+      :type:  Optional[Coord]
+      :value: None
+
+
+
+   .. py:attribute:: min_aisle_position
+      :type:  Optional[int | float]
+      :value: None
+
+
+
+   .. py:attribute:: max_aisle_position
+      :type:  Optional[int | float]
+      :value: None
+
+
+
+   .. py:attribute:: start_node
+      :type:  Optional[Tuple[int | float, int | float]]
+      :value: None
+
+
+
+   .. py:attribute:: end_node
+      :type:  Optional[Tuple[int | float, int | float]]
+      :value: None
+
+
+
+   .. py:attribute:: node_list
+      :type:  Optional[list[Tuple[int | float, int | float]]]
+      :value: None
+
+
+
+.. py:class:: LayoutData
+
+   Bases: :py:obj:`ware_ops_algos.domain_models.BaseDomainObject`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: tpe
+      :type:  LayoutType
+
+
+   .. py:attribute:: graph_data
+      :type:  Optional[LayoutParameters]
+      :value: None
+
+
+
+   .. py:attribute:: layout_network
+      :type:  Optional[LayoutNetwork]
+      :value: None
+
+
+
+   .. py:method:: get_features() -> dict[str, any]
+
+
