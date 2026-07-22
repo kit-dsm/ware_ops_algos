@@ -1,0 +1,44 @@
+algo_name: RatliffRosenthalNF
+problem_type: routing
+description: >
+  Dynamic programming approach for the single-picker routing problem with scattered storage
+  in single-block parallel-aisle warehouses. Formulated as a network flow problem over the resulting
+  state space of the dynamic problem.
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+      - n_aisles
+      - n_pick_locations
+      - dist_aisle
+      - dist_pick_locations
+      - dist_aisle_location
+      - dist_start
+      - dist_end
+    constraints:
+      n_blocks:
+        equals: 1
+  resources:
+    type:
+      - any
+  orders:
+    type:
+      - any
+  storage:
+    type:
+      - any
+
+objective: Distance
+
+implementation:
+  class_name: RatliffRosenthalScatteredRouting
+  component_name: RatliffRosenthalNF
+  solver: gurobi
+  type: exact
