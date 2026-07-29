@@ -72,7 +72,7 @@ def plot_route_with_directions(network_graph: nx.Graph, route: list[tuple[int, i
         plt.arrow(x1 + offset_x, y1 + offset_y,
                   dx * 0.9, dy * 0.9,
                   length_includes_head=True,
-                  head_width=0.5,
+                  head_width=0.05,
                   head_length=0.2,
                   fc='red', ec='red')
 

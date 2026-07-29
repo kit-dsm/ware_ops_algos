@@ -5,8 +5,9 @@ from ware_ops_algos.algorithms import (
     LocalSearchBatching,
     ClarkAndWrightBatching,
     NearestNeighbourhoodRouting,
-    RatliffRosenthalRouting, Batching, BatchingSolution,
-)
+    RatliffRosenthalRouting, Batching, BatchingSolution, SShapeRouting, )
+from ware_ops_algos.algorithms.batching.local_search_batching import LocalSearchBatchingModular
+from ware_ops_algos.algorithms.batching.moves import SwapNeighborhood, ShiftNeighborhood
 from ware_ops_algos.domain_models import Order
 
 
@@ -121,6 +122,7 @@ def test_local_search_batching_muter(benchmark, muter_domain, muter_resolved_ord
         routing_class=RatliffRosenthalRouting,
         routing_class_kwargs=_rr_routing_kwargs(muter_domain),
         start_batching_class=OrderNrFifoBatching,
+        verbose=True
     )
     result = benchmark(algo.solve, muter_resolved_orders)
     assert_valid_batching_result(result, muter_resolved_orders, algo)
@@ -149,3 +151,52 @@ def test_fifo_batching_kris(benchmark, kris_domain, kris_resolved_orders):
     algo = OrderNrFifoBatching(pick_cart=pick_cart, articles=articles)
     result = benchmark(algo.solve, kris_resolved_orders)
     assert_valid_batching_result(result, kris_resolved_orders, algo)
+
+
+@pytest.mark.benchmark(group="local_search_batching")
+def test_local_search_batching_foodmart(benchmark, foodmart_domain, foodmart_resolved_orders):
+    pick_cart = foodmart_domain.resources.resources[0].pick_cart
+    articles = foodmart_domain.articles
+    algo = LocalSearchBatching(
+        pick_cart=pick_cart,
+        articles=articles,
+        routing_class=NearestNeighbourhoodRouting,
+        routing_class_kwargs=_routing_kwargs(foodmart_domain),
+        start_batching_class=OrderNrFifoBatching,
+        verbose=True
+    )
+    result = benchmark(algo.solve, foodmart_resolved_orders)
+    assert_valid_batching_result(result, foodmart_resolved_orders, algo)
+
+
+@pytest.mark.benchmark(group="local_search_batching")
+def test_local_search_batching_modular_foodmart(benchmark, foodmart_domain, foodmart_resolved_orders):
+    pick_cart = foodmart_domain.resources.resources[0].pick_cart
+    articles = foodmart_domain.articles
+    # algo1 = LocalSearchBatching(
+    #     pick_cart=pick_cart,
+    #     articles=articles,
+    #     routing_class=NearestNeighbourhoodRouting,
+    #     routing_class_kwargs=_routing_kwargs(foodmart_domain),
+    #     start_batching_class=OrderNrFifoBatching,
+    #     verbose=True
+    # )
+
+    algo2 = LocalSearchBatchingModular(
+        pick_cart=pick_cart,
+        articles=articles,
+        routing_class=NearestNeighbourhoodRouting,
+        routing_class_kwargs=_routing_kwargs(foodmart_domain),
+        start_batching_class=OrderNrFifoBatching,
+        verbose=True,
+        neighborhood_classes=[
+            SwapNeighborhood,
+            ShiftNeighborhood
+        ]
+    )
+    # result1 = benchmark(algo1.solve, foodmart_resolved_orders)
+    # assert_valid_batching_result(result1, foodmart_resolved_orders, algo1)
+
+    result2 = benchmark(algo2.solve, foodmart_resolved_orders)
+    assert_valid_batching_result(result2, foodmart_resolved_orders, algo2)
+

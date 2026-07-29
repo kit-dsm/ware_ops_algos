@@ -3,6 +3,7 @@ import unittest
 import pandas as pd
 
 from ware_ops_algos.algorithms import RatliffRosenthalRouting, GreedyItemAssignment, ExactTSPRoutingDistance
+from ware_ops_algos.algorithms.visualization import plot_route, plot_route_with_directions
 from ware_ops_algos.data_loaders import HesslerIrnichLoader
 from tests.conftest import find_project_root
 
@@ -98,6 +99,8 @@ class RRTSPEquality(unittest.TestCase):
         for pl in pick_lists:
             sol_rr = rr_router.solve(pl)
             sol_tsp = tsp_router.solve(pl)
+            if dist_tsp == 0:
+                plot_route_with_directions(graph, sol_tsp.route.route)
             rr_router.reset_parameters()
             tsp_router.reset_parameters()
 
