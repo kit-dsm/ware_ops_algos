@@ -17,6 +17,7 @@ O = TypeVar("O")  # output type
 class AlgorithmSolution:
     algo_name: str = ""
     execution_time: float = 0.0
+    objective_trajectory: list[tuple[float, float]] = field(default_factory=list)
     provenance: dict[str, Any] = field(default_factory=dict)
 
 
@@ -171,6 +172,11 @@ class ScheduledJob:
 class ItemAssignmentSolution(AlgorithmSolution):
     resolved_orders: list[WarehouseOrder] = field(default_factory=list)
 
+@dataclass
+class BatchingState:
+    """Common dataclass to represent a solution state for search-based batching approaches."""
+    batches: list[BatchObject]
+    unassigned: list[WarehouseOrder] = field(default_factory=list)
 
 @dataclass
 class BatchingSolution(AlgorithmSolution):
@@ -202,9 +208,24 @@ class Algorithm(ABC, Generic[I, O]):
     def __init__(self, seed: Optional[int] = None):
         self._seed = seed
         self.logger = logging.getLogger(self.__class__.__name__)
+        self._solve_start_time: float | None = None
+        self._objective_trajectory: list[tuple[float, float]] = []
+
+    def _record_objective(self, objective: float) -> None:
+        if self._solve_start_time is None:
+            return
+
+        self._objective_trajectory.append(
+            (
+                time.perf_counter() - self._solve_start_time,
+                objective,
+            )
+        )
 
     def solve(self, input_data: I) -> O:
         start_time = time.perf_counter()
+        self._solve_start_time = start_time
+        self._objective_trajectory = []
 
         try:
             result: O = self._run(input_data)
@@ -216,6 +237,7 @@ class Algorithm(ABC, Generic[I, O]):
         if not result.algo_name:
             result.algo_name = self.algo_name
         result.execution_time = elapsed
+        result.objective_trajectory = self._objective_trajectory
 
         return result
 

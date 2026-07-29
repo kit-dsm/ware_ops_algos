@@ -596,6 +596,11 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
 
         self.orders: list[WarehouseOrder] | None = None
 
+    def _callback(self, model, where):
+        if where == GRB.Callback.MIPSOL:
+            objective = model.cbGet(GRB.Callback.MIPSOL_OBJ)
+            self._record_objective(objective)
+
     def _run(self, orders: list[WarehouseOrder] = None) -> CombinedRoutingSolution:
         pick_list = []
         self.orders = orders
@@ -613,7 +618,7 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
         if self.time_limit is not None:
             self.mdl.Params.TimeLimit = self.time_limit
         self.mdl.Params.OutputFlag = 1
-        self.mdl.optimize()
+        self.mdl.optimize(self._callback)
 
         execution_time = time.time() - start_time
 

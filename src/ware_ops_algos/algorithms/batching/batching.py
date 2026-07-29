@@ -1,7 +1,6 @@
 import heapq
 import random
 import time
-from copy import deepcopy
 from enum import Enum
 from abc import ABC, abstractmethod
 from itertools import combinations
@@ -13,7 +12,7 @@ from ware_ops_algos.algorithms import Algorithm
 from ware_ops_algos.algorithms.batching.batching_utils import CapacityChecker
 from ware_ops_algos.algorithms.routing.routing import Routing
 from ware_ops_algos.algorithms.algorithm_interfaces import BatchingSolution, BatchObject, WarehouseOrder
-from ware_ops_algos.domain_models import Order, PickCart, Articles
+from ware_ops_algos.domain_models import PickCart, Articles
 
 
 class Batching(Algorithm[list[WarehouseOrder], BatchingSolution], ABC):
@@ -415,8 +414,9 @@ class LocalSearchBatching(Batching):
 
     def _local_search(self, batches: list[BatchObject]) -> list[BatchObject]:
         self._start_time = time.time()
-
         initial_cost = sum(self._batch_cost_from_orders(b.orders) for b in batches)
+        self._record_objective(initial_cost)
+
         if self.verbose:
             print(f"\n{'=' * 60}")
             print(f"Local Search Started")
@@ -450,6 +450,12 @@ class LocalSearchBatching(Batching):
                     swap_improvements += 1
                     overall_improved = True
 
+                    current_cost = sum(
+                        self._batch_cost_from_orders(b.orders)
+                        for b in batches
+                    )
+                    self._record_objective(current_cost)
+
             # Exhaust all SHIFT improvements
             shift_count = 0
             shift_improved = True
@@ -459,6 +465,12 @@ class LocalSearchBatching(Batching):
                     shift_count += 1
                     shift_improvements += 1
                     overall_improved = True
+
+                    current_cost = sum(
+                        self._batch_cost_from_orders(b.orders)
+                        for b in batches
+                    )
+                    self._record_objective(current_cost)
 
             if overall_improved:
                 iter_end_cost = sum(self._batch_cost_from_orders(b.orders) for b in batches)
@@ -547,9 +559,11 @@ class LocalSearchBatching(Batching):
 
                     batch_j = batches[j]
 
-                    # Skip if source batch would become empty
+                    # # Skip if source batch would become empty
                     if len(batch_i.orders) <= 1:
-                        continue
+                        if self.verbose:
+                            print("batch empty")
+                        # continue
 
                     # Check capacity BEFORE computing costs
                     temp_orders_i = batch_i.orders[:order_idx] + batch_i.orders[order_idx + 1:]
