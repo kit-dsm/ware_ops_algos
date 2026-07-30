@@ -40,6 +40,7 @@ class AlgorithmCard:
         implementation: Dict,
         description: Optional[str] = None,
         configuration: Optional[Dict] = None,
+        capabilities: Optional[Dict] = None,
     ):
         self.algo_name = algo_name
         self.problem_type = problem_type
@@ -48,6 +49,7 @@ class AlgorithmCard:
         self.implementation = implementation
         self.description = description
         self.configuration = configuration or {}
+        self.capabilities = capabilities or {}
 
     def __repr__(self):
         return f"name={self.algo_name} problem={self.problem_type}>"
@@ -89,6 +91,7 @@ def load_algo_card(path: str | Path) -> AlgorithmCard:
         implementation=data.get("implementation", {}),
         description=data.get("description"),
         configuration=data.get("configuration"),
+        capabilities=data.get("capabilities"),
     )
 
 
@@ -270,6 +273,7 @@ def resolve_configuration(
         objective=base.objective,
         implementation=implementation,
         description=description,
+        capabilities=dict(base.capabilities),
     )
 
 

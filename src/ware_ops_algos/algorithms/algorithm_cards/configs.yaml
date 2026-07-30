@@ -12,7 +12,7 @@ configurations:
   - name: LSBatchingRRFiFo
     base: LSBatching
     configuration: {routing_class: RatliffRosenthal, start_batching_class: FiFo}
-  - name: LSBatchingRR   # existing name: RR + OrderNrFiFo
+  - name: LSBatchingRROrderNrFiFo   # existing name: RR + OrderNrFiFo
     base: LSBatching
     configuration: {routing_class: RatliffRosenthal, start_batching_class: OrderNrFiFo}
   - name: LSBatchingRRDueDate

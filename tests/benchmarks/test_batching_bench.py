@@ -5,8 +5,7 @@ from ware_ops_algos.algorithms import (
     LocalSearchBatching,
     ClarkAndWrightBatching,
     NearestNeighbourhoodRouting,
-    RatliffRosenthalRouting, Batching, BatchingSolution,
-)
+    RatliffRosenthalRouting, Batching, BatchingSolution, )
 from ware_ops_algos.domain_models import Order
 
 
@@ -121,6 +120,7 @@ def test_local_search_batching_muter(benchmark, muter_domain, muter_resolved_ord
         routing_class=RatliffRosenthalRouting,
         routing_class_kwargs=_rr_routing_kwargs(muter_domain),
         start_batching_class=OrderNrFifoBatching,
+        verbose=True
     )
     result = benchmark(algo.solve, muter_resolved_orders)
     assert_valid_batching_result(result, muter_resolved_orders, algo)
@@ -149,3 +149,4 @@ def test_fifo_batching_kris(benchmark, kris_domain, kris_resolved_orders):
     algo = OrderNrFifoBatching(pick_cart=pick_cart, articles=articles)
     result = benchmark(algo.solve, kris_resolved_orders)
     assert_valid_batching_result(result, kris_resolved_orders, algo)
+
