@@ -1,7 +1,13 @@
 import time
 
-from ware_ops_algos.algorithms import WarehouseOrder, Batching, BatchingSolution, BatchObject, Routing
+from ware_ops_algos.algorithms.algorithm_interfaces import (
+    BatchObject,
+    BatchingSolution,
+    WarehouseOrder,
+)
+from ware_ops_algos.algorithms.batching.batching import Batching
 from ware_ops_algos.algorithms.batching.moves import Neighborhood
+from ware_ops_algos.algorithms.routing.routing import Routing
 from ware_ops_algos.domain_models import PickCart, Articles
 
 

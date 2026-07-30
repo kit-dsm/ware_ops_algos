@@ -4,7 +4,12 @@ from typing import ClassVar
 
 import pandas as pd
 
-from ware_ops_algos.algorithms import WarehouseOrder, Batching, BatchingSolution, BatchObject
+from ware_ops_algos.algorithms.algorithm_interfaces import (
+    BatchObject,
+    BatchingSolution,
+    WarehouseOrder,
+)
+from ware_ops_algos.algorithms.batching.batching import Batching
 from ware_ops_algos.domain_models import PickCart, Articles
 
 
