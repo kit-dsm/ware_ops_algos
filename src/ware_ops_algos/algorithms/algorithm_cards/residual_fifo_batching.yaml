@@ -1,0 +1,40 @@
+algo_name: ResidualFiFo
+problem_type: batching
+description: >
+  Deterministically fills genuinely empty bins of an active non-mixing
+  order-capacity cart while preserving every existing bin owner.
+
+requirements:
+  layout:
+    type: [any]
+  resources:
+    type: [any]
+    features: [capacities, dimensions_type, n_boxes, box_can_mix_orders]
+    constraints:
+      dimensions_type:
+        equals: [orders]
+      n_boxes:
+        greater_than: 0
+      box_can_mix_orders:
+        equals: false
+  orders:
+    type: [any]
+    features: [order_date]
+  storage:
+    type: [any]
+
+objective: Distance
+
+capabilities:
+  partial_active_batch: true
+  locked_orders: true
+  residual_capacity: true
+  empty_order_bin_insertion: true
+  mixed_order_bins: false
+  non_order_dimensions: false
+
+implementation:
+  class_name: ResidualFifoBatching
+  component_name: ResidualFiFo
+  solver:
+  type: heuristic

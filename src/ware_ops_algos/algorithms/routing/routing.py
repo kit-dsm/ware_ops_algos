@@ -74,6 +74,14 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         """Concrete routing algorithms implement this and return a Route result."""
         ...
 
+    def solve(
+        self,
+        input_data: list[PickPosition] | list[OrderPosition],
+    ) -> RoutingSolution | CombinedRoutingSolution:
+        """Start every solve with clean temporary route construction state."""
+        self.reset_parameters()
+        return super().solve(input_data)
+
     def _get_distance(self, source, target) -> float:
         """Fast distance lookup."""
         return self._dist_array[self._node_to_idx[source], self._node_to_idx[target]]
@@ -2033,3 +2041,257 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
                     T.add_edge((aisle, seg_top[0]), (aisle, self.n_pick_locations + 1))
 
         return T
+
+
+class ProfitableSprpRouting(RatliffRosenthalRouting):
+    """Profitable SPRP (pricing problem) for dedicated storage.
+
+    Extends the Ratliff-Rosenthal DP state graph with partial-coverage
+    aisle actions and solves an IP that jointly selects a capacity-feasible
+    subset of orders and an optimal route maximizing
+
+        sum_i theta_i * y_i  -  (1 / scale) * route_cost
+
+    where ``y_i`` is the order-inclusion variable and ``route_cost`` is the
+    DP-optimal travel distance of the selected positions. This is the
+    profitable/pricing variant of the SPRP of Heßler & Irnich (2024): order
+    inclusion is optional, selected orders earn their score, capacity is
+    enforced, and the existing DP handles the routing cost.
+
+    The state graph (equivalence classes, aisle-action tables, cross-aisle
+    transitions, cost functions) is inherited unchanged from
+    :class:`RatliffRosenthalRouting`. Only the aisle transitions are widened
+    to parameterized partial-coverage actions (turn at any relevant pick
+    position, including void) and the IP replaces the shortest-path solve.
+
+    ``route_cost_scale`` normalizes the physical distance so that the route
+    cost is comparable to the actor scores. It defaults to the cost of an
+    S-shape tour over all aisles.
+    """
+
+    algo_name = "ProfitableSprpRouting"
+
+    def __init__(self, *args, route_cost_scale: float | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.state_graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        if route_cost_scale is None:
+            route_cost_scale = (
+                self.n_aisles * self.one_pass()
+                + max(0, self.n_aisles - 1) * self.dist_aisle
+            )
+        self.route_cost_scale = float(max(route_cost_scale, 1.0))
+        self._aisle_ys: dict[int, list[int]] = {}
+        self._position_edges: dict[tuple[int, int], list[tuple]] = {}
+
+    @staticmethod
+    def _next_state(prev_eq, action_id):
+        return table_I.get(prev_eq, {}).get(action_id)
+
+    def _aisle_relevant_y(self, j: int) -> list[int]:
+        return self._aisle_ys.get(j, [])
+
+    def _add_first_aisle_transitions(self):
+        self._add_aisle_transitions_for(j=1, prev_states=[("0", "0", "0C")])
+
+    def _add_aisle_transitions(self, j: int):
+        self._add_aisle_transitions_for(j=j, prev_states=equivalence_classes)
+
+    @staticmethod
+    def _action_id(action_type: str) -> int:
+        return {
+            "void": 6, "one_pass": 1, "two_pass": 5,
+            "top": 2, "bottom": 3, "gap": 4,
+        }[action_type]
+
+    def _add_aisle_transitions_for(self, j: int, prev_states):
+        is_depot_aisle = j == self.depot[0]
+        depot_cost = 2 * self.dist_end if is_depot_aisle else 0.0
+        relevant_y = self._aisle_relevant_y(j)
+        npl = self.n_pick_locations
+        ry_set = set(relevant_y)
+        for prev_eq in prev_states:
+            candidates = []
+            next_eq = self._next_state(prev_eq, 6)
+            if next_eq is not None:
+                candidates.append(("void", None, self.void() + depot_cost, []))
+            next_eq = self._next_state(prev_eq, 1)
+            if next_eq is not None:
+                candidates.append(("one_pass", None, self.one_pass() + depot_cost, [(0, npl)]))
+            next_eq = self._next_state(prev_eq, 5)
+            if next_eq is not None:
+                candidates.append(("two_pass", None, self.two_pass() + depot_cost, [(0, npl)]))
+            next_eq = self._next_state(prev_eq, 2)
+            if next_eq is not None and relevant_y:
+                for p in relevant_y:
+                    candidates.append(("top", p, self.top(p) + depot_cost, [(p, npl)]))
+            next_eq = self._next_state(prev_eq, 3)
+            if next_eq is not None and relevant_y:
+                for p in reversed(relevant_y):
+                    candidates.append(("bottom", p, self.bottom(p) + depot_cost, [(0, p)]))
+            next_eq = self._next_state(prev_eq, 4)
+            if next_eq is not None and len(relevant_y) >= 2:
+                n_ry = len(relevant_y)
+                for h_idx in range(n_ry - 1):
+                    h = relevant_y[h_idx]
+                    for i_idx in range(h_idx + 1, n_ry):
+                        i = relevant_y[i_idx]
+                        gap_distance = (i - h) * self.dist_pick_locations
+                        candidates.append(("gap", (h, i), self.gap(gap_distance) + depot_cost, [(0, h), (i, npl)]))
+            self._emit_dominated(j, prev_eq, ry_set, candidates)
+
+    def _emit_dominated(self, j, prev_eq, ry_set, candidates):
+        """Apply exact Pareto dominance and emit surviving edges.
+
+        An edge e1 dominates e2 (same from/to) when cost(e1) <= cost(e2) and
+        e1 covers a superset of e2's positions.  Dominated edges can never be
+        selected by the IP, so pruning them is exact.
+        """
+        by_target: dict[tuple, list] = defaultdict(list)
+        for action_type, action_node, cost, coverage in candidates:
+            next_eq = self._next_state(prev_eq, self._action_id(action_type))
+            if next_eq is None:
+                continue
+            covered = frozenset(
+                y for (y_min, y_max) in coverage for y in ry_set
+                if y_min <= y <= y_max
+            )
+            by_target[next_eq].append((cost, action_type, action_node, coverage, covered))
+        for next_eq, group in by_target.items():
+            group.sort(key=lambda c: c[0])
+            kept = []
+            for cost, action_type, action_node, coverage, covered in group:
+                dominated = False
+                for k_cost, _k_t, _k_n, _k_c, k_covered in kept:
+                    if k_cost <= cost and k_covered >= covered:
+                        dominated = True
+                        break
+                if not dominated:
+                    kept.append((cost, action_type, action_node, coverage, covered))
+            for cost, action_type, action_node, coverage, covered in kept:
+                self._emit_edge(j, prev_eq, next_eq, action_type, action_node,
+                                cost, coverage)
+
+    def _emit_edge(self, j, prev_eq, next_eq, action_type, action_node,
+                   cost, coverage):
+        f = (j, prev_eq, "-")
+        t = (j, next_eq, "+")
+        if f not in self.state_graph or t not in self.state_graph:
+            return
+        key = self.state_graph.add_edge(
+            f, t, weight=float(cost), action=action_type,
+            action_node=action_node, aisle=j, coverage=coverage,
+        )
+        ys = self._aisle_ys.get(j, [])
+        if not ys or not coverage:
+            return
+        for (y_min, y_max) in coverage:
+            for y in ys:
+                if y_min <= y <= y_max:
+                    self._position_edges[(j, y)].append((f, t, key))
+
+    def prepare(self, order_positions, demands, capacity, *,
+                allow_empty: bool = False):
+        """Build the DP state graph and the IP model for one set of orders.
+
+        Returns an opaque context dict to pass to :meth:`solve_with_scores`.
+        Reusing the prepared model across many score vectors (candidate
+        generation) avoids rebuilding the graph and the constraint matrix.
+        """
+        n_orders = len(order_positions)
+        self._aisle_ys = {}
+        for positions in order_positions:
+            for (aisle, y) in positions:
+                self._aisle_ys.setdefault(aisle, set()).add(y)
+        self._aisle_ys = {a: sorted(ys) for a, ys in self._aisle_ys.items()}
+        self.pick_list = [
+            PickPosition(order_number=oi, article_id=-1, amount=1,
+                         pick_node=(int(a), int(y)), in_store=1)
+            for oi, positions in enumerate(order_positions)
+            for (a, y) in positions
+        ]
+        self.current_order = list(self.pick_list)
+        self.state_graph = nx.MultiDiGraph()
+        self._position_edges = defaultdict(list)
+        self.reset_parameters()
+        self.build_state_space()
+        start_node = (1, ("0", "0", "0C"), "-")
+        end_node = (self.n_aisles + 1, ("0", "0", "1C"), "-")
+        mdl = gp.Model("ProfitableSPRP")
+        mdl.setParam("OutputFlag", 0)
+        mdl.setParam("Threads", 1)
+        edge_list = list(self.state_graph.edges(keys=True, data=True))
+        x = {}
+        for u, v, k, data in edge_list:
+            x[(u, v, k)] = mdl.addVar(
+                vtype=GRB.BINARY,
+                obj=-float(data["weight"]) / self.route_cost_scale,
+            )
+        y = {}
+        for i in range(n_orders):
+            y[i] = mdl.addVar(vtype=GRB.BINARY, obj=0.0)
+        mdl.setAttr("ModelSense", GRB.MAXIMIZE)
+        for node in self.state_graph.nodes():
+            out_expr = gp.quicksum(
+                x[(u, v, k)]
+                for u, v, k in self.state_graph.out_edges(node, keys=True)
+            )
+            in_expr = gp.quicksum(
+                x[(u, v, k)]
+                for u, v, k in self.state_graph.in_edges(node, keys=True)
+            )
+            rhs = 1 if node == start_node else (-1 if node == end_node else 0)
+            mdl.addConstr(out_expr - in_expr == rhs)
+        for i, positions in enumerate(order_positions):
+            for (aisle, yv) in positions:
+                edges = self._position_edges.get((aisle, yv), [])
+                if not edges:
+                    mdl.addConstr(y[i] == 0)
+                    continue
+                mdl.addConstr(gp.quicksum(x[e] for e in edges) >= y[i])
+        mdl.addConstr(
+            gp.quicksum(float(demands[i]) * y[i] for i in range(n_orders))
+            <= float(capacity)
+        )
+        if not allow_empty and n_orders > 0:
+            feasible = [
+                i for i, positions in enumerate(order_positions)
+                if all(self._position_edges.get((a, yv)) for (a, yv) in positions)
+            ]
+            if feasible:
+                mdl.addConstr(gp.quicksum(y[i] for i in feasible) >= 1)
+        mdl.update()
+        return {
+            "model": mdl,
+            "x": x,
+            "y": y,
+            "edge_list": edge_list,
+            "n_orders": n_orders,
+            "order_positions": order_positions,
+            "graph": self.state_graph,
+            "position_edges": self._position_edges,
+        }
+
+    def solve_with_scores(self, context, scores):
+        """Re-optimize the prepared model for one score vector.
+
+        Returns ``(selected_order_indices, route_distance)``.
+        """
+        mdl = context["model"]
+        y = context["y"]
+        n_orders = context["n_orders"]
+        for i in range(n_orders):
+            y[i].Obj = float(scores[i])
+        mdl.update()
+        mdl.optimize()
+        if mdl.status != GRB.OPTIMAL:
+            if mdl.status == GRB.INFEASIBLE:
+                raise RuntimeError("Profitable SPRP IP is infeasible")
+            raise RuntimeError(f"Profitable SPRP IP status {mdl.status}")
+        selected = [i for i in range(n_orders) if y[i].X > 0.5]
+        x = context["x"]
+        edge_list = context["edge_list"]
+        distance = sum(
+            data["weight"] for u, v, k, data in edge_list
+            if x[(u, v, k)].X > 0.5
+        )
+        return np.asarray(selected, dtype=int), float(distance)
