@@ -1315,11 +1315,109 @@ class RatliffRosenthalRouting(Routing):
         self.distance = nx.path_weight(self.state_graph, self.path, weight='weight')
         self.T = self._construct_picker_tour()
 
+        ordered_picks = self.get_item_sequence_from_path()
+        self.item_sequence = [pos.pick_node for pos in ordered_picks]
+        self.annotated_route = self._build_annotated_route(ordered_picks)
+        self.route = [n.position for n in self.annotated_route]
+
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route,
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
+
+    def _build_annotated_route(self, ordered_picks: list[PickPosition]) -> list[RouteNode]:
+        """Build the full annotated route by walking the DP path edge by edge.
+
+        For each aisle transition the physical positions the picker visits are
+        emitted — pick positions as PICK nodes, cross-aisle / turn-around
+        positions as ROUTE nodes — so the simulator can track the picker and
+        match every batch pick position.
+        """
+        from ware_ops_algos.algorithms.routing.dynamic_programming_helpers import aisle_mapping
+
+        annotated: list[RouteNode] = []
+        pick_by_aisle: dict[int, list[PickPosition]] = {}
+        for pos in self.pick_list:
+            pick_by_aisle.setdefault(pos.pick_node[0], []).append(pos)
+
+        annotated.append(RouteNode(self.start_node, NodeType.ROUTE))
+        if self.closest_node_to_start != self.start_node:
+            annotated.append(RouteNode(self.closest_node_to_start, NodeType.ROUTE))
+
+        at_front = True
+
+        for i in range(len(self.path) - 1):
+            from_state = self.path[i]
+            to_state = self.path[i + 1]
+            edge_data = self.state_graph.get_edge_data(from_state, to_state)
+            action = edge_data.get("action")
+            action_node = edge_data.get("action_node")
+
+            if isinstance(action, tuple):
+                a_edges, b_edges = action
+                current_aisle = from_state[0]
+                if a_edges > 0 and at_front:
+                    annotated.append(RouteNode((current_aisle + 1, 0), NodeType.ROUTE))
+                if b_edges > 0 and not at_front:
+                    annotated.append(
+                        RouteNode((current_aisle + 1, self.n_pick_locations + 1), NodeType.ROUTE))
+            else:
+                transition_type = aisle_mapping.get(action)
+                aisle = from_state[0]
+                picks = pick_by_aisle.get(aisle, [])
+
+                if transition_type == "one_pass":
+                    for pos in sorted(picks, key=lambda p: p.pick_node[1]):
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(RouteNode((aisle, self.n_pick_locations + 1), NodeType.ROUTE))
+                    at_front = False
+
+                elif transition_type == "two_pass":
+                    for pos in sorted(picks, key=lambda p: p.pick_node[1]):
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(RouteNode((aisle, self.n_pick_locations + 1), NodeType.ROUTE))
+                    annotated.append(RouteNode((aisle, 0), NodeType.ROUTE))
+                    at_front = True
+
+                elif transition_type == "top" and isinstance(action_node, int):
+                    top_picks = sorted(
+                        [p for p in picks if p.pick_node[1] >= action_node],
+                        key=lambda p: p.pick_node[1], reverse=True)
+                    for pos in top_picks:
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(RouteNode((aisle, self.n_pick_locations + 1), NodeType.ROUTE))
+                    at_front = False
+
+                elif transition_type == "bottom" and isinstance(action_node, int):
+                    bottom_picks = sorted(
+                        [p for p in picks if p.pick_node[1] <= action_node],
+                        key=lambda p: p.pick_node[1])
+                    for pos in bottom_picks:
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(RouteNode((aisle, 0), NodeType.ROUTE))
+                    at_front = True
+
+                elif transition_type == "gap" and isinstance(action_node, tuple):
+                    y_min, y_max = action_node
+                    front_picks = sorted(
+                        [p for p in picks if p.pick_node[1] <= y_min],
+                        key=lambda p: p.pick_node[1])
+                    for pos in front_picks:
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(RouteNode((aisle, 0), NodeType.ROUTE))
+                    back_picks = sorted(
+                        [p for p in picks if p.pick_node[1] >= y_max],
+                        key=lambda p: p.pick_node[1], reverse=True)
+                    for pos in back_picks:
+                        annotated.append(RouteNode(pos.pick_node, NodeType.PICK))
+                    annotated.append(
+                        RouteNode((aisle, self.n_pick_locations + 1), NodeType.ROUTE))
+                    at_front = False
+
+        annotated.append(RouteNode(self.end_node, NodeType.ROUTE))
+        return annotated
 
     def build_state_space(self):
         start_node = (1, ("0", "0", "0C"), "-")
@@ -1573,8 +1671,6 @@ class RatliffRosenthalRouting(Routing):
 
             elif transition_type == "bottom" and isinstance(action_node, int):
                 # Bottom-up: low y → high y
-                if aisle == 3:
-                    print()
                 picked_items.extend(sorted(
                     [o for o in aisle_orders if o.pick_node[1] <= action_node],
                     key=lambda o: o.pick_node[1]))
@@ -1671,12 +1767,6 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
 
         # 4. Solve IP (Eq 1a-1d)
         route_edges = self._solve_ip()
-        print("DP PATH:")
-        for u, v, k, data in route_edges:
-            action = data.get("action")
-            print(f"  {u} -> {v}  action={action}  node={data.get('action_node')}  "
-                  f"cost={data['weight']}  supply={data.get('supply', {})}")
-        print(f"Total: {sum(d['weight'] for _, _, _, d in route_edges)}")
         # 5. Reconstruct tour
         self.distance = sum(d["weight"] for _, _, _, d in route_edges)
         self.T = self._construct_scattered_tour(route_edges)
@@ -2295,3 +2385,207 @@ class ProfitableSprpRouting(RatliffRosenthalRouting):
             if x[(u, v, k)].X > 0.5
         )
         return np.asarray(selected, dtype=int), float(distance)
+
+
+class ProfitableSprpRoutingRG(ProfitableSprpRouting):
+    """Profitable SPRP with linear-size RG (reduced gaps) state space.
+
+    Replaces the O(k²) gap(h, i) edges of the Heßler-Irnich formulation
+    (inherited from :class:`ProfitableSprpRouting`) with linear-size RG
+    subnetworks following Lüke, Hessenius & Irnich (EJOR 332(1), 2026).
+
+    The RG subnetwork decomposes each gap(h, i) action into a path
+    bottom(h) → w → top(i) through an auxiliary vertex w, where
+    bottom(h) and top(i) are the two halves of the gap action.  When all
+    gap actions are feasible (as in the profitable SPRP), there is exactly
+    one non-extensible gap (NEG) per (state, aisle) pair, so the
+    subnetwork has O(k) edges instead of O(k²).
+
+    Artificial positions 0 and M (beyond the last pick location) represent
+    "not entering from bottom/top", allowing the subnetwork to also
+    represent top, bottom, and void actions when they are parallel to
+    gap (i.e., connect the same pair of states).
+    """
+
+    algo_name = "ProfitableSprpRoutingRG"
+
+    # State-dependent position sets: (include_0, include_M)
+    # 0 is included when bottom is parallel to gap (allows top-as-gap
+    # and void via bottom(0) -> top(i) and bottom(0) -> top(M))
+    # M is included when top is parallel to gap (allows bottom-as-gap
+    # and void via bottom(h) -> top(M) and bottom(0) -> top(M))
+    _STATE_POS_CONFIG = {
+        ("U", "U", "1C"): (True, True),   # UU1c: top, bottom, void parallel
+        ("E", "0", "1C"): (True, False),  # E01c: bottom parallel
+        ("0", "E", "1C"): (False, True),  # 0E1c: top parallel
+        ("E", "E", "1C"): (True, True),   # EE1c: top, bottom, void parallel
+        ("E", "E", "2C"): (True, True),   # EE2c: top, bottom, void parallel
+        ("0", "0", "0C"): (False, False), # 000c: only gap parallel
+    }
+
+    _VERTEX_FACTOR = 1
+
+    def _add_aisle_transitions_for(self, j: int, prev_states):
+        is_depot_aisle = j == self.depot[0]
+        depot_cost = 2 * self.dist_end if is_depot_aisle else 0.0
+        relevant_y = self._aisle_relevant_y(j)
+        npl = self.n_pick_locations
+        M = npl + 1
+        ry_set = set(relevant_y)
+        k = len(relevant_y)
+
+        for prev_eq in prev_states:
+            gap_target = self._next_state(prev_eq, 4)
+            gap_feasible = gap_target is not None and k >= 2
+
+            include_0, include_M = self._STATE_POS_CONFIG.get(
+                prev_eq, (False, False))
+
+            void_target = self._next_state(prev_eq, 6)
+            top_target = self._next_state(prev_eq, 2)
+            bottom_target = self._next_state(prev_eq, 3)
+
+            void_parallel = (
+                void_target is not None and void_target == gap_target)
+            top_parallel = (
+                top_target is not None and top_target == gap_target)
+            bottom_parallel = (
+                bottom_target is not None and bottom_target == gap_target)
+
+            use_subnet = False
+            if gap_feasible:
+                k_orig = k * (k - 1) // 2
+                if top_parallel:
+                    k_orig += k
+                if bottom_parallel:
+                    k_orig += k
+                if void_parallel:
+                    k_orig += 1
+                h_size = k + (1 if include_0 else 0)
+                i_size = k + (1 if include_M else 0)
+                k_new = h_size + i_size
+                use_subnet = k_new + self._VERTEX_FACTOR < k_orig
+
+            void_in_subnet = (
+                use_subnet and void_parallel and include_0 and include_M)
+            top_in_subnet = use_subnet and top_parallel and include_0
+            bottom_in_subnet = use_subnet and bottom_parallel and include_M
+
+            candidates = []
+
+            if void_target is not None and not void_in_subnet:
+                candidates.append(
+                    ("void", None, self.void() + depot_cost, []))
+
+            next_eq = self._next_state(prev_eq, 1)
+            if next_eq is not None:
+                candidates.append(
+                    ("one_pass", None,
+                     self.one_pass() + depot_cost, [(0, npl)]))
+
+            next_eq = self._next_state(prev_eq, 5)
+            if next_eq is not None:
+                candidates.append(
+                    ("two_pass", None,
+                     self.two_pass() + depot_cost, [(0, npl)]))
+
+            if top_target is not None and relevant_y and not top_in_subnet:
+                for p in relevant_y:
+                    candidates.append(
+                        ("top", p, self.top(p) + depot_cost, [(p, npl)]))
+
+            if (bottom_target is not None and relevant_y
+                    and not bottom_in_subnet):
+                for p in reversed(relevant_y):
+                    candidates.append(
+                        ("bottom", p,
+                         self.bottom(p) + depot_cost, [(0, p)]))
+
+            if gap_feasible and not use_subnet:
+                for h_idx in range(k - 1):
+                    h = relevant_y[h_idx]
+                    for i_idx in range(h_idx + 1, k):
+                        i = relevant_y[i_idx]
+                        gap_distance = (i - h) * self.dist_pick_locations
+                        candidates.append(
+                            ("gap", (h, i),
+                             self.gap(gap_distance) + depot_cost,
+                             [(0, h), (i, npl)]))
+
+            self._emit_dominated(j, prev_eq, ry_set, candidates)
+
+            if use_subnet:
+                self._build_rg_subnetwork(
+                    j, prev_eq, gap_target, relevant_y,
+                    depot_cost, M, include_0, include_M)
+
+    def _build_rg_subnetwork(self, j, prev_eq, gap_target, relevant_y,
+                              depot_cost, M, include_0, include_M):
+        """Build the RG subnetwork replacing gap (and parallel) edges."""
+        npl = self.n_pick_locations
+        from_node = (j, prev_eq, "-")
+        to_node = (j, gap_target, "+")
+
+        if from_node not in self.state_graph or to_node not in self.state_graph:
+            return
+
+        h_set = list(relevant_y)
+        if include_0:
+            h_set = [0] + h_set
+        i_set = list(relevant_y)
+        if include_M:
+            i_set = i_set + [M]
+
+        # NEGs: with all gaps feasible, one NEG = (min(h_set), max(i_set))
+        negs = [(min(h_set), max(i_set))]
+
+        aux_nodes = []
+        for h, i in negs:
+            w = (j, prev_eq, gap_target, h, i)
+            self.state_graph.add_node(w)
+            aux_nodes.append(w)
+
+        for idx in range(len(negs) - 1):
+            self.state_graph.add_edge(
+                aux_nodes[idx], aux_nodes[idx + 1],
+                weight=0.0, action="upward", action_node=None,
+                aisle=j, coverage=[])
+
+        ys = self._aisle_ys.get(j, [])
+
+        for w, (neg_h, neg_i) in zip(aux_nodes, negs):
+            for h in h_set:
+                if h == 0:
+                    cost = depot_cost
+                    coverage = []
+                else:
+                    cost = self.bottom(h) + depot_cost
+                    coverage = [(0, h)]
+
+                key = self.state_graph.add_edge(
+                    from_node, w, weight=float(cost), action="bottom",
+                    action_node=h, aisle=j, coverage=coverage)
+
+                for (y_min, y_max) in coverage:
+                    for y in ys:
+                        if y_min <= y <= y_max:
+                            self._position_edges[(j, y)].append(
+                                (from_node, w, key))
+
+            for i in i_set:
+                if i == M:
+                    cost = 0.0
+                    coverage = []
+                else:
+                    cost = self.top(i)
+                    coverage = [(i, npl)]
+
+                key = self.state_graph.add_edge(
+                    w, to_node, weight=float(cost), action="top",
+                    action_node=i, aisle=j, coverage=coverage)
+
+                for (y_min, y_max) in coverage:
+                    for y in ys:
+                        if y_min <= y <= y_max:
+                            self._position_edges[(j, y)].append(
+                                (w, to_node, key))
