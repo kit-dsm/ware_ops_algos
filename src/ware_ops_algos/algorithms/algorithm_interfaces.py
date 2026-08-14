@@ -4,11 +4,17 @@ from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from itertools import count
-from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque
+from typing import Generic, TypeVar, Optional, NamedTuple, Deque
 import time
 import logging
 
-from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, OrderPosition, Resource
+from ware_ops_algos.domain_models import (
+    Order,
+    PickCart,
+    ResolvedOrderPosition,
+    OrderPosition,
+    Resource,
+)
 
 I = TypeVar("I")  # input type
 O = TypeVar("O")  # output type
@@ -18,17 +24,41 @@ class AlgorithmSolution:
     algo_name: str = ""
     execution_time: float = 0.0
     objective_trajectory: list[tuple[float, float]] = field(default_factory=list)
-    provenance: dict[str, Any] = field(default_factory=dict)
+    solver_status: str | None = None
+    objective_value: float | None = None
+    objective_bound: float | None = None
+    optimality_gap: float | None = None
+    is_optimal: bool | None = None
+    explored_states: int | None = None
 
 
 @dataclass(frozen=True)
 class PickPosition:
+    """A resolved physical pick.
+
+    ``in_store`` is the canonical quantity assigned to this location.
+    ``amount`` is retained for API compatibility and must contain the same
+    resolved quantity; the original requested quantity remains on
+    :class:`OrderPosition`.
+    """
+
     order_number: int
     article_id: int
     amount: int
     pick_node: tuple[int, int]
     in_store: int
-    article_name: Optional[str] = None,
+    article_name: Optional[str] = None
+
+    def __post_init__(self):
+        if self.amount != self.in_store:
+            raise ValueError(
+                "PickPosition.amount and PickPosition.in_store must both "
+                "equal the quantity picked at this location"
+            )
+
+    @property
+    def picked_quantity(self) -> int:
+        return self.in_store
 
 
 @dataclass
@@ -44,6 +74,7 @@ class WarehouseOrder:
 class BatchObject:
     batch_id: int
     orders: list[WarehouseOrder]
+    bin_assignments: dict[int, tuple[int, ...]] = field(default_factory=dict)
 
     @property
     def pick_positions(self) -> list[PickPosition]:
@@ -171,6 +202,17 @@ class ScheduledJob:
 @dataclass
 class ItemAssignmentSolution(AlgorithmSolution):
     resolved_orders: list[WarehouseOrder] = field(default_factory=list)
+    unassigned_orders: list[Order] = field(default_factory=list)
+    shortages: list[dict[str, int | float]] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class ResidualBatchingInput:
+    active_batch: BatchObject
+    candidate_orders: tuple[WarehouseOrder, ...]
+    bin_order_ids: tuple[tuple[int, ...], ...]
+    locked_bin_ids: frozenset[int]
+    pick_cart: PickCart
 
 @dataclass
 class BatchingState:

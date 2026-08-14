@@ -14,6 +14,8 @@ class OrderType(str, Enum):
 
 @dataclass
 class OrderPosition:
+    """An unresolved order line whose amount is the requested quantity."""
+
     order_number: int
     article_id: int
     amount: int

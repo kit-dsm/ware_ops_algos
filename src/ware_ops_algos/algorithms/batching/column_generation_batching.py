@@ -1,8 +1,12 @@
 import gurobipy
 import networkx as nx
 
-from ware_ops_algos.algorithms import Batching, Routing, WarehouseOrder, CapacityChecker, BatchingSolution, BatchObject, \
-    I, O
+from ..algorithm_interfaces import (
+    WarehouseOrder, BatchingSolution, BatchObject, I, O,
+)
+from .batching import Batching
+from .batching_utils import CapacityChecker
+from ..routing.routing import Routing
 from ware_ops_algos.domain_models import PickCart, Articles
 
 
@@ -72,10 +76,8 @@ class ColumnGenerationBatcher(Batching):
 
         key = tuple(sorted(o.order_id for o in orders))
         if key not in self._route_cache:
-            self._router.reset_parameters()
             pick_list = [pos for order in orders for pos in order.pick_positions]
-            sol = self._router.solve(pick_list)
-            self._route_cache[key] = sol.route.distance
+            self._route_cache[key] = self._router.score(pick_list)
         return self._route_cache[key]
 
     def solve_restricted_master_problem(self):

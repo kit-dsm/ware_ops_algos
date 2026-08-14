@@ -28,7 +28,7 @@ def _items(
     for order_index, order in enumerate(orders):
         mask = 0
         for position in order.pick_positions:
-            for _ in range(int(position.in_store)):
+            for _ in range(int(position.picked_quantity)):
                 mask |= 1 << len(items)
                 items.append((order_index, position))
         if not mask:

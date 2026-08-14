@@ -4,3 +4,4 @@ from .batching import *
 from .item_assignment import *
 from .scheduling import *
 from .routing_and_batching import *
+from .lorenz_reoptimization import exact_lorenz_makespan

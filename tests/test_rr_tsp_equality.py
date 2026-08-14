@@ -101,9 +101,6 @@ class RRTSPEquality(unittest.TestCase):
             sol_tsp = tsp_router.solve(pl)
             if dist_tsp == 0:
                 plot_route_with_directions(graph, sol_tsp.route.route)
-            rr_router.reset_parameters()
-            tsp_router.reset_parameters()
-
             dist_rr += sol_rr.route.distance
             dist_tsp += sol_tsp.route.distance
         self.assertEqual(dist_tsp, dist_rr)

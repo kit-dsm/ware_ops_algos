@@ -1,16 +1,15 @@
 import math
 
-from ware_ops_algos.algorithms import WarehouseOrder
+from ..algorithm_interfaces import WarehouseOrder
 from ware_ops_algos.domain_models import Order, DimensionType, Articles, PickCart
 
 
 class CapacityChecker:
     def __init__(self, pick_cart: PickCart, articles: Articles):
         self.pick_cart = pick_cart
-        self._order_consumption_cache: dict[int, list[float]] = {}
 
         # Only load article dimensions if needed (non-ITEMS/ORDERLINES dimensions)
-        if any(dim not in [DimensionType.ITEMS, DimensionType.ORDERLINES]
+        if any(dim not in [DimensionType.ITEMS, DimensionType.ORDERLINES, DimensionType.ORDERS]
                for dim in pick_cart.dimensions):
             self.article_dimensions = self._load_article_dimensions(articles)
         else:
@@ -73,17 +72,47 @@ class CapacityChecker:
     def orders_fit(self, orders: list[WarehouseOrder]) -> bool:
         if self.pick_cart.box_can_mix_orders:
             consumption = self._compute_consumption(orders)
-            total_capacity = [
-                cap * self.pick_cart.n_boxes
-                for cap in self.pick_cart.capacities
-            ]
-            return all(
-                consumption[d] <= total_capacity[d]
-                for d in range(self.pick_cart.n_dimension)
-            )
+            return self.fits_consumption(consumption)
         else:
-            total_boxes = sum(self._compute_boxes_needed(o) for o in orders)
-            return total_boxes <= self.pick_cart.n_boxes
+            total_boxes = sum(self.order_box_count(o) for o in orders)
+            return self.fits_consumption(
+                (),
+                box_count=total_boxes,
+            )
+
+    def order_consumption(self, order: WarehouseOrder) -> tuple[float, ...]:
+        """Return the capacity vector contributed by one semantic order."""
+        return tuple(self._compute_order_consumption(order))
+
+    def order_box_count(self, order: WarehouseOrder) -> int:
+        """Return the boxes occupied by an order when boxes cannot be mixed."""
+        return self._compute_boxes_needed(order)
+
+    def fits_consumption(
+        self,
+        consumption: tuple[float, ...] | list[float],
+        *,
+        box_count: int | None = None,
+    ) -> bool:
+        """Check an already-computed batch capacity state.
+
+        ``box_count`` is required for non-mixing carts because aggregate
+        dimension consumption cannot represent per-order box rounding.
+        """
+        if not self.pick_cart.box_can_mix_orders:
+            if box_count is None:
+                raise ValueError(
+                    "box_count is required when cart boxes cannot mix orders"
+                )
+            return box_count <= self.pick_cart.n_boxes
+
+        return all(
+            value <= capacity * self.pick_cart.n_boxes
+            for value, capacity in zip(
+                consumption,
+                self.pick_cart.capacities,
+            )
+        )
 
     def _compute_consumption(self, orders: list[WarehouseOrder]) -> list[float]:
         total = [0.0] * self.pick_cart.n_dimension
@@ -96,37 +125,34 @@ class CapacityChecker:
         return total
 
     def _compute_order_consumption(self, order: WarehouseOrder) -> list[float]:
-        if order.order_id in self._order_consumption_cache:
-            return self._order_consumption_cache[order.order_id]
         consumption = [0.0] * self.pick_cart.n_dimension
 
         for d, dim_type in enumerate(self.pick_cart.dimensions):
             if dim_type == DimensionType.ITEMS:
                 # Count items
-                consumption[d] = sum(pos.in_store for pos in order.pick_positions)
+                consumption[d] = sum(
+                    pos.picked_quantity for pos in order.pick_positions
+                )
             elif dim_type == DimensionType.ORDERLINES:
-                # Count order lines (positions)
-                consumption[d] = len(order.pick_positions)
+                # A line may be split over several storage locations. Within
+                # the current domain model an order line is identified by its
+                # order number and article.
+                consumption[d] = len({
+                    (pos.order_number, pos.article_id)
+                    for pos in order.pick_positions
+                })
             elif dim_type == DimensionType.ORDERS:
                 # Count orders
                 consumption[d] = 1
-            elif dim_type == DimensionType.WEIGHT:
-                for pos in order.pick_positions:
-                    article_id = pos.article_id
-                    quantity = pos.amount
-                    article_dims = self.article_dimensions[article_id]
-                    dim_idx = self._get_article_dim_index(d)
-                    consumption[d] += quantity * article_dims[dim_idx]
             else:
                 # Sum (quantity × article_dimension)
                 for pos in order.pick_positions:
-                    article_id = pos.order_position.article_id
-                    quantity = pos.in_store
+                    article_id = pos.article_id
+                    quantity = pos.picked_quantity
                     article_dims = self.article_dimensions[article_id]
                     dim_idx = self._get_article_dim_index(d)
                     consumption[d] += quantity * article_dims[dim_idx]
 
-        self._order_consumption_cache[order.order_id] = consumption
         return consumption
 
     def _get_article_dim_index(self, pick_cart_dim_index: int) -> int:
