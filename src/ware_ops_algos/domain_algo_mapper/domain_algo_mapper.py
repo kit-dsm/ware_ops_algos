@@ -104,12 +104,101 @@ class DomainAlgorithmMapper:
         """
         problem_compatible = self._filter_by_problem(algorithms, instance.problem_class, verbose)
 
-        feasible_algorithms = self._filter_by_requirements(problem_compatible, instance, verbose)
+        feasible_algorithms = self._filter_by_requirements(
+            problem_compatible,
+            instance,
+            verbose,
+        )
+        feasible_algorithms = self._filter_by_planning_context(
+            feasible_algorithms,
+            instance,
+            verbose,
+        )
 
         if verbose:
             print(f"\nFinal result: {len(feasible_algorithms)}/{len(algorithms)} algorithms are feasible")
 
         return feasible_algorithms
+
+    @staticmethod
+    def _planning_features(instance) -> set[str]:
+        warehouse_info = getattr(instance, "warehouse_info", None)
+        if warehouse_info is None:
+            return set()
+        try:
+            features = warehouse_info.get_features()
+        except AttributeError:
+            features = warehouse_info.get("features", {})
+        return {
+            name
+            for name, value in (features or {}).items()
+            if value
+        }
+
+    def _filter_by_planning_context(
+        self,
+        algorithms: List['AlgorithmCard'],
+        instance,
+        verbose: bool = False,
+    ) -> List['AlgorithmCard']:
+        """Match algorithm capabilities to the adapter-projected context.
+
+        The DataCard describes which planning state is available. Algorithms
+        remain unaware of CASIM and only declare the corresponding capability
+        names on their cards.
+        """
+        features = self._planning_features(instance)
+        required_by_problem = {
+            "routing": set(),
+            "batching": set(),
+            "scheduling": set(),
+        }
+        if "active_residual_tour" in features:
+            required_by_problem["routing"].update(
+                {
+                    "arbitrary_origin_node",
+                    "arbitrary_end_node",
+                    "residual_picks",
+                }
+            )
+        if "arbitrary_origin_edge" in features:
+            required_by_problem["routing"].add("arbitrary_origin_edge")
+        if "active_residual_batch" in features:
+            required_by_problem["batching"].update(
+                {
+                    "partial_active_batch",
+                    "locked_orders",
+                    "residual_capacity",
+                    "empty_order_bin_insertion",
+                }
+            )
+        if "resource_ready_times" in features:
+            required_by_problem["scheduling"].add(
+                "resource_ready_times"
+            )
+        if "congestion_cost_snapshot" in features:
+            required_by_problem["routing"].add("dynamic_edge_costs")
+
+        applicable = []
+        for algorithm in algorithms:
+            required = required_by_problem.get(
+                algorithm.problem_type,
+                set(),
+            )
+            missing = sorted(
+                capability
+                for capability in required
+                if not algorithm.capabilities.get(capability, False)
+            )
+            if missing:
+                if verbose:
+                    print(
+                        f"    INAPPLICABLE {algorithm.algo_name}: planning context "
+                        f"requires capabilities {missing}"
+                    )
+                continue
+            applicable.append(algorithm)
+        return applicable
 
     def _filter_by_problem(self, algorithms: List['AlgorithmCard'], problem_type: str,
                            verbose: bool = False) -> List['AlgorithmCard']:
@@ -203,7 +292,7 @@ class DomainAlgorithmMapper:
                 return False
 
         if verbose:
-            print(f"    ✓ Algorithm is feasible")
+            print("    applicable")
 
         return True
 
@@ -240,27 +329,27 @@ class DomainAlgorithmMapper:
         # Check 1: Domain type must match
         if "any" not in required_types and domain_type not in required_types:
             if verbose:
-                print(f"    ✗ {domain_name}: type '{domain_type}' not in required types {required_types}")
+                print(f"    INAPPLICABLE {domain_name}: type '{domain_type}' not in required types {required_types}")
             return False
 
         # Check 2: All required features must exist
         missing_features = [feat for feat in required_features if feat not in domain_features]
         if missing_features:
             if verbose:
-                print(f"    ✗ {domain_name}: missing required features {missing_features}")
+                print(f"    INAPPLICABLE {domain_name}: missing required features {missing_features}")
             return False
 
         # Check 3: Feature constraints must be satisfied
         for feature_name, constraint in feature_constraints.items():
             if feature_name not in domain_features:
                 if verbose:
-                    print(f"    ✗ {domain_name}: feature '{feature_name}' needed for constraint not found")
+                    print(f"    INAPPLICABLE {domain_name}: feature '{feature_name}' needed for constraint not found")
                 return False
 
             actual_value = domain_features[feature_name]
             if not self.evaluator.evaluate(actual_value, constraint):
                 if verbose:
-                    print(f"    ✗ {domain_name}: constraint violated - {feature_name}={actual_value} "
+                    print(f"    INAPPLICABLE {domain_name}: constraint violated - {feature_name}={actual_value} "
                           f"does not satisfy {constraint}")
                 return False
 

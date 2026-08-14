@@ -104,6 +104,7 @@ class Resource:
     available: Optional[bool] = None # "stronger" compared to occupied -> E.g a picker is not available for a shift
     occupied: Optional[bool] = None
     current_location: Optional[tuple[float, float]] = None
+    available_at: Optional[float] = None
 
 
 @dataclass
@@ -136,4 +137,5 @@ class Resources(BaseDomainObject):
         features["speed"] = any(r.speed is not None for r in self.resources)
         features["time_per_pick"] = any(r.time_per_pick is not None for r in self.resources)
         features["current_location"] = any(r.current_location is not None for r in self.resources)
+        features["available_at"] = any(r.available_at is not None for r in self.resources)
         return features

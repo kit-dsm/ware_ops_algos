@@ -27,6 +27,13 @@ requirements:
 
 objective: Distance
 
+capabilities:
+  arbitrary_origin_node: true
+  arbitrary_origin_edge: true
+  arbitrary_end_node: true
+  residual_picks: true
+  dynamic_edge_costs: true
+
 implementation:
   class_name: NearestNeighbourhoodRouting
   component_name: NearestNeighbourhood

@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 
-from ware_ops_algos.algorithms import ScheduledJob
+from .algorithm_interfaces import ScheduledJob
 
 
 def render_graph(G, plot: bool = True, out_name=False, draw_edge_labels=False, with_labels=False, dpi=700, font_size=5, node_size=50, node_color='lightblue') -> None:

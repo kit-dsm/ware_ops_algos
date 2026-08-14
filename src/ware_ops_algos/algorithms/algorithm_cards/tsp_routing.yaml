@@ -25,8 +25,17 @@ requirements:
 
 objective: Distance
 
+capabilities:
+  arbitrary_origin_node: true
+  arbitrary_origin_edge: true
+  arbitrary_end_node: true
+  residual_picks: true
+  partial_batch: false
+  locked_orders: false
+  active_job_replacement: false
+
 implementation:
   class_name: ExactTSPRoutingDistance
-  component_name: ExactSolving
+  component_name: TSPRouting
   solver: Gurobi
   type: exact

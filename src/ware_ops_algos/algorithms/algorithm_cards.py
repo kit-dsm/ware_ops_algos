@@ -55,12 +55,8 @@ class AlgorithmCard:
         return f"name={self.algo_name} problem={self.problem_type}>"
 
 
-def _normalize_requirements(requirements: Dict, source: str = "") -> Dict:
-    """Drop None/empty entries from type/features lists (stray YAML dashes).
-
-    Warns with the card source so authoring errors surface instead of silently
-    propagating a 'null' feature into the mapper.
-    """
+def _normalize_requirements(requirements: Dict) -> Dict:
+    """Drop None/empty entries from type/features lists."""
     out = {}
     for section, spec in (requirements or {}).items():
         spec = dict(spec or {})
@@ -68,8 +64,6 @@ def _normalize_requirements(requirements: Dict, source: str = "") -> Dict:
             if key in spec:
                 raw = spec[key] or []
                 cleaned = [x for x in raw if x]
-                if len(cleaned) != len(raw):
-                    print(f"{source}: dropped empty entry in {section}.{key}")
                 if cleaned:
                     spec[key] = cleaned
                 else:
@@ -86,7 +80,7 @@ def load_algo_card(path: str | Path) -> AlgorithmCard:
     return AlgorithmCard(
         algo_name=data["algo_name"],
         problem_type=data["problem_type"],
-        requirements=_normalize_requirements(data.get("requirements", {}), source=path.name),
+        requirements=_normalize_requirements(data.get("requirements", {})),
         objective=data.get("objective"),
         implementation=data.get("implementation", {}),
         description=data.get("description"),
