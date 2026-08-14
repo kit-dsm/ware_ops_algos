@@ -28,6 +28,9 @@ class SimilarityMeasure(ABC):
 class SeedCriterion(ABC):
     name: ClassVar[str]
 
+    def reset(self) -> None:
+        """Reset per-solve state; deterministic criteria have none."""
+
     @abstractmethod
     def __call__(
             self,
@@ -80,7 +83,11 @@ class RandomSeed(SeedCriterion):
     name = "RANDOM"
 
     def __init__(self, seed: int = 43):
+        self.seed = seed
         self._rng = random.Random(seed)
+
+    def reset(self) -> None:
+        self._rng.seed(self.seed)
 
     def __call__(
             self,
@@ -142,7 +149,7 @@ class ClosestToDepotSeed(SeedCriterion):
         )
 
 
-class SeedBatchingModular(Batching):
+class SeedBatching(Batching):
     def __init__(
             self,
             pick_cart: PickCart,
@@ -165,6 +172,7 @@ class SeedBatchingModular(Batching):
             self,
             input_data: list[WarehouseOrder],
     ) -> BatchingSolution:
+        self.seed_criterion.reset()
         remaining_orders = input_data.copy()
         batches: list[BatchObject] = []
 
