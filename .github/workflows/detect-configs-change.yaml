@@ -1,0 +1,25 @@
+name: detect-configs-change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/ware_ops_algos/algorithms/algorithm_cards/configs.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dispatch configs changed to ware_ops_pipes
+        env:
+          GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            repos/kit-dsm/ware_ops_pipes/dispatches \
+            -f event_type=configs-changed \
+            -F client_payload[sha]="$GITHUB_SHA"
