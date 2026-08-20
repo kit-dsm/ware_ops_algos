@@ -209,7 +209,7 @@ class ExactTSPBatchingAndRoutingDistance(RoutingBatchingAssigning, ABC):
 
         self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
         self.list_item_numbers = [item.article_id for item in self.pick_list]
-        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_item_amounts = [item.picked_quantity for item in self.pick_list]
         self.list_order_numbers = [item.order_number for item in self.pick_list]
 
         self.set_order_numbers = set(self.list_order_numbers)
@@ -227,7 +227,7 @@ class ExactTSPBatchingAndRoutingDistance(RoutingBatchingAssigning, ABC):
         # Amount items in each order
         df = pd.DataFrame([{
             'order_number': item.order_number,
-            'amount': item.amount
+            'amount': item.picked_quantity
         } for item in self.pick_list])
 
         self.s_i = df.groupby('order_number')['amount'].sum().to_dict()
@@ -417,7 +417,7 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
 
         self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
         self.list_item_numbers = [item.article_id for item in self.pick_list]
-        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_item_amounts = [item.picked_quantity for item in self.pick_list]
         self.list_order_numbers = [item.order_number for item in self.pick_list]
 
         self.set_order_numbers = set(self.list_order_numbers)
@@ -436,7 +436,7 @@ class ExactTSPBatchingAndRoutingMaxCompletionTime(RoutingBatchingAssigning):
         # Amount items in each order
         df = pd.DataFrame([{
             'order_number': item.order_number,
-            'amount': item.amount
+            'amount': item.picked_quantity
         } for item in self.pick_list])
 
         self.s_i = df.groupby('order_number')['amount'].sum().to_dict()
@@ -630,7 +630,7 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
     def _set_routing_parameters(self):
         self.list_item_pick_locations = [item.pick_node for item in self.pick_list]
         self.list_item_numbers = [item.article_id for item in self.pick_list]
-        self.list_item_amounts = [item.amount for item in self.pick_list]
+        self.list_item_amounts = [item.picked_quantity for item in self.pick_list]
         self.list_order_numbers = [item.order_number for item in self.pick_list]
 
         self.set_order_numbers = sorted(set(self.list_order_numbers))
@@ -646,7 +646,7 @@ class ExactCombinedBatchingRouting(RoutingBatchingAssigning):
         # Total size per order: s_o
         df = pd.DataFrame(
             [
-                {"order_number": item.order_number, "amount": item.amount}
+                {"order_number": item.order_number, "amount": item.picked_quantity}
                 for item in self.pick_list
             ]
         )

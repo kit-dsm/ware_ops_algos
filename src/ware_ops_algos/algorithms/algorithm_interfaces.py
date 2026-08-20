@@ -23,6 +23,14 @@ class AlgorithmSolution:
 
 @dataclass(frozen=True)
 class PickPosition:
+    """A physical pick resolved from one semantic order line.
+
+    ``amount`` retains the requested order-line quantity for compatibility.
+    ``in_store`` (and the clearer ``picked_quantity`` alias) is the quantity
+    assigned to this physical location and must be used for capacity and
+    picking-time calculations.
+    """
+
     order_number: int
     article_id: int
     amount: int
