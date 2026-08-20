@@ -291,6 +291,7 @@ class SinglePositionItemAssignment(PriorityItemAssignment):
         super().__init__(storage_locations, distance_matrix, **kwargs)
         self.routing_class = routing_class
         self.routing_class_kwargs = routing_class_kwargs
+        self._router = routing_class(**routing_class_kwargs)
         self.start_node = routing_class_kwargs["start_node"]
 
     def _select_for_order(self, order: Order) -> list[PickPosition]:
@@ -345,8 +346,7 @@ class SinglePositionItemAssignment(PriorityItemAssignment):
     def _calc_tour_length(self, pick_positions: list[PickPosition]) -> float:
         if not pick_positions:
             return float('inf')
-        router = self.routing_class(**self.routing_class_kwargs)
-        return router.solve(pick_positions).route.distance
+        return self._router.score(pick_positions)
 
 
 class MinMaxItemAssignment(PriorityItemAssignment):

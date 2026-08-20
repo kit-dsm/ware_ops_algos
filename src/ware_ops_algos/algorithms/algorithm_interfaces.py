@@ -28,7 +28,12 @@ class PickPosition:
     amount: int
     pick_node: tuple[int, int]
     in_store: int
-    article_name: Optional[str] = None,
+    article_name: Optional[str] = None
+
+    @property
+    def picked_quantity(self) -> int:
+        """Quantity picked at this physical location."""
+        return self.in_store
 
 
 @dataclass
