@@ -18,7 +18,7 @@ these implementations and support card-based discovery and configuration.
 - `src/ware_ops_algos/algorithms/algorithm_cards/`: algorithm cards and generated configurations
 - `src/ware_ops_algos/domain_algo_mapper/`: matching of data cards and algorithm cards
 - `src/ware_ops_algos/taxonomy/`: problem taxonomy
-- `examples/`: runnable direct-use and extension examples
+- `examples/`: an end-to-end notebook and runnable examples
 - `data/instances/`: small smoke-test instances only
 
 ## Installation
@@ -31,21 +31,29 @@ cd ware_ops_algos
 uv sync --frozen
 ```
 
-Run the bundled example to verify the installation:
+The [getting-started notebook](examples/getting_started.ipynb) constructs a
+warehouse directly with the domain model, matches algorithm cards, reproduces a
+published single-picker routing example, and visualizes the optimal tour. Start
+it with:
+
+```bash
+uv sync --frozen --extra notebook
+uv run --frozen --extra notebook jupyter lab examples/getting_started.ipynb
+```
+
+For a quick command-line check of the installation, run:
 
 ```bash
 uv run --frozen python examples/getting_started.py
 ```
 
-The example loads a small Foodmart instance, maps order positions to storage
-locations, and batches the resulting warehouse orders. It uses heuristic
-algorithms and does not solve a Gurobi model.
+Neither example solves a Gurobi model.
 
 ## Direct use
 
 Algorithms expose a common `solve` method and return solution objects containing
-the algorithm name, runtime, and problem-specific result. The complete runnable
-example is [`examples/getting_started.py`](examples/getting_started.py).
+the algorithm name, runtime, and problem-specific result. The complete workflow
+is shown in the [getting-started notebook](examples/getting_started.ipynb).
 
 ```python
 assignment = GreedyItemAssignment(domain.storage)

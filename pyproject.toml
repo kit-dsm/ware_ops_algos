@@ -32,6 +32,13 @@ docs = [
     "sphinx",
     "sphinx-copybutton",
     "furo",
+    "nbsphinx",
+    "nbsphinx-link",
+    "pypandoc-binary",
+]
+
+notebook = [
+    "jupyterlab",
 ]
 
 [tool.setuptools.packages.find]

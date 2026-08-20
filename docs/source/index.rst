@@ -9,5 +9,6 @@ optimization.
    :maxdepth: 2
 
    getting_started
+   extending
    algorithms
    authors
