@@ -7,7 +7,7 @@ domain from ``model_domain.py``:
 
 .. code-block:: bash
 
-   uv run --frozen python examples/custom_batching.py
+   uv run --locked python examples/custom_batching.py
 
 .. literalinclude:: ../../examples/custom_batching.py
    :language: python

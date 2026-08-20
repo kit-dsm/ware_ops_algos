@@ -22,12 +22,14 @@ these implementations and support card-based discovery and configuration.
 
 ## Installation
 
-Python 3.11 or newer and [uv](https://docs.astral.sh/uv/) are recommended.
+Python 3.13 and [uv](https://docs.astral.sh/uv/) are required. The interpreter
+version is recorded in `.python-version` and enforced by `pyproject.toml`; the
+full dependency resolution is pinned in `uv.lock`.
 
 ```bash
 git clone https://github.com/kit-dsm/ware_ops_algos.git
 cd ware_ops_algos
-uv sync --frozen
+uv sync --locked
 ```
 
 The [getting-started notebook](examples/getting_started.ipynb) constructs a
@@ -36,17 +38,17 @@ published single-picker routing example, and visualizes the optimal tour. Start
 it with:
 
 ```bash
-uv sync --frozen --extra notebook
-uv run --frozen --extra notebook jupyter lab examples/getting_started.ipynb
+uv sync --locked --extra notebook
+uv run --locked --extra notebook jupyter lab examples/getting_started.ipynb
 ```
 
 The command-line examples progress from domain modeling to algorithm use and
 extension:
 
 ```bash
-uv run --frozen python examples/model_domain.py
-uv run --frozen python examples/batch_orders.py
-uv run --frozen python examples/custom_batching.py
+uv run --locked python examples/model_domain.py
+uv run --locked python examples/batch_orders.py
+uv run --locked python examples/custom_batching.py
 ```
 
 These examples construct their inputs directly and use heuristic algorithms,
@@ -76,7 +78,7 @@ priority-based batching algorithm by subclassing `PriorityBatching`. It can be
 run without changing the package:
 
 ```bash
-uv run --frozen python examples/custom_batching.py
+uv run --locked python examples/custom_batching.py
 ```
 
 To make a new implementation available through card-based discovery, implement
