@@ -454,7 +454,11 @@ class LargestGapRouting(HeuristicRouting):
                 selected = y_values[:split]
                 if selected:
                     visit_nodes.extend((aisle, y) for y in selected)
-                    remaining[aisle] = y_values[split:]
+                    unvisited = y_values[split:]
+                    if unvisited:
+                        remaining[aisle] = unvisited
+                    else:
+                        remaining.pop(aisle)
                 if remaining:
                     visit_nodes.append((aisle, self.min_aisle_position))
 

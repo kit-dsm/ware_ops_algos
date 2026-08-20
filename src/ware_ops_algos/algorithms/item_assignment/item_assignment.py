@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
-from ware_ops_algos.domain_models import Order, StorageLocations, Location
+from ware_ops_algos.domain_models import Order, StorageLocations, Location, StorageType
 # from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
@@ -17,6 +17,17 @@ class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
 
     def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
         pass
+
+    def _pick_quantity(self, remaining: int, location: Location) -> int:
+        """Return the quantity represented by one physical pick.
+
+        Dedicated-storage benchmark quantities describe the location, not a
+        consumable stock bound. A single dedicated location therefore fulfils
+        the complete order-line demand. Scattered storage remains stock-bound.
+        """
+        if self.storage_locations.tpe == StorageType.DEDICATED:
+            return remaining
+        return min(remaining, location.amount)
 
 
 class GreedyItemAssignment(ItemAssignment):
@@ -51,7 +62,7 @@ class GreedyItemAssignment(ItemAssignment):
                     if remaining <= 0:
                         break
 
-                    pick_qty = min(remaining, loc.amount)
+                    pick_qty = self._pick_quantity(remaining, loc)
                     resolved.append(PickPosition(
                         order_number=pos.order_number,
                         article_id=pos.article_id,
@@ -149,7 +160,7 @@ class NearestNeighborItemAssignment(ItemAssignment):
                     key=lambda loc: self.distance_matrix.at[current_loc, (loc.x, loc.y)]
                 )
 
-                pick_qty = min(demand - fulfilled, nearest.amount)
+                pick_qty = self._pick_quantity(demand - fulfilled, nearest)
 
                 resolved.append(PickPosition(
                         order_number=pos.order_number,
@@ -220,6 +231,9 @@ class PriorityItemAssignment(ItemAssignment):
         if initial_qty >= demand:
             return preselected
 
+        if self.storage_locations.tpe == StorageType.DEDICATED:
+            return list(preselected) or list(sku_locations[:1])
+
         candidates = [loc for loc in sku_locations if loc not in preselected]
         prioritized = sorted(candidates, key=priority_fn)
 
@@ -249,7 +263,7 @@ class PriorityItemAssignment(ItemAssignment):
         result = []
         remaining = demand
         for loc in selected:
-            pick_qty = min(remaining, loc.amount)
+            pick_qty = self._pick_quantity(remaining, loc)
             result.append((loc, pick_qty))
             remaining -= pick_qty
             if remaining <= 0:

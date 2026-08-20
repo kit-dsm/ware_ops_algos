@@ -134,6 +134,40 @@ def test_heuristic_score_matches_solve_on_repeated_calls(routing_class):
     assert router.score(picks) == pytest.approx(score)
 
 
+def test_largest_gap_drops_aisles_completed_in_first_pass():
+    picks = [
+        PickPosition(1, 1, 1, (4, 3), 1),
+        PickPosition(1, 2, 1, (3, 8), 1),
+        PickPosition(1, 3, 1, (1, 14), 1),
+    ]
+    nodes = [(5, -1), (5, 0), (4, -1)]
+    nodes.extend((aisle, y) for aisle in range(1, 6) for y in range(32))
+    distance = pd.DataFrame(
+        [
+            [abs(x - u) * 3 + abs(y - v) for u, v in nodes]
+            for x, y in nodes
+        ],
+        index=nodes,
+        columns=nodes,
+    )
+    router = LargestGapRouting(
+        start_node=(5, -1),
+        end_node=(4, -1),
+        closest_node_to_start=(5, 0),
+        min_aisle_position=0,
+        max_aisle_position=31,
+        picker=[Resource(id=1)],
+        distance_matrix=distance,
+        predecessor_matrix=None,
+        node_list=nodes,
+        node_to_idx={node: index for index, node in enumerate(nodes)},
+        idx_to_node={index: node for index, node in enumerate(nodes)},
+    )
+
+    assert router.score(picks) == pytest.approx(73.0)
+    assert router.solve(picks).route.distance == pytest.approx(73.0)
+
+
 class MembershipScoreRouting:
     algo_name = "MembershipScore"
 
