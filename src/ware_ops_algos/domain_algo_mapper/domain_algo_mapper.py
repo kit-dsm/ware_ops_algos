@@ -191,7 +191,7 @@ class DomainAlgorithmMapper:
         # objectives = SUBPROBLEMS[instance.problem_class]["objectives"]
         # if algorithm.objective not in objectives:
         #     if verbose:
-        #         print(f"    ✗ Objective mismatch: algorithm needs '{algorithm.objective}', "
+        #         print(f"    Objective mismatch: algorithm needs '{algorithm.objective}', "
         #               f"instance has '{objectives}'")
         #     return False
 
@@ -203,7 +203,7 @@ class DomainAlgorithmMapper:
                 return False
 
         if verbose:
-            print(f"    ✓ Algorithm is feasible")
+            print("    Algorithm is feasible")
 
         return True
 
@@ -240,27 +240,27 @@ class DomainAlgorithmMapper:
         # Check 1: Domain type must match
         if "any" not in required_types and domain_type not in required_types:
             if verbose:
-                print(f"    ✗ {domain_name}: type '{domain_type}' not in required types {required_types}")
+                print(f"    {domain_name}: type '{domain_type}' not in required types {required_types}")
             return False
 
         # Check 2: All required features must exist
         missing_features = [feat for feat in required_features if feat not in domain_features]
         if missing_features:
             if verbose:
-                print(f"    ✗ {domain_name}: missing required features {missing_features}")
+                print(f"    {domain_name}: missing required features {missing_features}")
             return False
 
         # Check 3: Feature constraints must be satisfied
         for feature_name, constraint in feature_constraints.items():
             if feature_name not in domain_features:
                 if verbose:
-                    print(f"    ✗ {domain_name}: feature '{feature_name}' needed for constraint not found")
+                    print(f"    {domain_name}: feature '{feature_name}' needed for constraint not found")
                 return False
 
             actual_value = domain_features[feature_name]
             if not self.evaluator.evaluate(actual_value, constraint):
                 if verbose:
-                    print(f"    ✗ {domain_name}: constraint violated - {feature_name}={actual_value} "
+                    print(f"    {domain_name}: constraint violated - {feature_name}={actual_value} "
                           f"does not satisfy {constraint}")
                 return False
 

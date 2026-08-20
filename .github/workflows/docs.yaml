@@ -11,12 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v5
       - name: Install dependencies
-        run: |
-          pip install sphinx furo myst-nb sphinx-autoapi sphinx_design sphinx_copybutton
+        run: uv sync --frozen --extra docs
       - name: Sphinx build
-        run: |
-          sphinx-build docs/source docs/_build/html
+        run: uv run --frozen sphinx-build -W docs/source docs/_build/html
       - name: Add .nojekyll
         run: touch docs/_build/html/.nojekyll
       - name: Deploy to GitHub Pages

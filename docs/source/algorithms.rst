@@ -1,91 +1,32 @@
 Algorithms
 ==========
 
-The algorithms package provides optimization algorithms for warehouse operations, including order batching, routing, and sequencing.
+Algorithms use a common ``solve`` interface and return solution objects with
+runtime and result metadata. The repository contains implementations for item
+assignment, batching, routing, integrated batching and routing, and scheduling.
 
+Base interface
+--------------
 
-Overview
---------
-
-The algorithms package is organized into specialized subpackages:
-
-* **ItemAssignment**: Assign order items to storage locations.
-* **OrderSelection**: Select a subset of orders from a larger order pool. 
-* **Batching**: Group orders into batches to optimize picker workload.
-* **Routing**: Find optimal picking routes through the warehouse.
-* **Sequencing**: Determine the order in which tasks should be executed.
-
-Base Classes
-------------
-
-Algorithm
-~~~~~~~~~
-
-All algorithms inherit from the base ``Algorithm`` class:
-
-.. autoclass:: ware_ops_algos.algorithms.algorithm.Algorithm
-   :members:
-   :special-members: __init__
-   :show-inheritance:
-
-**Key Methods:**
-
-* ``solve(input_data)`` - Main entry point to run the algorithm
-* ``_run(input_data)`` - Abstract method implemented by subclasses
-
-Batching Algorithms
--------------------
-
-Order batching algorithms group orders into batches for efficient picking.
-
-Priority-Based Batching
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.FifoBatching
+.. autoclass:: ware_ops_algos.algorithms.algorithm_interfaces.Algorithm
    :members:
    :show-inheritance:
 
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.DueDateBatching
-   :members:
-   :show-inheritance:
-
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.RandomBatching
-   :members:
-   :show-inheritance:
-
-
-Savings-Based Batching
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.ClarkAndWrightBatching
-   :members:
-   :show-inheritance:
-
-Savings-Based Batching
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Canonical configurable batching implementations
+------------------------------------------------
 
 .. autoclass:: ware_ops_algos.algorithms.batching.seed_batching.SeedBatching
    :members:
    :show-inheritance:
 
-Local Search Batching
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: ware_ops_algos.algorithms.batching.local_search_batching.LocalSearchBatching
    :members:
    :show-inheritance:
 
+Algorithm cards
+---------------
 
-Routing Algorithms
-------------------
-
-Routing algorithms determine the path through pick locations.
-
-.. automodule:: ware_ops_algos.algorithms.routing.routing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-
-
-
+Algorithm cards are stored under
+``src/ware_ops_algos/algorithms/algorithm_cards``. They declare the subproblem,
+objective, domain requirements, and parameters used to generate executable
+algorithm configurations.
