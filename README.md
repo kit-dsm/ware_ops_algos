@@ -1,15 +1,14 @@
-# Warehouse optimization algorithms for CASOP
+# Warehouse optimization algorithms
 
-`ware_ops_algos` provides the common domain model, benchmark data loaders,
-algorithm implementations, algorithm cards, and problem taxonomy used by
-[CASOP](https://github.com/kit-dsm/ware_ops_pipes), the framework presented in
-*Context-Aware Synthesis of Optimization Pipelines for Warehouse Optimization*.
+`ware_ops_algos` is a collection of reusable algorithms for warehouse
+optimization built around a common domain model. It provides benchmark data
+loaders, domain objects, algorithm interfaces and implementations, algorithm
+cards, and a problem taxonomy.
 
 The repository contains executable algorithms for item assignment, batching,
 routing, integrated batching and routing, and scheduling. Algorithm cards state
 the subproblem, objective, domain requirements, and configuration parameters of
-these implementations. `ware_ops_pipes` matches those cards to a data card and
-composes compatible configurations into executable optimization pipelines.
+these implementations and support card-based discovery and configuration.
 
 ## Repository structure
 
@@ -69,11 +68,10 @@ run without changing the package:
 uv run --frozen python examples/custom_batching.py
 ```
 
-To expose a new implementation to CASOP, add its algorithm card under
-`src/ware_ops_algos/algorithms/algorithm_cards/` and add the corresponding
-CLS-Luigi component in `ware_ops_pipes`. The existing `FifoBatching`
-implementation and `fifo_batching.yaml` card provide a compact example of this
-pair.
+To make a new implementation available through card-based discovery, implement
+the appropriate algorithm interface and add its algorithm card under
+`src/ware_ops_algos/algorithms/algorithm_cards/`. The existing `FifoBatching`
+implementation and `fifo_batching.yaml` card provide a compact example.
 
 ## Gurobi
 
@@ -86,8 +84,8 @@ and [academic licensing information](https://support.gurobi.com/hc/en-us/article
 
 ## Benchmark files
 
-Only small smoke-test instances are included. They originate from the benchmark
-sets used in the CASOP paper:
+Only small smoke-test instances are included. They originate from established
+warehouse-optimization benchmark sets:
 
 - Foodmart: Valle et al. (2017), [doi:10.1016/j.ejor.2017.03.069](https://doi.org/10.1016/j.ejor.2017.03.069)
 - HennWaescher: Henn et al. (2010), [doi:10.1007/BF03342717](https://doi.org/10.1007/BF03342717)
@@ -96,8 +94,7 @@ sets used in the CASOP paper:
 - Kris: Briant et al. (2023), [arXiv:2303.17834](https://arxiv.org/abs/2303.17834)
 
 The full collections are not included here. Their sources and terms are listed
-in [`data/README.md`](data/README.md); the complete paper data preparation and
-experiment workflow is maintained in `ware_ops_pipes`.
+in [`data/README.md`](data/README.md).
 
 ## License and citation
 

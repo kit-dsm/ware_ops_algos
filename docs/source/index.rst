@@ -2,7 +2,8 @@ ware_ops_algos
 ===============
 
 ``ware_ops_algos`` provides the warehouse domain model, data loaders,
-algorithms, algorithm cards, and problem taxonomy used by CASOP.
+reusable algorithms, algorithm cards, and problem taxonomy for warehouse
+optimization.
 
 .. toctree::
    :maxdepth: 2
@@ -10,6 +11,3 @@ algorithms, algorithm cards, and problem taxonomy used by CASOP.
    getting_started
    algorithms
    authors
-
-The publication repository and complete reproduction workflow are maintained
-in `ware_ops_pipes <https://github.com/kit-dsm/ware_ops_pipes>`_.
