@@ -120,7 +120,7 @@ class CapacityChecker:
             else:
                 # Sum (quantity × article_dimension)
                 for pos in order.pick_positions:
-                    article_id = pos.order_position.article_id
+                    article_id = pos.article_id
                     quantity = pos.in_store
                     article_dims = self.article_dimensions[article_id]
                     dim_idx = self._get_article_dim_index(d)

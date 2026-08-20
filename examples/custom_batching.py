@@ -1,6 +1,6 @@
 from ware_ops_algos.algorithms import GreedyItemAssignment, PriorityBatching
 
-from getting_started import load_domain
+from model_domain import build_domain
 
 
 class LargestOrderFirstBatching(PriorityBatching):
@@ -14,7 +14,7 @@ class LargestOrderFirstBatching(PriorityBatching):
 
 
 def main() -> None:
-    domain = load_domain()
+    domain = build_domain()
     resolved_orders = GreedyItemAssignment(domain.storage).solve(
         domain.orders.orders
     ).resolved_orders

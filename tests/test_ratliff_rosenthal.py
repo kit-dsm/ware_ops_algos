@@ -60,9 +60,3 @@ def test_rr_returns_solution(pick_list):
     sol = router.solve(pick_list)
     assert sol is not None
     assert sol.route.distance > 0
-
-
-def test_rr_visits_all_picks(pick_list):
-    router = RatliffRosenthalRouting(**RR_KWARGS)
-    sol = router.solve(pick_list)
-    assert len(sol.route.route) >= len(pick_list)

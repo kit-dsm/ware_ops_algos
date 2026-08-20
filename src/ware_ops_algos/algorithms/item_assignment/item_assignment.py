@@ -1,16 +1,12 @@
 from abc import abstractmethod
-from collections import defaultdict
 from copy import deepcopy
-from pathlib import Path
 from typing import Type, Callable
 
 import numpy as np
 import pandas as pd
 
-from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing, \
-    RatliffRosenthalRouting, NearestNeighbourhoodRouting
-from ware_ops_algos.data_loaders import HesslerIrnichLoader
-from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, StorageLocations, Location
+from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
+from ware_ops_algos.domain_models import Order, StorageLocations, Location
 # from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
@@ -462,119 +458,3 @@ class MinMinItemAssignment(PriorityItemAssignment):
         min_dist = min(self.distance_matrix.at[loc_pos, pos] for pos in selected_positions)
         tiebreaker = (self.q_max - loc.amount) / self.q_max
         return min_dist + tiebreaker
-
-
-if __name__ == "__main__":
-    PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
-    DATA_DIR = PROJECT_ROOT / "data"
-    instances_base = DATA_DIR / "instances"
-    cache_base = DATA_DIR / "instances" / "caches"
-
-    instance_set = "SPRP-SS"
-    il = HesslerIrnichLoader(instances_dir=instances_base / instance_set)
-    domain = il.load(filepath="unit_F2_m5_C30_a3_3.txt",
-                     use_cache=False)
-
-    orders = domain.orders
-    layout = domain.layout
-    resources = domain.resources
-    articles = domain.articles
-    storage_locations = domain.storage
-
-    layout_network = layout.layout_network
-    graph = layout_network.graph
-    graph_params = layout.graph_data
-    dima = layout_network.distance_matrix
-
-    rr_kwargs = {"start_node": layout_network.start_node,
-                 "end_node": layout_network.end_node,
-                 "closest_node_to_start": layout_network.closest_node_to_start,
-                 "min_aisle_position": layout_network.min_aisle_position,
-                 "max_aisle_position": layout_network.max_aisle_position,
-                 "distance_matrix": layout_network.distance_matrix,
-                 "predecessor_matrix": layout_network.predecessor_matrix,
-                 "picker": resources.resources,
-                 "n_aisles": graph_params.n_aisles,
-                 "n_pick_locations": graph_params.n_pick_locations,
-                 "dist_aisle": graph_params.dist_aisle,
-                 "dist_pick_locations": graph_params.dist_pick_locations,
-                 "dist_aisle_location": graph_params.dist_bottom_to_pick_location,
-                 "dist_start": graph_params.dist_start,
-                 "dist_end": graph_params.dist_end,
-                 "gen_tour": False,
-                 "gen_item_sequence": False
-                 }
-
-    nn_kwargs = {"start_node": layout_network.start_node,
-                 "end_node": layout_network.end_node,
-                 "closest_node_to_start": layout_network.closest_node_to_start,
-                 "min_aisle_position": layout_network.min_aisle_position,
-                 "max_aisle_position": layout_network.max_aisle_position,
-                 "distance_matrix": layout_network.distance_matrix,
-                 "predecessor_matrix": layout_network.predecessor_matrix,
-                 "picker": resources.resources,
-                 "gen_tour": True,
-                 "gen_item_sequence": True,
-                 "fixed_depot": True,
-                 "node_list": layout_network.node_list,
-                 "node_to_idx": {node: idx for idx, node in enumerate(
-                     list(layout_network.graph.nodes))},
-                 "idx_to_node": {idx: node for idx, node in enumerate(
-                     list(layout_network.graph.nodes))}
-                 }
-
-    gia = GreedyItemAssignment(
-        storage_locations=storage_locations
-    )
-
-    gia_sol = gia.solve(domain.orders.orders)
-
-    nnia = NearestNeighborItemAssignment(
-        storage_locations=storage_locations,
-        distance_matrix=dima,
-        start_node=layout_network.start_node
-    )
-
-    nnia_sol = nnia.solve(domain.orders.orders)
-
-    single_pos = SinglePositionItemAssignment(
-        storage_locations=storage_locations,
-        distance_matrix=dima,
-        routing_class=RatliffRosenthalRouting,
-        routing_class_kwargs=rr_kwargs
-    )
-
-    single_pos_sol = single_pos.solve(domain.orders.orders)
-
-    minmin = MinMinItemAssignment(
-        storage_locations=storage_locations,
-        distance_matrix=dima,
-        start_node=layout_network.start_node
-    )
-
-    minmin_sol = minmin.solve(domain.orders.orders)
-
-    minmax = MinMaxItemAssignment(
-        storage_locations=storage_locations,
-        distance_matrix=dima,
-        start_node=layout_network.start_node
-    )
-
-    minmax_sol = minmax.solve(domain.orders.orders)
-
-    rr_routing = RatliffRosenthalRouting(
-        **rr_kwargs
-    )
-    nn_routing = NearestNeighbourhoodRouting(
-        **nn_kwargs
-    )
-    for sol in [gia_sol, nnia_sol, single_pos_sol, minmax_sol, minmin_sol]:
-        pick_list = []
-        for o in sol.resolved_orders:
-            for pp in o.pick_positions:
-                pick_list.append(pp)
-
-        routing_sol = nn_routing.solve(pick_list)
-        nn_routing.reset_parameters()
-        print(routing_sol.route.distance)
-        # plot_route_with_directions(network_graph=layout_network.graph, route=routing_sol.route.route)

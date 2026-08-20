@@ -10,7 +10,7 @@ os.environ["PATH"] = pandoc_dir + os.pathsep + os.environ.get("PATH", "")
 
 project = "ware_ops_algos"
 author = "Janik Bischoff"
-release = "0.1.0"
+release = "0.2.0"
 
 extensions = [
     "sphinx.ext.autodoc",

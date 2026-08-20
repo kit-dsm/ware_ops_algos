@@ -1,9 +1,9 @@
 # Warehouse optimization algorithms
 
 `ware_ops_algos` is a collection of reusable algorithms for warehouse
-optimization built around a common domain model. It provides benchmark data
-loaders, domain objects, algorithm interfaces and implementations, algorithm
-cards, and a problem taxonomy.
+optimization built around a common domain model. It provides domain objects,
+generic layout construction, algorithm interfaces and implementations,
+algorithm cards, visualization, and a problem taxonomy.
 
 The repository contains executable algorithms for item assignment, batching,
 routing, integrated batching and routing, and scheduling. Algorithm cards state
@@ -13,13 +13,12 @@ these implementations and support card-based discovery and configuration.
 ## Repository structure
 
 - `src/ware_ops_algos/domain_models/`: common warehouse domain model and data cards
-- `src/ware_ops_algos/data_loaders/`: loaders for the benchmark formats
+- `src/ware_ops_algos/domain_models/layout/`: layout models and graph generators
 - `src/ware_ops_algos/algorithms/`: interfaces and implementations
 - `src/ware_ops_algos/algorithms/algorithm_cards/`: algorithm cards and generated configurations
 - `src/ware_ops_algos/domain_algo_mapper/`: matching of data cards and algorithm cards
 - `src/ware_ops_algos/taxonomy/`: problem taxonomy
-- `examples/`: an end-to-end notebook and runnable examples
-- `data/instances/`: small smoke-test instances only
+- `examples/`: an end-to-end notebook and progressive runnable examples
 
 ## Installation
 
@@ -41,13 +40,17 @@ uv sync --frozen --extra notebook
 uv run --frozen --extra notebook jupyter lab examples/getting_started.ipynb
 ```
 
-For a quick command-line check of the installation, run:
+The command-line examples progress from domain modeling to algorithm use and
+extension:
 
 ```bash
-uv run --frozen python examples/getting_started.py
+uv run --frozen python examples/model_domain.py
+uv run --frozen python examples/batch_orders.py
+uv run --frozen python examples/custom_batching.py
 ```
 
-Neither example solves a Gurobi model.
+These examples construct their inputs directly and use heuristic algorithms,
+so they do not require a Gurobi license.
 
 ## Direct use
 
@@ -90,23 +93,8 @@ domain model, and running the heuristic examples above do not require an active
 license. See Gurobi's [Python installation instructions](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python)
 and [academic licensing information](https://support.gurobi.com/hc/en-us/articles/12684663118993-How-do-I-obtain-a-Gurobi-license).
 
-## Benchmark files
-
-Only small smoke-test instances are included. They originate from established
-warehouse-optimization benchmark sets:
-
-- Foodmart: Valle et al. (2017), [doi:10.1016/j.ejor.2017.03.069](https://doi.org/10.1016/j.ejor.2017.03.069)
-- HennWaescher: Henn et al. (2010), [doi:10.1007/BF03342717](https://doi.org/10.1007/BF03342717)
-- MuterOencan: Muter and Öncan (2015), [doi:10.1080/0740817X.2014.991478](https://doi.org/10.1080/0740817X.2014.991478)
-- SPRP: Heßler and Irnich (2024), [doi:10.1287/ijoc.2023.0075](https://doi.org/10.1287/ijoc.2023.0075)
-- Kris: Briant et al. (2023), [arXiv:2303.17834](https://arxiv.org/abs/2303.17834)
-
-The full collections are not included here. Their sources and terms are listed
-in [`data/README.md`](data/README.md).
-
 ## License and citation
 
-The source code is licensed under the BSD 3-Clause License. Third-party
-benchmark files retain their original terms. Citation metadata are provided in
+The source code is licensed under the BSD 3-Clause License. Citation metadata are provided in
 [`CITATION.cff`](CITATION.cff), and software authorship is recorded in
 [`AUTHORS`](AUTHORS).
