@@ -1,90 +1,188 @@
 Examples
 ========
 
-This page is a map of the examples rather than a copy of their source code.
-The main walkthrough is the :doc:`getting-started notebook <getting_started>`:
-it builds a small warehouse, exposes the values that the algorithms consume,
-matches algorithm cards, solves a routing problem, and draws the result.
+This page follows one warehouse problem from input facts to an algorithmic
+result. The goal is to make the domain model, card matching, assignment, and
+routing steps visible before introducing the smaller command-line examples.
 
-The shorter Python scripts then isolate one idea at a time. The extension
-example has its own page under :doc:`extending`, so it is linked here instead
-of being repeated.
+The worked example: a warehouse you can inspect
+------------------------------------------------
 
-The main walkthrough: from warehouse facts to a route
-------------------------------------------------------
+The :doc:`getting-started notebook <getting_started>` builds a conventional
+single-picker warehouse directly from Python. It does not read a benchmark
+file or hide the setup behind a loader. The instance has:
 
-Open ``examples/getting_started.ipynb`` after installing the notebook extra:
+.. list-table::
+   :header-rows: 1
+   :widths: 32 18 50
+
+   * - Part of the instance
+     - Value
+     - Why it matters
+   * - Layout
+     - 3 aisles, 10 pick locations
+     - The graph determines which picker tours are possible.
+   * - Depot
+     - ``(3, 0)``
+     - The route starts and ends at the bottom of aisle 3.
+   * - Storage
+     - 9 dedicated locations
+     - Each requested article resolves to a physical pick node.
+   * - Order
+     - 9 unit-demand positions
+     - The same pick list is passed to assignment and routing.
+   * - Resource
+     - 1 human picker, 9-item cart
+     - The cart capacity is part of the domain, not an algorithm constant.
+
+The first visualization shows those facts as a graph. Red nodes are pick
+locations and the dark square is the depot.
+
+.. image:: _static/getting_started_layout.png
+   :alt: Three-aisle warehouse graph with pick locations and depot
+   :width: 55%
+
+What the model produces
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``BaseWarehouseDomain`` keeps the six pieces together. The notebook prints the
+following feature surface before any algorithm runs:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 28 22 22
+
+   * - Component
+     - Model
+     - Type
+     - Features
+   * - layout
+     - ``LayoutData``
+     - conventional
+     - 21
+   * - articles
+     - ``Articles``
+     - standard
+     - 3
+   * - orders
+     - ``OrdersDomain``
+     - unit_demand
+     - 6
+   * - resources
+     - ``Resources``
+     - human
+     - 7
+   * - storage
+     - ``StorageLocations``
+     - dedicated
+     - 6
+   * - warehouse_info
+     - ``WarehouseInfo``
+     - offline
+     - 0
+
+The data-card representation of that domain is then matched against the
+packaged algorithm cards. For this instance the mapper finds these distance-
+based candidates:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 36 32 32
+
+   * - Algorithm card
+     - Subproblem
+     - Objective
+   * - ``GreedyIA``
+     - item assignment
+     - Distance
+   * - ``ExactSolving``
+     - routing
+     - Distance
+   * - ``LargestGap``
+     - routing
+     - Distance
+   * - ``Midpoint``
+     - routing
+     - Distance
+   * - ``NearestNeighbourhood``
+     - routing
+     - Distance
+   * - ``Return``
+     - routing
+     - Distance
+   * - ``SShape``
+     - routing
+     - Distance
+
+This is the important separation: the domain describes what is available, the
+cards describe what an algorithm needs, and the mapper decides which cards are
+compatible before an implementation is executed.
+
+From an article request to a route
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Greedy item assignment resolves the nine requested articles to these physical
+pick nodes:
+
+.. code-block:: text
+
+   article  1  2  3  4  5  6  7   8   9
+   node   (1,9) (1,4) (2,9) (2,8) (2,4) (2,2) (3,10) (3,9) (3,7)
+
+The Ratliff--Rosenthal dynamic program then checks the published action
+sequence and route length:
+
+.. code-block:: text
+
+   action sequence: 1pass, 11, 1pass, 22, top, 00
+   route distance:   36
+
+The second visualization overlays the optimal tour. A thicker edge means that
+the picker traverses that segment twice.
+
+.. image:: _static/getting_started_tour.png
+   :alt: Optimal picker tour over the three-aisle warehouse graph
+   :width: 55%
+
+Run the complete notebook with:
 
 .. code-block:: bash
 
    uv run --locked --extra notebook jupyter lab examples/getting_started.ipynb
 
-The notebook reproduces the published three-aisle single-picker routing
-example. Its inputs are deliberately concrete:
+Because every value above is created in the notebook, changing one input—such
+as the depot, a storage location, or the cart capacity—gives a concrete way to
+observe how the matching and route result changes.
 
-* a conventional layout with **3 aisles**, **10 pick locations per aisle**, and
-  a depot at **(3, 0)**;
-* **9 articles** stored at **9 named pick nodes** and one unit-demand order;
-* one human picker with a **9-item cart**;
-* a domain object assembled from layout, articles, orders, resources, storage,
-  and warehouse information.
+The small scripts
+-----------------
 
-The notebook makes the hand-off visible in four stages:
+After the worked example, the two focused scripts make the same ideas easy to
+probe from a terminal:
 
-1. It plots the warehouse graph and highlights the depot and pick nodes.
-2. It shows the domain-component types and feature counts, then turns the
-   domain into a data card and lists the matching algorithm cards.
-3. Greedy item assignment resolves the order into physical pick nodes, which
-   are shown in a table.
-4. Ratliff--Rosenthal computes the route and the notebook checks the published
-   action sequence ``1pass, 11, 1pass, 22, top, 00`` and the total distance
-   **36**. A second plot overlays the optimal tour, with line width showing
-   whether a segment is traversed once or twice.
-
-This is the useful starting point for changing the problem: alter the layout,
-storage policy, order, or picker and observe which domain values, cards, pick
-nodes, and route properties change. It demonstrates the algorithm library's
-domain model without relying on a benchmark loader or duplicating the custom
-algorithm extension.
-
-Small runnable examples
------------------------
-
-The companion scripts use the same domain objects with smaller outputs:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 24 40 36
-
-   * - Example
-     - Question it answers
-     - Observable result
-   * - ``model_domain.py``
-     - What does a minimal warehouse domain contain?
-     - A 2-aisle layout, 4 articles, 4 orders, and cart capacities of 6 items,
-       10 weight units, and 10 volume units.
-   * - ``batch_orders.py``
-     - How do resolved orders become feasible batches?
-     - FIFO produces two batches: orders ``[1, 2]`` use 5 items, 8 weight, and
-       5 volume; orders ``[3, 4]`` use 6 items, 10 weight, and 10 volume.
-
-Run them from the repository root:
+``model_domain.py`` constructs a smaller two-aisle domain with 4 articles and
+4 orders. Its picker has capacities of 6 items, 10 weight units, and 10 volume
+units:
 
 .. code-block:: bash
 
    uv run --locked python examples/model_domain.py
+
+``batch_orders.py`` resolves the orders, applies FIFO batching, asserts that
+each batch fits the cart, and prints the resulting loads:
+
+.. code-block:: text
+
+   Batch 0: orders=[1, 2], items=5, weight=8, volume=5
+   Batch 1: orders=[3, 4], items=6, weight=10, volume=10
+
+Run it with:
+
+.. code-block:: bash
+
    uv run --locked python examples/batch_orders.py
 
-The scripts assert the important invariant—the batches fit the pick cart—and
-print the values so a failure is explainable. They are useful when debugging a
-small domain in a terminal; the notebook is the better place to inspect the
-relationships visually.
-
-Where the extension belongs
----------------------------
-
-Once the domain and batching flow are clear, see :doc:`extending` for the
-separate ``custom_batching.py`` example. It demonstrates how to subclass an
-algorithm interface and change order priority; it is intentionally kept apart
-from this page so the getting-started example remains about modeling,
-compatibility, values, and route behavior.
+The custom batching implementation is deliberately documented separately in
+:doc:`extending`. That page answers how to add an algorithm; this page answers
+what the domain values mean and how they become a compatible, measurable
+solution.
