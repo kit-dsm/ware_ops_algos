@@ -142,7 +142,7 @@ class ClosestToDepotSeed(SeedCriterion):
         )
 
 
-class SeedBatchingModular(Batching):
+class SeedBatching(Batching):
     def __init__(
             self,
             pick_cart: PickCart,

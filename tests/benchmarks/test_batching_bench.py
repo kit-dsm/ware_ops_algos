@@ -5,7 +5,12 @@ from ware_ops_algos.algorithms import (
     LocalSearchBatching,
     ClarkAndWrightBatching,
     NearestNeighbourhoodRouting,
-    RatliffRosenthalRouting, Batching, BatchingSolution, )
+    RatliffRosenthalRouting,
+    ShiftNeighborhood,
+    SwapNeighborhood,
+    Batching,
+    BatchingSolution,
+)
 from ware_ops_algos.domain_models import Order
 
 
@@ -78,6 +83,7 @@ def test_local_search_batching_henn(benchmark, henn_domain, henn_resolved_orders
         routing_class=RatliffRosenthalRouting,
         routing_class_kwargs=_rr_routing_kwargs(henn_domain),
         start_batching_class=OrderNrFifoBatching,
+        neighborhood_classes=[SwapNeighborhood, ShiftNeighborhood],
     )
     result = benchmark(algo.solve, henn_resolved_orders)
     assert_valid_batching_result(result, henn_resolved_orders, algo)
@@ -120,6 +126,7 @@ def test_local_search_batching_muter(benchmark, muter_domain, muter_resolved_ord
         routing_class=RatliffRosenthalRouting,
         routing_class_kwargs=_rr_routing_kwargs(muter_domain),
         start_batching_class=OrderNrFifoBatching,
+        neighborhood_classes=[SwapNeighborhood, ShiftNeighborhood],
         verbose=True
     )
     result = benchmark(algo.solve, muter_resolved_orders)

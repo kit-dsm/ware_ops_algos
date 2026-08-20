@@ -11,7 +11,7 @@ from ware_ops_algos.algorithms.routing.routing import Routing
 from ware_ops_algos.domain_models import PickCart, Articles
 
 
-class LocalSearchBatchingModular(Batching):
+class LocalSearchBatching(Batching):
     def __init__(
         self,
         pick_cart: PickCart,

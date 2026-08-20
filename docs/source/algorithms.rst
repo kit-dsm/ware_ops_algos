@@ -64,13 +64,13 @@ Savings-Based Batching
 Savings-Based Batching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.SeedBatching
+.. autoclass:: ware_ops_algos.algorithms.batching.seed_batching.SeedBatching
    :members:
    :show-inheritance:
 
 Local Search Batching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: ware_ops_algos.algorithms.batching.batching.LocalSearchBatching
+.. autoclass:: ware_ops_algos.algorithms.batching.local_search_batching.LocalSearchBatching
    :members:
    :show-inheritance:
 
