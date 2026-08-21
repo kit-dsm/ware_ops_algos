@@ -147,7 +147,7 @@ def test_all_item_assignment_paths_preserve_split_pick_quantities(factory):
     ],
     ids=["greedy", "nearest-neighbor", "single-position", "min-max", "min-min"],
 )
-def test_dedicated_location_quantity_does_not_cap_order_demand(factory):
+def test_dedicated_location_with_sufficient_stock_fulfils_order_demand(factory):
     nodes = [(0, 0), (1, 1)]
     distances = pd.DataFrame(
         [[0, 2], [2, 0]],
@@ -156,7 +156,7 @@ def test_dedicated_location_quantity_does_not_cap_order_demand(factory):
     )
     storage = StorageLocations(
         tpe=StorageType.DEDICATED,
-        locations=[Location(x=1, y=1, article_id=7, amount=1)],
+        locations=[Location(x=1, y=1, article_id=7, amount=4)],
     )
     storage.build_article_location_mapping()
     order = Order(
@@ -169,6 +169,45 @@ def test_dedicated_location_quantity_does_not_cap_order_demand(factory):
     assert len(resolved.pick_positions) == 1
     assert resolved.pick_positions[0].amount == 4
     assert resolved.pick_positions[0].picked_quantity == 4
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda storage, distances: GreedyItemAssignment(storage),
+        lambda storage, distances: NearestNeighborItemAssignment(
+            storage, distances, start_node=(0, 0)
+        ),
+        lambda storage, distances: SinglePositionItemAssignment(
+            storage,
+            distances,
+            _ManhattanScore,
+            {"start_node": (0, 0)},
+        ),
+        lambda storage, distances: MinMaxItemAssignment(
+            storage, distances, start_node=(0, 0)
+        ),
+        lambda storage, distances: MinMinItemAssignment(
+            storage, distances, start_node=(0, 0)
+        ),
+    ],
+    ids=["greedy", "nearest-neighbor", "single-position", "min-max", "min-min"],
+)
+def test_all_item_assignment_paths_reject_insufficient_stock(factory):
+    nodes = [(0, 0), (1, 1)]
+    distances = pd.DataFrame([[0, 2], [2, 0]], index=nodes, columns=nodes)
+    storage = StorageLocations(
+        tpe=StorageType.DEDICATED,
+        locations=[Location(x=1, y=1, article_id=7, amount=1)],
+    )
+    storage.build_article_location_mapping()
+    order = Order(
+        order_id=11,
+        order_positions=[OrderPosition(order_number=11, article_id=7, amount=4)],
+    )
+
+    with pytest.raises(RuntimeError, match="Insufficient stock for article 7"):
+        factory(storage, distances).solve([order])
 
 
 def _split_order(*, second_article=False):

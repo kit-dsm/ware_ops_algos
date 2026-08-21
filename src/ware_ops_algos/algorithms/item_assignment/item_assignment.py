@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
-from ware_ops_algos.domain_models import Order, StorageLocations, Location, StorageType
+from ware_ops_algos.domain_models import Order, StorageLocations, Location
 # from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
@@ -19,15 +19,21 @@ class ItemAssignment(Algorithm[list[Order], ItemAssignmentSolution]):
         pass
 
     def _pick_quantity(self, remaining: int, location: Location) -> int:
-        """Return the quantity represented by one physical pick.
-
-        Dedicated-storage benchmark quantities describe the location, not a
-        consumable stock bound. A single dedicated location therefore fulfils
-        the complete order-line demand. Scattered storage remains stock-bound.
-        """
-        if self.storage_locations.tpe == StorageType.DEDICATED:
-            return remaining
+        """Return the demand that can be supplied by one location."""
         return min(remaining, location.amount)
+
+    @staticmethod
+    def _require_fulfilled(
+        article_id: int | None,
+        demand: int,
+        remaining: int,
+    ) -> None:
+        """Reject invalid domains instead of silently returning partial picks."""
+        if remaining > 0:
+            raise ValueError(
+                f"Insufficient stock for article {article_id}: "
+                f"requested {demand}, missing {remaining}"
+            )
 
 
 class GreedyItemAssignment(ItemAssignment):
@@ -55,7 +61,7 @@ class GreedyItemAssignment(ItemAssignment):
         for order in orders:
             resolved = []
             for pos in order.order_positions:
-                sorted_locs = self._location_lookup[pos.article_id]
+                sorted_locs = self._location_lookup.get(pos.article_id, [])
                 remaining = pos.amount
 
                 for loc in sorted_locs:
@@ -72,6 +78,8 @@ class GreedyItemAssignment(ItemAssignment):
                         article_name=pos.article_name,
                     ))
                     remaining -= pick_qty
+
+                self._require_fulfilled(pos.article_id, pos.amount, remaining)
 
             warehouse_orders.append(WarehouseOrder(
                 order_id=order.order_id,
@@ -177,8 +185,7 @@ class NearestNeighborItemAssignment(ItemAssignment):
                 # Remove this location from candidates
                 candidates.remove(nearest)
 
-            if fulfilled < demand:
-                print(f"Could not fully fulfill article {sku}. Needed {demand}, got {fulfilled}")
+            self._require_fulfilled(sku, demand, demand - fulfilled)
 
         return resolved
 
@@ -231,9 +238,6 @@ class PriorityItemAssignment(ItemAssignment):
         if initial_qty >= demand:
             return preselected
 
-        if self.storage_locations.tpe == StorageType.DEDICATED:
-            return list(preselected) or list(sku_locations[:1])
-
         candidates = [loc for loc in sku_locations if loc not in preselected]
         prioritized = sorted(candidates, key=priority_fn)
 
@@ -268,6 +272,8 @@ class PriorityItemAssignment(ItemAssignment):
             remaining -= pick_qty
             if remaining <= 0:
                 break
+        article_id = selected[0].article_id if selected else None
+        self._require_fulfilled(article_id, demand, remaining)
         return result
 
 
