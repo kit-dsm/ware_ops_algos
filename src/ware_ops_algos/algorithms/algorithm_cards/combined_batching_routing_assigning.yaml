@@ -20,9 +20,12 @@ requirements:
     features:
       - capacities
       - dimensions_type
+      - n_boxes
     constraints:
       dimensions_type:
         equals: [items]
+      n_boxes:
+        equals: 1
   orders:
     type:
       - any
