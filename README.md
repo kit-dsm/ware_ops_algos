@@ -10,16 +10,6 @@ routing, integrated batching and routing, and scheduling. Algorithm cards state
 the subproblem, objective, domain requirements, and configuration parameters of
 these implementations and support card-based discovery and configuration.
 
-## Repository structure
-
-- `src/ware_ops_algos/domain_models/`: common warehouse domain model and data cards
-- `src/ware_ops_algos/domain_models/layout/`: layout models and graph generators
-- `src/ware_ops_algos/algorithms/`: interfaces and implementations
-- `src/ware_ops_algos/algorithms/algorithm_cards/`: algorithm cards and generated configurations
-- `src/ware_ops_algos/domain_algo_mapper/`: matching of data cards and algorithm cards
-- `src/ware_ops_algos/taxonomy/`: problem taxonomy
-- `examples/`: an end-to-end notebook and progressive runnable examples
-
 ## Installation
 
 Python 3.13 and [uv](https://docs.astral.sh/uv/) are required. The interpreter
