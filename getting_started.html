@@ -1,0 +1,926 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Examples" href="examples.html"><link rel="prev" title="ware_ops_algos" href="index.html">
+        <link rel="prefetch" href="_static/favicon.png" as="image">
+
+    <link rel="shortcut icon" href="_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>Getting started with ware_ops_algos - ware_ops_algos</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">ware_ops_algos</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/favicon.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">ware_ops_algos</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting started with <code class="docutils literal notranslate"><span class="pre">ware_ops_algos</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending the algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/getting_started.nblink.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="Getting-started-with-ware_ops_algos">
+<h1>Getting started with <code class="docutils literal notranslate"><span class="pre">ware_ops_algos</span></code><a class="headerlink" href="#Getting-started-with-ware_ops_algos" title="Link to this heading">¶</a></h1>
+<p>This notebook builds a warehouse problem directly with the common domain model, matches algorithm cards to the resulting domain, solves the problem, and visualizes the result.</p>
+<p>The example reproduces the three-aisle single-picker routing problem in Figure 1 of Heßler and Irnich’s technical report <a class="reference external" href="https://download.uni-mainz.de/fb03-logistikmanagement/tech-reports/LM-2022-03.pdf">Modeling and Exact Solution of Picker Routing and Order Batching Problems</a>. The report uses the dynamic program introduced by <a class="reference external" href="https://doi.org/10.1287/opre.31.3.507">Ratliff and Rosenthal (1983)</a>.</p>
+<section id="Setup">
+<h2>Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
+<p>From the repository root, install the locked notebook environment and open this file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync<span class="w"> </span>--locked<span class="w"> </span>--extra<span class="w"> </span>notebook
+uv<span class="w"> </span>run<span class="w"> </span>--locked<span class="w"> </span>--extra<span class="w"> </span>notebook<span class="w"> </span>jupyter<span class="w"> </span>lab<span class="w"> </span>examples/getting_started.ipynb
+</pre></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse.csgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">floyd_warshall</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">GreedyItemAssignment</span><span class="p">,</span> <span class="n">RatliffRosenthalRouting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.algorithms.algorithm_cards</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_packaged_algo_cards</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.algorithms.routing.dynamic_programming_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">aisle_mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.algorithms.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_graph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.domain_algo_mapper.domain_algo_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainAlgorithmMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.domain_models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Article</span><span class="p">,</span> <span class="n">Articles</span><span class="p">,</span> <span class="n">ArticleType</span><span class="p">,</span> <span class="n">BaseWarehouseDomain</span><span class="p">,</span> <span class="n">DimensionType</span><span class="p">,</span>
+    <span class="n">LayoutData</span><span class="p">,</span> <span class="n">LayoutNetwork</span><span class="p">,</span> <span class="n">LayoutParameters</span><span class="p">,</span> <span class="n">LayoutType</span><span class="p">,</span> <span class="n">Location</span><span class="p">,</span>
+    <span class="n">Order</span><span class="p">,</span> <span class="n">OrdersDomain</span><span class="p">,</span> <span class="n">OrderType</span><span class="p">,</span> <span class="n">PickCart</span><span class="p">,</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Resources</span><span class="p">,</span>
+    <span class="n">ResourceType</span><span class="p">,</span> <span class="n">StorageLocations</span><span class="p">,</span> <span class="n">StorageType</span><span class="p">,</span> <span class="n">WarehouseInfo</span><span class="p">,</span>
+    <span class="n">WarehouseInfoType</span><span class="p">,</span> <span class="n">datacard_from_instance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ware_ops_algos.taxonomy.taxonomy</span><span class="w"> </span><span class="kn">import</span> <span class="n">TAXONOMY</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Model-the-layout">
+<h2>Model the layout<a class="headerlink" href="#Model-the-layout" title="Link to this heading">¶</a></h2>
+<p>The published example has three parallel aisles, ten cells per aisle, and a depot at the bottom of aisle 3. We use unit distance between adjacent cells and adjacent aisles. The graph contains the ten pick positions and the two cross-aisle endpoints for each aisle.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">N_AISLES</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">N_PICK_LOCATIONS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">DEPOT</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">PICK_NODES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">aisle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N_AISLES</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_PICK_LOCATIONS</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">((</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">y</span><span class="p">:</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">aisle</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">aisle</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">aisle</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">aisle</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="p">(</span><span class="n">aisle</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">render_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#b8c2cc"</span><span class="p">)</span>
+<span class="n">positions</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="s2">"pos"</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">PICK_NODES</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#e45756"</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="p">[</span><span class="n">DEPOT</span><span class="p">],</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#222222"</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Published SPRP example"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/getting_started_5_0.png" src="_images/getting_started_5_0.png" />
+</div>
+</div>
+</section>
+<section id="Assemble-the-domain">
+<h2>Assemble the domain<a class="headerlink" href="#Assemble-the-domain" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BaseWarehouseDomain</span></code> combines layout, article, order, resource, storage, and warehouse-information objects. Algorithms consume these common objects rather than source-specific file formats.</p>
+<p>The layout network stores both the graph and its shortest-path data. Articles 1–9 are assigned to the nine published pick positions, and one unit-demand order requests all articles.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+<span class="n">adjacency</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">to_scipy_sparse_array</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">"weight"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">distances</span><span class="p">,</span> <span class="n">predecessors</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="p">(</span><span class="n">adjacency</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_predecessors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">nodes</span><span class="p">)</span>
+
+<span class="n">layout</span> <span class="o">=</span> <span class="n">LayoutData</span><span class="p">(</span>
+    <span class="n">tpe</span><span class="o">=</span><span class="n">LayoutType</span><span class="o">.</span><span class="n">CONVENTIONAL</span><span class="p">,</span>
+    <span class="n">graph_data</span><span class="o">=</span><span class="n">LayoutParameters</span><span class="p">(</span>
+        <span class="n">n_aisles</span><span class="o">=</span><span class="n">N_AISLES</span><span class="p">,</span> <span class="n">n_pick_locations</span><span class="o">=</span><span class="n">N_PICK_LOCATIONS</span><span class="p">,</span> <span class="n">n_blocks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">dist_top_to_pick_location</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist_bottom_to_pick_location</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">dist_pick_locations</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist_aisle</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dist_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dist_end</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">start_location</span><span class="o">=</span><span class="n">DEPOT</span><span class="p">,</span> <span class="n">end_location</span><span class="o">=</span><span class="n">DEPOT</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">layout_network</span><span class="o">=</span><span class="n">LayoutNetwork</span><span class="p">(</span>
+        <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="o">=</span><span class="n">distance_matrix</span><span class="p">,</span> <span class="n">predecessor_matrix</span><span class="o">=</span><span class="n">predecessors</span><span class="p">,</span>
+        <span class="n">closest_node_to_start</span><span class="o">=</span><span class="n">DEPOT</span><span class="p">,</span> <span class="n">min_aisle_position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_aisle_position</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">start_node</span><span class="o">=</span><span class="n">DEPOT</span><span class="p">,</span> <span class="n">end_node</span><span class="o">=</span><span class="n">DEPOT</span><span class="p">,</span> <span class="n">node_list</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">articles</span> <span class="o">=</span> <span class="n">Articles</span><span class="p">(</span>
+    <span class="n">tpe</span><span class="o">=</span><span class="n">ArticleType</span><span class="o">.</span><span class="n">STANDARD</span><span class="p">,</span>
+    <span class="n">articles</span><span class="o">=</span><span class="p">[</span><span class="n">Article</span><span class="p">(</span><span class="n">article_id</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">StorageLocations</span><span class="p">(</span>
+    <span class="n">tpe</span><span class="o">=</span><span class="n">StorageType</span><span class="o">.</span><span class="n">DEDICATED</span><span class="p">,</span>
+    <span class="n">locations</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Location</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">article_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">PICK_NODES</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">build_article_location_mapping</span><span class="p">()</span>
+
+<span class="n">order</span> <span class="o">=</span> <span class="n">Order</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="p">{</span><span class="s2">"order_positions"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">"amount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]},</span>
+<span class="p">)</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="n">OrdersDomain</span><span class="p">(</span><span class="n">tpe</span><span class="o">=</span><span class="n">OrderType</span><span class="o">.</span><span class="n">UNIT_DEMAND</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="p">[</span><span class="n">order</span><span class="p">])</span>
+
+<span class="n">resources</span> <span class="o">=</span> <span class="n">Resources</span><span class="p">(</span>
+    <span class="n">tpe</span><span class="o">=</span><span class="n">ResourceType</span><span class="o">.</span><span class="n">HUMAN</span><span class="p">,</span>
+    <span class="n">resources</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Resource</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">pick_cart</span><span class="o">=</span><span class="n">PickCart</span><span class="p">(</span>
+                <span class="n">n_dimension</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">capacities</span><span class="o">=</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">DimensionType</span><span class="o">.</span><span class="n">ITEMS</span><span class="p">],</span>
+                <span class="n">n_boxes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">box_can_mix_orders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">BaseWarehouseDomain</span><span class="p">(</span>
+    <span class="n">problem_class</span><span class="o">=</span><span class="s2">"SPRP"</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="s2">"Distance"</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
+    <span class="n">articles</span><span class="o">=</span><span class="n">articles</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="n">orders</span><span class="p">,</span> <span class="n">resources</span><span class="o">=</span><span class="n">resources</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span>
+    <span class="n">warehouse_info</span><span class="o">=</span><span class="n">WarehouseInfo</span><span class="p">(</span><span class="n">tpe</span><span class="o">=</span><span class="n">WarehouseInfoType</span><span class="o">.</span><span class="n">OFFLINE</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"layout"</span><span class="p">,</span> <span class="s2">"articles"</span><span class="p">,</span> <span class="s2">"orders"</span><span class="p">,</span> <span class="s2">"resources"</span><span class="p">,</span> <span class="s2">"storage"</span><span class="p">,</span> <span class="s2">"warehouse_info"</span><span class="p">]</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"component"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">"model"</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">get_type_value</span><span class="p">(),</span>
+            <span class="s2">"features"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">get_features</span><span class="p">()),</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">components</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>component</th>
+      <th>model</th>
+      <th>type</th>
+      <th>features</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>layout</td>
+      <td>LayoutData</td>
+      <td>conventional</td>
+      <td>21</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>articles</td>
+      <td>Articles</td>
+      <td>standard</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>orders</td>
+      <td>OrdersDomain</td>
+      <td>unit_demand</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>resources</td>
+      <td>Resources</td>
+      <td>human</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>storage</td>
+      <td>StorageLocations</td>
+      <td>dedicated</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>warehouse_info</td>
+      <td>WarehouseInfo</td>
+      <td>offline</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Match-algorithm-cards">
+<h2>Match algorithm cards<a class="headerlink" href="#Match-algorithm-cards" title="Link to this heading">¶</a></h2>
+<p>A data card describes the problem and the features present in each domain component. Algorithm cards state the problem they solve and their domain requirements. The mapper filters the packaged cards without executing their implementations.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_card</span> <span class="o">=</span> <span class="n">datacard_from_instance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"hessler_irnich_figure_1"</span><span class="p">)</span>
+<span class="n">matching_cards</span> <span class="o">=</span> <span class="n">DomainAlgorithmMapper</span><span class="p">(</span><span class="n">TAXONOMY</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">load_packaged_algo_cards</span><span class="p">(),</span> <span class="n">domain</span><span class="p">)</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">:</span> <span class="n">card</span><span class="o">.</span><span class="n">algo_name</span><span class="p">,</span> <span class="s2">"subproblem"</span><span class="p">:</span> <span class="n">card</span><span class="o">.</span><span class="n">problem_type</span><span class="p">,</span> <span class="s2">"objective"</span><span class="p">:</span> <span class="n">card</span><span class="o">.</span><span class="n">objective</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">matching_cards</span>
+    <span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"subproblem"</span><span class="p">,</span> <span class="s2">"algorithm"</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>algorithm</th>
+      <th>subproblem</th>
+      <th>objective</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>GreedyIA</td>
+      <td>item_assignment</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>ExactSolving</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>LargestGap</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Midpoint</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>NearestNeighbourhood</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Return</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>SShape</td>
+      <td>routing</td>
+      <td>Distance</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Resolve-the-order-and-solve-the-SPRP">
+<h2>Resolve the order and solve the SPRP<a class="headerlink" href="#Resolve-the-order-and-solve-the-SPRP" title="Link to this heading">¶</a></h2>
+<p>Greedy item assignment maps each requested article to its stored pick position. The resulting <code class="docutils literal notranslate"><span class="pre">PickPosition</span></code> objects are the input to the Ratliff–Rosenthal dynamic program.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">assignment_solution</span> <span class="o">=</span> <span class="n">GreedyItemAssignment</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
+<span class="n">pick_positions</span> <span class="o">=</span> <span class="n">assignment_solution</span><span class="o">.</span><span class="n">resolved_orders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pick_positions</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[{</span><span class="s2">"article"</span><span class="p">:</span> <span class="n">pick</span><span class="o">.</span><span class="n">article_id</span><span class="p">,</span> <span class="s2">"pick node"</span><span class="p">:</span> <span class="n">pick</span><span class="o">.</span><span class="n">pick_node</span><span class="p">}</span> <span class="k">for</span> <span class="n">pick</span> <span class="ow">in</span> <span class="n">pick_positions</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>article</th>
+      <th>pick node</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>(1, 9)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>(1, 4)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>(2, 9)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>(2, 8)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>(2, 4)</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>(2, 2)</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>(3, 10)</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8</td>
+      <td>(3, 9)</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>9</td>
+      <td>(3, 7)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">network</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">layout_network</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">graph_data</span>
+<span class="n">router</span> <span class="o">=</span> <span class="n">RatliffRosenthalRouting</span><span class="p">(</span>
+    <span class="n">start_node</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">start_node</span><span class="p">,</span> <span class="n">end_node</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">end_node</span><span class="p">,</span>
+    <span class="n">closest_node_to_start</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">closest_node_to_start</span><span class="p">,</span>
+    <span class="n">min_aisle_position</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">min_aisle_position</span><span class="p">,</span>
+    <span class="n">max_aisle_position</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">max_aisle_position</span><span class="p">,</span>
+    <span class="n">picker</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">resources</span><span class="p">,</span>
+    <span class="n">n_aisles</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">n_aisles</span><span class="p">,</span> <span class="n">n_pick_locations</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">n_pick_locations</span><span class="p">,</span>
+    <span class="n">dist_aisle</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">dist_aisle</span><span class="p">,</span>
+    <span class="n">dist_pick_locations</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">dist_pick_locations</span><span class="p">,</span>
+    <span class="n">dist_aisle_location</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">dist_top_to_pick_location</span><span class="p">,</span>
+    <span class="n">dist_start</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">dist_start</span><span class="p">,</span> <span class="n">dist_end</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">dist_end</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">routing_solution</span> <span class="o">=</span> <span class="n">router</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">pick_positions</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Heßler and Irnich report the optimal action sequence <code class="docutils literal notranslate"><span class="pre">1pass,</span> <span class="pre">11,</span> <span class="pre">1pass,</span> <span class="pre">22,</span> <span class="pre">top,</span> <span class="pre">00</span></code>. With all elementary distances normalized to one, this sequence has length 36. The checks below turn the published example into an executable reproduction.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">action_labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"one_pass"</span><span class="p">:</span> <span class="s2">"1pass"</span><span class="p">,</span> <span class="s2">"two_pass"</span><span class="p">:</span> <span class="s2">"2pass"</span><span class="p">}</span>
+<span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">router</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">router</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">router</span><span class="o">.</span><span class="n">state_graph</span><span class="p">[</span><span class="n">source</span><span class="p">][</span><span class="n">target</span><span class="p">][</span><span class="s2">"action"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">aisle_mapping</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+<span class="n">expected_actions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"1pass"</span><span class="p">,</span> <span class="s2">"11"</span><span class="p">,</span> <span class="s2">"1pass"</span><span class="p">,</span> <span class="s2">"22"</span><span class="p">,</span> <span class="s2">"top"</span><span class="p">,</span> <span class="s2">"00"</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">actions</span> <span class="o">==</span> <span class="n">expected_actions</span>
+<span class="k">assert</span> <span class="n">routing_solution</span><span class="o">.</span><span class="n">route</span><span class="o">.</span><span class="n">distance</span> <span class="o">==</span> <span class="mi">36</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"result"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"action sequence"</span><span class="p">,</span> <span class="s2">"route distance"</span><span class="p">],</span>
+        <span class="s2">"computed"</span><span class="p">:</span> <span class="p">[</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">actions</span><span class="p">),</span> <span class="n">routing_solution</span><span class="o">.</span><span class="n">route</span><span class="o">.</span><span class="n">distance</span><span class="p">],</span>
+        <span class="s2">"expected"</span><span class="p">:</span> <span class="p">[</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expected_actions</span><span class="p">),</span> <span class="mi">36</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>result</th>
+      <th>computed</th>
+      <th>expected</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>action sequence</td>
+      <td>1pass, 11, 1pass, 22, top, 00</td>
+      <td>1pass, 11, 1pass, 22, top, 00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>route distance</td>
+      <td>36</td>
+      <td>36</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Visualize-the-optimal-tour-subgraph">
+<h2>Visualize the optimal tour subgraph<a class="headerlink" href="#Visualize-the-optimal-tour-subgraph" title="Link to this heading">¶</a></h2>
+<p>The dynamic program returns the optimal picker-tour subgraph. Line width indicates whether an aisle or cross-aisle segment is traversed once or twice.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">render_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#d7dce1"</span><span class="p">)</span>
+
+<span class="n">tour_segments</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">router</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">aisle</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+            <span class="n">tour_segments</span><span class="p">[((</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">aisle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">tour_segments</span><span class="p">[((</span><span class="n">aisle</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">aisle</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">))]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">for</span> <span class="n">edge</span><span class="p">,</span> <span class="n">multiplicity</span> <span class="ow">in</span> <span class="n">tour_segments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">edgelist</span><span class="o">=</span><span class="p">[</span><span class="n">edge</span><span class="p">],</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">"#e45756"</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mf">1.8</span> <span class="o">*</span> <span class="n">multiplicity</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">PICK_NODES</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#4c78a8"</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">65</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="p">[</span><span class="n">DEPOT</span><span class="p">],</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">"#222222"</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Optimal picker-tour subgraph"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/getting_started_18_0.png" src="_images/getting_started_18_0.png" />
+</div>
+</div>
+</section>
+<section id="Where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#Where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Change the domain objects to model another warehouse, storage policy, order set, or resource configuration.</p></li>
+<li><p>Use the matched algorithm cards to identify alternative implementations for the same domain.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">examples/model_domain.py</span></code> to construct a domain with articles, orders, storage, and a capacity-constrained picker.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">examples/batch_orders.py</span></code> to resolve and batch those orders subject to item, weight, and volume capacities.</p></li>
+<li><p>See <code class="docutils literal notranslate"><span class="pre">examples/custom_batching.py</span></code> for a small extension of the batching interface.</p></li>
+<li><p>Use a loader in an application repository when the input originates from a benchmark or operational file format.</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="examples.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Examples</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Getting started with <code class="docutils literal notranslate"><span class="pre">ware_ops_algos</span></code></a><ul>
+<li><a class="reference internal" href="#Setup">Setup</a></li>
+<li><a class="reference internal" href="#Model-the-layout">Model the layout</a></li>
+<li><a class="reference internal" href="#Assemble-the-domain">Assemble the domain</a></li>
+<li><a class="reference internal" href="#Match-algorithm-cards">Match algorithm cards</a></li>
+<li><a class="reference internal" href="#Resolve-the-order-and-solve-the-SPRP">Resolve the order and solve the SPRP</a></li>
+<li><a class="reference internal" href="#Visualize-the-optimal-tour-subgraph">Visualize the optimal tour subgraph</a></li>
+<li><a class="reference internal" href="#Where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    </body>
+</html>
