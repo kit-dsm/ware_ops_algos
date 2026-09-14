@@ -1,10 +1,10 @@
 """Henn deterministic waiting policies.
 
 Stateless decision logic for online order batching with waiting.
-Extracted from casim's scenario_henn_online to keep algorithms out of
+Extracted from casim's scenario_henn to keep algorithms out of
 the simulation framework.  The scenario layer passes ware_ops_algos
 types (``Resource``, ``WarehouseOrder``, ``CombinedRoutingSolution``)
-and scalars (``current_time``, ``input_closed``); this module owns the
+and scalars (``current_time``, ``stream_exhausted``); this module owns the
 selection and threshold logic.
 """
 
@@ -14,7 +14,6 @@ from dataclasses import dataclass
 from typing import Literal
 
 from ware_ops_algos.algorithms import (
-    BatchObject,
     CombinedRoutingSolution,
     Route,
     SchedulingSolution,
@@ -137,9 +136,11 @@ def decide_henn(
     resources: Resources,
     orders: list,
     current_time: float,
-    input_closed: bool,
+    stream_exhausted: bool,
     selector: str,
     single_services: dict[int, float],
+    *,
+    next_arrival: float | None = None,
     waiting_policy: str = "henn_4_1",
     fill_threshold: float = 0.75,
     max_age_s: float = 300.0,
@@ -158,12 +159,14 @@ def decide_henn(
         Currently buffered orders (for fill/age calculations).
     current_time
         Simulation clock in seconds.
-    input_closed
+    stream_exhausted
         True when no more orders will arrive (flush remaining).
     selector
         Route selection rule: ``"first"``, ``"short"``, ``"long"``, ``"sav"``.
     single_services
         Per-order standalone service-time cache.
+    next_arrival
+        Time of the next known order arrival, or ``None`` if unknown.
     waiting_policy
         ``"henn_4_1"``, ``"no_wait"``, or ``"fill_or_age"``.
     """
@@ -186,11 +189,12 @@ def decide_henn(
             for route in sorted(routes, key=_route_key)
         ],
         "selector": selector,
-        "input_closed": input_closed,
+        "next_arrival_s": next_arrival,
+        "stream_exhausted": stream_exhausted,
         "waiting_policy": waiting_policy,
     }
 
-    if input_closed:
+    if stream_exhausted:
         selected = _order_routes(routes, selector, picker, single_services)
         details["selected_order_ids"] = [
             sorted(route.batch.order_numbers) for route in selected
@@ -199,37 +203,42 @@ def decide_henn(
             "dispatch",
             _schedule(selected, resources, current_time, selector),
             None,
-            "input_closed_dispatch_all",
+            "final_arrival_dispatch_all",
             details,
         )
 
     if waiting_policy == "fill_or_age":
-        visible_items = sum(
-            int(getattr(position, "in_store", getattr(position, "amount", 0)))
-            for order in orders
-            for position in (
-                getattr(order, "pick_positions", None)
-                or getattr(order, "order_positions", ())
+        visible_items = 0
+        for order in orders:
+            positions = getattr(order, "pick_positions", None)
+            if positions is None:
+                positions = getattr(order, "order_positions", ())
+            visible_items += sum(
+                int(getattr(position, "in_store", getattr(position, "amount", 0)))
+                for position in positions
             )
-        )
         capacity = max(1.0, float(picker.capacity or 1.0))
         fill = min(1.0, visible_items / capacity)
-        oldest_release = min(
-            (float(order.order_date or 0.0) for order in orders),
-            default=current_time,
+        oldest_age = max(
+            (
+                current_time - float(order.order_date or 0.0)
+                for order in orders
+            ),
+            default=0.0,
         )
-        oldest_age = current_time - oldest_release
-        details.update({
-            "fill": fill,
-            "fill_threshold": fill_threshold,
-            "oldest_age_s": oldest_age,
-            "max_age_s": max_age_s,
-        })
+        details.update(
+            {
+                "fill": fill,
+                "fill_threshold": fill_threshold,
+                "oldest_age_s": oldest_age,
+                "max_age_s": max_age_s,
+            }
+        )
         if fill < fill_threshold and oldest_age < max_age_s:
             return HennDecision(
                 "wait",
                 None,
-                oldest_release + max_age_s,
+                None,
                 "fill_or_age_below_threshold",
                 details,
             )
@@ -270,18 +279,26 @@ def decide_henn(
         + critical_service
         - batch_service
     )
-    details.update({
-        "critical_order_id": int(critical_order.order_id),
-        "critical_order_service_time_s": critical_service,
-        "batch_service_time_s": batch_service,
-        "threshold_s": threshold,
-    })
+    details.update(
+        {
+            "critical_order_id": int(critical_order.order_id),
+            "critical_order_service_time_s": critical_service,
+            "batch_service_time_s": batch_service,
+            "threshold_s": threshold,
+        }
+    )
 
     if current_time < threshold:
+        reconsider_at = (
+            threshold
+            if next_arrival is None or threshold < next_arrival
+            else None
+        )
+        details["reconsider_at_s"] = reconsider_at
         return HennDecision(
             "wait",
             None,
-            threshold,
+            reconsider_at,
             "single_batch_threshold",
             details,
         )
