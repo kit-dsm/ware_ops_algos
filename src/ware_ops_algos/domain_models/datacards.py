@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from collections.abc import Mapping
 from typing import Optional, Any
 import yaml
 
@@ -29,9 +30,14 @@ def _section(obj: BaseDomainObject) -> dict[str, Any]:
     return data
 
 
-def load_and_flatten_data_card(card_path: str | Path) -> DataCard:
-    with open(card_path, "r", encoding="utf-8") as f:
-        raw = yaml.safe_load(f)
+def load_and_flatten_data_card(
+    source: str | Path | Mapping,
+) -> DataCard:
+    if isinstance(source, Mapping):
+        raw = source
+    else:
+        with open(source, "r", encoding="utf-8") as stream:
+            raw = yaml.safe_load(stream)
 
     def flatten_domain(domain: dict) -> dict:
         features = {}
