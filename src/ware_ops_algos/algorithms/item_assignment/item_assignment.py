@@ -1,12 +1,20 @@
 from abc import abstractmethod
+from collections import defaultdict
 from copy import deepcopy
+from pathlib import Path
 from typing import Type, Callable
 
 import numpy as np
 import pandas as pd
 
-from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
-from ware_ops_algos.domain_models import Order, StorageLocations, Location
+from ..algorithm_interfaces import (
+    Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder,
+)
+from ..routing.routing import (
+    Routing, RatliffRosenthalRouting, NearestNeighbourhoodRouting,
+)
+from ware_ops_algos.data_loaders import HesslerIrnichLoader
+from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, StorageLocations, Location
 # from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
@@ -26,41 +34,70 @@ class GreedyItemAssignment(ItemAssignment):
     algo_name = "GIA"
     def __init__(self, storage_locations: StorageLocations, **kwargs):
         super().__init__(storage_locations, **kwargs)
-        self._location_lookup: dict[int, list[Location]] = {
-            article_id: sorted(locs, key=lambda l: -l.amount)
-            for article_id, locs in storage_locations.article_location_mapping.items()
-        }
 
     def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
-        orders = input_data
-
-        all_article_ids: set[int] = {
-            pos.article_id
-            for order in orders
-            for pos in order.order_positions
+        locations_by_article: dict[int, list[Location]] = {
+            article_id: sorted(
+                locations,
+                key=lambda location: (
+                    -location.amount,
+                    location.x,
+                    location.y,
+                ),
+            )
+            for article_id, locations
+            in self.storage_locations.article_location_mapping.items()
+        }
+        available = {
+            (location.article_id, location.x, location.y): location.amount
+            for location in self.storage_locations.locations
         }
 
-        warehouse_orders = []
-        for order in orders:
-            resolved = []
+        warehouse_orders: list[WarehouseOrder] = []
+        unassigned_orders: list[Order] = []
+        shortages: list[dict] = []
+        for order in input_data:
+            resolved: list[PickPosition] = []
+            tentative: list[tuple[tuple[int, float, float], int | float]] = []
+            shortage = None
             for pos in order.order_positions:
-                sorted_locs = self._location_lookup[pos.article_id]
+                sorted_locs = locations_by_article.get(pos.article_id, [])
                 remaining = pos.amount
 
                 for loc in sorted_locs:
                     if remaining <= 0:
                         break
 
-                    pick_qty = min(remaining, loc.amount)
+                    key = (loc.article_id, loc.x, loc.y)
+                    pick_qty = min(remaining, available[key])
+                    if pick_qty <= 0:
+                        continue
                     resolved.append(PickPosition(
                         order_number=pos.order_number,
                         article_id=pos.article_id,
-                        amount=pos.amount,
+                        amount=pick_qty,
                         pick_node=(loc.x, loc.y),
                         in_store=pick_qty,
                         article_name=pos.article_name,
                     ))
+                    available[key] -= pick_qty
+                    tentative.append((key, pick_qty))
                     remaining -= pick_qty
+
+                if remaining > 0:
+                    shortage = {
+                        "order_id": order.order_id,
+                        "article_id": pos.article_id,
+                        "missing": remaining,
+                    }
+                    break
+
+            if shortage is not None:
+                for key, quantity in tentative:
+                    available[key] += quantity
+                unassigned_orders.append(order)
+                shortages.append(shortage)
+                continue
 
             warehouse_orders.append(WarehouseOrder(
                 order_id=order.order_id,
@@ -70,7 +107,11 @@ class GreedyItemAssignment(ItemAssignment):
                 pick_positions=resolved,
             ))
 
-        return ItemAssignmentSolution(resolved_orders=warehouse_orders)
+        return ItemAssignmentSolution(
+            resolved_orders=warehouse_orders,
+            unassigned_orders=unassigned_orders,
+            shortages=shortages,
+        )
 
 
 class NearestNeighborItemAssignment(ItemAssignment):
@@ -154,7 +195,7 @@ class NearestNeighborItemAssignment(ItemAssignment):
                 resolved.append(PickPosition(
                         order_number=pos.order_number,
                         article_id=pos.article_id,
-                        amount=pos.amount,
+                        amount=pick_qty,
                         pick_node=(nearest.x, nearest.y),
                         in_store=pick_qty,
                         article_name=pos.article_name,
@@ -270,7 +311,7 @@ class PriorityItemAssignment(ItemAssignment):
                 pick_positions.append(PickPosition(
                     order_number=order_pos.order_number,
                     article_id=sku,
-                    amount=order_pos.amount,
+                    amount=pick_qty,
                     pick_node=(loc.x, loc.y),
                     in_store=pick_qty,
                     article_name=order_pos.article_name,
@@ -291,6 +332,7 @@ class SinglePositionItemAssignment(PriorityItemAssignment):
         super().__init__(storage_locations, distance_matrix, **kwargs)
         self.routing_class = routing_class
         self.routing_class_kwargs = routing_class_kwargs
+        self._router = routing_class(**routing_class_kwargs)
         self.start_node = routing_class_kwargs["start_node"]
 
     def _select_for_order(self, order: Order) -> list[PickPosition]:
@@ -345,8 +387,7 @@ class SinglePositionItemAssignment(PriorityItemAssignment):
     def _calc_tour_length(self, pick_positions: list[PickPosition]) -> float:
         if not pick_positions:
             return float('inf')
-        router = self.routing_class(**self.routing_class_kwargs)
-        return router.solve(pick_positions).route.distance
+        return self._router.score(pick_positions)
 
 
 class MinMaxItemAssignment(PriorityItemAssignment):
@@ -458,3 +499,117 @@ class MinMinItemAssignment(PriorityItemAssignment):
         min_dist = min(self.distance_matrix.at[loc_pos, pos] for pos in selected_positions)
         tiebreaker = (self.q_max - loc.amount) / self.q_max
         return min_dist + tiebreaker
+
+
+if __name__ == "__main__":
+    PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
+    DATA_DIR = PROJECT_ROOT / "data"
+    instances_base = DATA_DIR / "instances"
+    cache_base = DATA_DIR / "instances" / "caches"
+
+    instance_set = "SPRP-SS"
+    il = HesslerIrnichLoader(instances_dir=instances_base / instance_set)
+    domain = il.load(filepath="unit_F2_m5_C30_a3_3.txt",
+                     use_cache=False)
+
+    orders = domain.orders
+    layout = domain.layout
+    resources = domain.resources
+    articles = domain.articles
+    storage_locations = domain.storage
+
+    layout_network = layout.layout_network
+    graph = layout_network.graph
+    graph_params = layout.graph_data
+    dima = layout_network.distance_matrix
+
+    rr_kwargs = {"start_node": layout_network.start_node,
+                 "end_node": layout_network.end_node,
+                 "closest_node_to_start": layout_network.closest_node_to_start,
+                 "min_aisle_position": layout_network.min_aisle_position,
+                 "max_aisle_position": layout_network.max_aisle_position,
+                 "distance_matrix": layout_network.distance_matrix,
+                 "predecessor_matrix": layout_network.predecessor_matrix,
+                 "picker": resources.resources,
+                 "n_aisles": graph_params.n_aisles,
+                 "n_pick_locations": graph_params.n_pick_locations,
+                 "dist_aisle": graph_params.dist_aisle,
+                 "dist_pick_locations": graph_params.dist_pick_locations,
+                 "dist_aisle_location": graph_params.dist_bottom_to_pick_location,
+                 "dist_start": graph_params.dist_start,
+                 "dist_end": graph_params.dist_end,
+                 "gen_tour": False,
+                 "gen_item_sequence": False
+                 }
+
+    nn_kwargs = {"start_node": layout_network.start_node,
+                 "end_node": layout_network.end_node,
+                 "closest_node_to_start": layout_network.closest_node_to_start,
+                 "min_aisle_position": layout_network.min_aisle_position,
+                 "max_aisle_position": layout_network.max_aisle_position,
+                 "distance_matrix": layout_network.distance_matrix,
+                 "predecessor_matrix": layout_network.predecessor_matrix,
+                 "picker": resources.resources,
+                 "gen_tour": True,
+                 "gen_item_sequence": True,
+                 "fixed_depot": True,
+                 "node_list": layout_network.node_list,
+                 "node_to_idx": {node: idx for idx, node in enumerate(
+                     list(layout_network.graph.nodes))},
+                 "idx_to_node": {idx: node for idx, node in enumerate(
+                     list(layout_network.graph.nodes))}
+                 }
+
+    gia = GreedyItemAssignment(
+        storage_locations=storage_locations
+    )
+
+    gia_sol = gia.solve(domain.orders.orders)
+
+    nnia = NearestNeighborItemAssignment(
+        storage_locations=storage_locations,
+        distance_matrix=dima,
+        start_node=layout_network.start_node
+    )
+
+    nnia_sol = nnia.solve(domain.orders.orders)
+
+    single_pos = SinglePositionItemAssignment(
+        storage_locations=storage_locations,
+        distance_matrix=dima,
+        routing_class=RatliffRosenthalRouting,
+        routing_class_kwargs=rr_kwargs
+    )
+
+    single_pos_sol = single_pos.solve(domain.orders.orders)
+
+    minmin = MinMinItemAssignment(
+        storage_locations=storage_locations,
+        distance_matrix=dima,
+        start_node=layout_network.start_node
+    )
+
+    minmin_sol = minmin.solve(domain.orders.orders)
+
+    minmax = MinMaxItemAssignment(
+        storage_locations=storage_locations,
+        distance_matrix=dima,
+        start_node=layout_network.start_node
+    )
+
+    minmax_sol = minmax.solve(domain.orders.orders)
+
+    rr_routing = RatliffRosenthalRouting(
+        **rr_kwargs
+    )
+    nn_routing = NearestNeighbourhoodRouting(
+        **nn_kwargs
+    )
+    for sol in [gia_sol, nnia_sol, single_pos_sol, minmax_sol, minmin_sol]:
+        pick_list = []
+        for o in sol.resolved_orders:
+            for pp in o.pick_positions:
+                pick_list.append(pp)
+
+        print(nn_routing.score(pick_list))
+        # plot_route_with_directions(network_graph=layout_network.graph, route=routing_sol.route.route)

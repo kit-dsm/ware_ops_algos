@@ -2,7 +2,7 @@ import heapq
 from abc import abstractmethod
 from typing import Callable
 
-from ware_ops_algos.algorithms import Algorithm
+from ..algorithm_interfaces import Algorithm
 from ware_ops_algos.algorithms.algorithm_interfaces import (
     Route,
     SchedulingSolution,
@@ -44,7 +44,8 @@ def earliest_free_assignment(
     resources: Resources,
 ) -> list[ScheduledJob]:
     heap: list[tuple[float, int, Resource]] = [
-        (0.0, i, r) for i, r in enumerate(resources.resources)
+        (float(r.available_at or 0.0), i, r)
+        for i, r in enumerate(resources.resources)
     ]
     heapq.heapify(heap)
 
