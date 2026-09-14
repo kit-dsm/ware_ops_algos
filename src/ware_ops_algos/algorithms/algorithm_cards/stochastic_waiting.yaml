@@ -1,0 +1,38 @@
+algo_name: StochasticWaiting
+problem_type: waiting
+description: >
+  MDP-based optimal-stopping waiting policy for online order batching
+  with S-shape routing. Estimates expected detour from a continuously
+  arriving order and decides whether to wait or dispatch.
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - n_aisles
+      - n_pick_locations
+      - dist_aisle
+      - dist_pick_locations
+    constraints:
+      n_blocks: 1
+  resources:
+    type:
+      - human
+    features:
+      - speed
+      - time_per_pick
+  orders:
+    type:
+      - standard
+    features:
+      - order_date
+  storage:
+    type:
+      - any
+
+objective: CompletionTime
+
+implementation:
+  class_name: StochasticWaitingOptimizer
+  solver: heuristic
