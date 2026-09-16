@@ -30,6 +30,9 @@ requirements:
 
 objective: Distance
 
+capabilities:
+  route_origins: [layout_start, node, edge]
+
 implementation:
   class_name: SShapeRouting
   component_name: SShape

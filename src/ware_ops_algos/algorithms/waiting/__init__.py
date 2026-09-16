@@ -1,27 +1,45 @@
-"""Waiting policies for online order batching.
-
-Provides deterministic Henn threshold policies and stochastic
-analytic-progress optimisation with MDP-based optimal stopping.
-"""
+"""Waiting decisions and retrospective insert-order analysis."""
 
 from __future__ import annotations
 
 from .henn import (
-    HennDecision,
-    decide_henn,
+    DeterministicWaitingInput,
+    FillOrAgeWaiting,
+    HennWaiting,
+    NoWaiting,
+    QueueThresholdWaiting,
     route_service_time,
 )
 from .waiting_analysis import (
     WaitingAnalysisInput,
-    WaitingSolution,
+    WaitingAnalysisSolution,
 )
 from .stochastic_waiting import StochasticWaitingOptimizer
+from .analytic_waiting import (
+    AnalyticStochasticWaiting,
+    AnalyticWaitingInput,
+)
+from .oct_insertion import (
+    DeterministicOCTInsertion,
+    InsertionInput,
+    InsertionSolution,
+    RemainingRouteInsertion,
+)
 
 __all__ = [
-    "HennDecision",
-    "decide_henn",
+    "DeterministicWaitingInput",
+    "FillOrAgeWaiting",
+    "HennWaiting",
+    "NoWaiting",
+    "QueueThresholdWaiting",
     "route_service_time",
     "WaitingAnalysisInput",
-    "WaitingSolution",
+    "WaitingAnalysisSolution",
     "StochasticWaitingOptimizer",
+    "AnalyticStochasticWaiting",
+    "AnalyticWaitingInput",
+    "DeterministicOCTInsertion",
+    "InsertionInput",
+    "InsertionSolution",
+    "RemainingRouteInsertion",
 ]

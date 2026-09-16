@@ -4,7 +4,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from itertools import count
-from typing import Generic, TypeVar, Optional, NamedTuple, Deque
+from typing import Generic, TypeVar, Optional, NamedTuple, Deque, Literal
 import time
 import logging
 
@@ -102,8 +102,54 @@ class NodeType(Enum):
 
 
 class RouteNode(NamedTuple):
-    position: tuple[int, int]
+    position: tuple[int | float, int | float]
     node_type: NodeType
+
+
+@dataclass(frozen=True)
+class RoutingOrigin:
+    """Current route origin, optionally located on a traversed edge.
+
+    Distances are measured from ``position`` to the corresponding endpoint.
+    ``None`` means that endpoint cannot be reached without reversing direction.
+    """
+
+    position: tuple[int | float, int | float]
+    edge_origin: tuple[int | float, int | float] | None = None
+    edge_destination: tuple[int | float, int | float] | None = None
+    distance_to_edge_origin: float | None = None
+    distance_to_edge_destination: float | None = None
+
+    def __post_init__(self):
+        endpoints = (self.edge_origin, self.edge_destination)
+        distances = (
+            self.distance_to_edge_origin,
+            self.distance_to_edge_destination,
+        )
+        if all(value is None for value in endpoints + distances):
+            return
+        if self.edge_origin is None or self.edge_destination is None:
+            raise ValueError("An edge routing origin requires both endpoints")
+        if all(value is None for value in distances):
+            raise ValueError("An edge routing origin requires a reachable endpoint")
+        if any(value is not None and value < 0 for value in distances):
+            raise ValueError("Routing-origin distances cannot be negative")
+
+    @property
+    def is_on_edge(self) -> bool:
+        return self.edge_origin is not None
+
+    def reachable_endpoints(self):
+        if not self.is_on_edge:
+            return ()
+        return tuple(
+            (endpoint, float(distance))
+            for endpoint, distance in (
+                (self.edge_origin, self.distance_to_edge_origin),
+                (self.edge_destination, self.distance_to_edge_destination),
+            )
+            if distance is not None
+        )
 
 @dataclass
 class Route:
@@ -232,6 +278,17 @@ class RoutingSolution(AlgorithmSolution):
 @dataclass
 class CombinedRoutingSolution(AlgorithmSolution):
     routes: list[Route] = field(default_factory=list)
+
+
+@dataclass
+class WaitingSolution(AlgorithmSolution):
+    """Release decision over already constructed candidate routes."""
+
+    action: Literal["dispatch", "wait"] = "dispatch"
+    routes: tuple[Route, ...] = ()
+    dispatch_at: float | None = None
+    reason: str = ""
+    details: dict[str, object] = field(default_factory=dict)
 
 
 @dataclass

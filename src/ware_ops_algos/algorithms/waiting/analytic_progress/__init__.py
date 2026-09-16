@@ -26,6 +26,13 @@ from .optimizer_common import (
 )
 from .mdp import phase_1_discrete
 from .order_optimizer import analyze_batch_window, analyze_batches
+from .interval_builder import IntervalData, build_interval_data
+from .optimal_waiting import (
+    AnalyticWaitingResult,
+    critical_mean_interarrival_time,
+    expected_waiting_cost,
+    solve_optimal_wait,
+)
 
 __all__ = [
     "EXPECTED_INTERARRIVAL_TIME",
@@ -45,4 +52,10 @@ __all__ = [
     "phase_1_discrete",
     "analyze_batch_window",
     "analyze_batches",
+    "IntervalData",
+    "build_interval_data",
+    "AnalyticWaitingResult",
+    "critical_mean_interarrival_time",
+    "expected_waiting_cost",
+    "solve_optimal_wait",
 ]

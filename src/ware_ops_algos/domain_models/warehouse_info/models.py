@@ -13,5 +13,10 @@ class WarehouseInfoType(str, Enum):
 @dataclass
 class WarehouseInfo(BaseDomainObject):
     tpe: WarehouseInfoType
+    arrival_process: str | None = None
+    mean_interarrival_time_s: float | None = None
+    order_line_count_distribution: str | None = None
+    order_lines_per_order: int | None = None
+    pick_location_distribution: str | None = None
 
 

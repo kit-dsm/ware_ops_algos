@@ -1,9 +1,8 @@
 """Stochastic waiting optimizer with MDP-based optimal stopping.
 
-Implements the ``Algorithm`` interface.  Takes ``WaitingAnalysisInput``
-(built from ware_ops_algos domain objects) and returns a
-``WaitingSolution``.  Internally adapts to the analytic_progress
-computation engine.
+Implements the ``Algorithm`` interface for retrospective analysis. It takes
+a known insert order and reports how that realised order could have been
+integrated. It is not the causal online waiting policy.
 """
 
 from __future__ import annotations
@@ -18,7 +17,7 @@ from ware_ops_algos.algorithms import (
 )
 from ware_ops_algos.domain_models import LayoutData, Resource
 
-from .waiting_analysis import WaitingAnalysisInput, WaitingSolution
+from .waiting_analysis import WaitingAnalysisInput, WaitingAnalysisSolution
 from .analytic_progress.models import (
     BatchComparisonResult,
     BatchWindow,
@@ -33,7 +32,7 @@ from .analytic_progress.order_optimizer_continuous import (
 )
 
 
-def _build_warehouse_instance(
+def build_warehouse_instance(
     layout: LayoutData,
     picker: Resource,
     all_orders: list[WarehouseOrder],
@@ -132,12 +131,12 @@ def _build_article_mapping(
     return mapping
 
 
-def _to_waiting_solution(
+def _to_analysis_solution(
     result: BatchComparisonResult,
     engine: str,
-) -> WaitingSolution:
-    """Convert the analytic_progress result to a WaitingSolution."""
-    return WaitingSolution(
+) -> WaitingAnalysisSolution:
+    """Convert the analytic-progress result to an analysis result."""
+    return WaitingAnalysisSolution(
         should_wait=bool(result.phase1_should_integrate),
         best_integration_time=float(result.phase1_best_integration_t),
         predicted_completion_time=float(result.phase1_predicted_completion_time),
@@ -160,37 +159,36 @@ def _to_waiting_solution(
     )
 
 
-class StochasticWaitingOptimizer(Algorithm[WaitingAnalysisInput, WaitingSolution]):
-    """MDP-based optimal-stopping waiting policy for S-shape routing.
+class StochasticWaitingOptimizer(
+    Algorithm[WaitingAnalysisInput, WaitingAnalysisSolution]
+):
+    """Retrospective insert-order analysis for S-shape routing.
 
-    Estimates the expected detour from a continuously arriving order and
-    decides whether to wait for it or dispatch immediately.  Only applicable
-    to conventional single-block layouts with S-shape routing and a single
-    human picker.
+    Compares a phase-1 prediction with the realised integration of a known
+    insert order. Only applicable to conventional single-block layouts with
+    S-shape routing and a single human picker.
 
     Parameters
     ----------
     engine
         Computation engine: "discrete" (exact S-shape positions) or
         "continuous" (continuous position approximation).
-    expected_interarrival
-        Expected time between order arrivals in seconds.
+    The historical evaluator retains project_4D4L's fixed 28.8-second
+    interarrival assumption.
     """
 
-    algo_name = "StochasticWaiting"
+    algo_name = "StochasticWaitingAnalysis"
 
     def __init__(
         self,
         engine: Literal["discrete", "continuous"] = "discrete",
-        expected_interarrival: float = 28.8,
     ):
         super().__init__()
         self.engine = engine
-        self.expected_interarrival = float(expected_interarrival)
 
-    def _run(self, input_data: WaitingAnalysisInput) -> WaitingSolution:
+    def _run(self, input_data: WaitingAnalysisInput) -> WaitingAnalysisSolution:
         all_orders = [*input_data.base_orders, input_data.insert_order]
-        instance = _build_warehouse_instance(
+        instance = build_warehouse_instance(
             input_data.layout,
             input_data.picker,
             all_orders,
@@ -204,10 +202,6 @@ class StochasticWaitingOptimizer(Algorithm[WaitingAnalysisInput, WaitingSolution
             input_data.insert_order,
         )
 
-        from .analytic_progress.models import EXPECTED_INTERARRIVAL_TIME
-        from .analytic_progress import optimizer_common
-        optimizer_common.EXPECTED_INTERARRIVAL = self.expected_interarrival
-
         engine_fn = _analyze_discrete if self.engine == "discrete" else _analyze_continuous
         result = engine_fn(
             window,
@@ -219,4 +213,4 @@ class StochasticWaitingOptimizer(Algorithm[WaitingAnalysisInput, WaitingSolution
             v=instance.v,
             t_p=instance.t_p,
         )
-        return _to_waiting_solution(result, self.engine)
+        return _to_analysis_solution(result, self.engine)

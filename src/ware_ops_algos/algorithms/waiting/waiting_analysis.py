@@ -3,17 +3,16 @@
 These types bridge ware_ops_algos domain objects to the analytic_progress
 computation engine.  ``WaitingAnalysisInput`` is built from domain objects
 (``LayoutData``, ``Resource``, ``WarehouseOrder``, ``Route``); the optimizer
-returns a ``WaitingSolution`` that the scenario layer translates into a
-dispatch/wait decision.
+returns a ``WaitingAnalysisSolution``. This retrospective analysis is kept
+separate from the causal ``WaitingSolution`` release contract.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from ware_ops_algos.algorithms import (
     AlgorithmSolution,
-    Route,
     WarehouseOrder,
 )
 from ware_ops_algos.domain_models import LayoutData, Resource
@@ -23,9 +22,8 @@ from ware_ops_algos.domain_models import LayoutData, Resource
 class WaitingAnalysisInput:
     """Input for stochastic waiting analysis, built from domain objects.
 
-    The optimizer analyses whether it is better to wait for ``insert_order``
-    to arrive and integrate it into the current batch, or to dispatch the
-    ``base_orders`` immediately.
+    The analyzer retrospectively compares the known ``insert_order`` with the
+    ``base_orders``. It does not represent an online release decision.
 
     Parameters
     ----------
@@ -37,26 +35,19 @@ class WaitingAnalysisInput:
         Already-routed orders in the current batch.
     insert_order
         Newly arrived order to potentially integrate.
-    base_route
-        Current S-shape route of the base orders.
-    current_time
-        Simulation clock in seconds.
-    expected_interarrival
-        Expected time between order arrivals in seconds.
+    The historical evaluator retains project_4D4L's fixed 28.8-second
+    interarrival assumption.
     """
 
     layout: LayoutData
     picker: Resource
     base_orders: list[WarehouseOrder]
     insert_order: WarehouseOrder
-    base_route: Route
-    current_time: float
-    expected_interarrival: float = 28.8
 
 
 @dataclass
-class WaitingSolution(AlgorithmSolution):
-    """Result of stochastic waiting analysis.
+class WaitingAnalysisSolution(AlgorithmSolution):
+    """Result of retrospective insert-order analysis.
 
     Attributes
     ----------

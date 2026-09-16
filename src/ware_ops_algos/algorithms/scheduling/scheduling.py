@@ -121,6 +121,15 @@ class FIFOScheduling(PriorityScheduler):
         return job.job_id
 
 
+class FirstBatchScheduling(PriorityScheduler):
+    """Select batches in their stable batching-algorithm order."""
+
+    algo_name = "FirstBatchScheduler"
+
+    def _priority(self, job: Job) -> int:
+        return int(job.route.batch.batch_id)
+
+
 class MSScheduling(PriorityScheduler):
     """Minimum Slack: due_date - processing_time. Urgency weighted by workload."""
     algo_name = "MSScheduler"
@@ -140,3 +149,35 @@ class EDDThenSPTScheduling(PriorityScheduler):
     algo_name = "EDDThenSPTScheduler"
     def _priority(self, job: Job) -> tuple[float, float]:
         return (job.due_date, job.processing_time)
+
+
+class SavingsScheduling(PriorityScheduler):
+    """Order routed batches by descending consolidation saving."""
+
+    algo_name = "SavingsScheduler"
+
+    def __init__(
+        self,
+        resources: Resources,
+        single_service_times: dict[int, float],
+        **kwargs,
+    ):
+        super().__init__(resources, **kwargs)
+        self.single_service_times = single_service_times
+
+    def _priority(self, job: Job) -> tuple[float, int]:
+        missing = job.order_numbers - self.single_service_times.keys()
+        if missing:
+            raise ValueError(
+                "Savings scheduling lacks standalone service times for "
+                f"orders {sorted(missing)}"
+            )
+        picker = self.resources.resources[0]
+        routed_service = job.processing_time + float(
+            picker.tour_setup_time or 0.0
+        )
+        saving = (
+            sum(self.single_service_times[value] for value in job.order_numbers)
+            - routed_service
+        )
+        return (-saving, job.job_id)

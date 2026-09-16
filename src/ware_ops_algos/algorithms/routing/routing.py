@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 import gurobipy as gp
 
 from ware_ops_algos.algorithms.algorithm_interfaces import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
-    CombinedRoutingSolution
+    CombinedRoutingSolution, RoutingOrigin
 from ware_ops_algos.domain_models import Resource, OrderPosition, Article, StorageLocations
 from ware_ops_algos.algorithms.routing.dynamic_programming_helpers import (
     equivalence_classes,
@@ -38,11 +38,15 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
                  node_to_idx: dict = None,
                  idx_to_node: dict = None,
                  distance_matrix: pd.DataFrame | None = None,
-        predecessor_matrix: np.array = None,
+                 predecessor_matrix: np.array = None,
+                 routing_origin: RoutingOrigin | None = None,
                  **kwargs):
         super().__init__(**kwargs)
 
-        self.start_node = start_node
+        self.routing_origin = routing_origin
+        self.start_node = (
+            routing_origin.position if routing_origin is not None else start_node
+        )
         self.end_node = end_node
         self.closest_node_to_start = closest_node_to_start
         self.min_aisle_position = min_aisle_position
@@ -75,7 +79,23 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
 
     def _get_distance(self, source, target) -> float:
         """Fast distance lookup."""
+        origin_leg = self._origin_leg_distance(source, target)
+        if origin_leg is not None:
+            return origin_leg
         return self._dist_array[self._node_to_idx[source], self._node_to_idx[target]]
+
+    def _origin_leg_distance(self, source, target) -> float | None:
+        origin = self.routing_origin
+        if origin is None or not origin.is_on_edge or source != origin.position:
+            return None
+        return next(
+            (
+                distance
+                for endpoint, distance in origin.reachable_endpoints()
+                if endpoint == target
+            ),
+            None,
+        )
 
     def _get_aisle_entry_points(self) -> dict:
         """Find the entry point (min y) for each aisle."""
@@ -86,6 +106,10 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
 
     def _get_route_segment(self, source, target, with_last_element: bool = False):
         """Expand one shortest-path segment without mutating the router."""
+        if self._origin_leg_distance(source, target) is not None:
+            path = [source, target] if with_last_element else [source]
+            return path, [RouteNode(node, NodeType.ROUTE) for node in path]
+
         source_idx = self.node_to_idx[source]
         target_idx = self.node_to_idx[target]
 
@@ -268,7 +292,7 @@ class SShapeRouting(HeuristicRouting):
 
     def _compute_visit_order(self, pick_nodes: list[tuple]) -> list[tuple]:
         remaining = self._group_aisle_nodes(pick_nodes)
-        visit_nodes = [self.start_node, self.closest_node_to_start]
+        visit_nodes = self._initial_visit_nodes()
         walking_up = not self._determine_walking_direction(visit_nodes[-1])
 
         while remaining:
@@ -279,6 +303,59 @@ class SShapeRouting(HeuristicRouting):
 
         visit_nodes.append(self._end_for(visit_nodes[-1]))
         return visit_nodes
+
+    def _initial_visit_nodes(self) -> list[tuple]:
+        origin = self.routing_origin
+        if origin is None:
+            return [self.start_node, self.closest_node_to_start]
+        if not origin.is_on_edge:
+            if origin.position[1] in {
+                self.min_aisle_position,
+                self.max_aisle_position,
+            }:
+                return [origin.position, origin.position]
+            aisle_ends = (
+                (origin.position[0], self.min_aisle_position),
+                (origin.position[0], self.max_aisle_position),
+            )
+            aisle_exit = min(
+                aisle_ends,
+                key=lambda node: (
+                    self._get_distance(origin.position, node),
+                    repr(node),
+                ),
+            )
+            return [origin.position, aisle_exit]
+
+        candidates = []
+        aisle_ends = (self.min_aisle_position, self.max_aisle_position)
+        for endpoint, edge_distance in origin.reachable_endpoints():
+            if endpoint not in self._node_to_idx:
+                continue
+            exits = (
+                (endpoint,)
+                if endpoint[1] in aisle_ends
+                else tuple((endpoint[0], y) for y in aisle_ends)
+            )
+            for aisle_exit in exits:
+                distance = edge_distance
+                if aisle_exit != endpoint:
+                    distance += self._get_distance(endpoint, aisle_exit)
+                candidates.append((
+                    distance,
+                    repr(endpoint),
+                    repr(aisle_exit),
+                    endpoint,
+                    aisle_exit,
+                ))
+
+        if not candidates:
+            raise ValueError("The edge routing origin has no reachable endpoint")
+        _, _, _, endpoint, aisle_exit = min(candidates)
+        nodes = [origin.position, endpoint]
+        if aisle_exit != endpoint:
+            nodes.append(aisle_exit)
+        return nodes
 
 
 class ReturnRouting(HeuristicRouting):
