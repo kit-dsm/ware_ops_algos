@@ -4,7 +4,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from itertools import count
-from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque
+from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque, Literal
 import time
 import logging
 
@@ -74,9 +74,19 @@ class RouteNode(NamedTuple):
     position: tuple[int, int]
     node_type: NodeType
 
+
+@dataclass(frozen=True)
+class RoutingOrigin:
+    """Observed origin; a picker on an edge must continue to its destination."""
+
+    position: tuple[float, float]
+    edge_destination: tuple[float, float] | None = None
+    distance_to_destination: float = 0.0
+
 @dataclass
 class Route:
     distance: float
+    routing_origin: RoutingOrigin | None = None
     route: Optional[list[tuple[float, float]]] = None
     item_sequence: Optional[list] = None
     batch: Optional[BatchObject] = None
@@ -195,6 +205,15 @@ class CombinedRoutingSolution(AlgorithmSolution):
 @dataclass
 class SchedulingSolution(AlgorithmSolution):
     jobs: list[ScheduledJob] = field(default_factory=list)
+
+
+@dataclass
+class WaitingSolution(AlgorithmSolution):
+    """A release decision over scheduled candidates, without state changes."""
+
+    action: Literal["release", "wait"] = "release"
+    jobs: tuple[ScheduledJob, ...] = ()
+    reconsider_at: float | None = None
 
 
 class Algorithm(ABC, Generic[I, O]):

@@ -1,0 +1,9 @@
+algo_name: NoWaiting
+problem_type: waiting
+description: Release scheduled candidates immediately.
+requirements: {}
+objective: makespan
+implementation:
+  class_name: NoWaiting
+  component_name: NoWaitingNode
+  type: policy

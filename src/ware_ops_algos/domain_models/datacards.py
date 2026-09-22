@@ -111,6 +111,11 @@ def validate_against_card(domain: BaseWarehouseDomain, card: DataCard) -> tuple[
     check("orders", domain.orders, card.orders)
     check("resources", domain.resources, card.resources)
     check("storage", domain.storage, card.storage)
+    if card.warehouse_info.get("features"):
+        if domain.warehouse_info is None:
+            errors.append("warehouse_info required but missing")
+        else:
+            check("warehouse_info", domain.warehouse_info, card.warehouse_info)
     return (len(errors) == 0, errors)
 
 

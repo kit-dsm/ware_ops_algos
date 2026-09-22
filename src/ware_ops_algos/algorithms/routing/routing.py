@@ -9,7 +9,7 @@ from gurobipy import GRB
 from matplotlib import pyplot as plt
 import gurobipy as gp
 
-from ware_ops_algos.algorithms.algorithm_interfaces import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, \
+from ware_ops_algos.algorithms.algorithm_interfaces import Algorithm, RoutingSolution, Route, PickPosition, RouteNode, NodeType, RoutingOrigin, \
     CombinedRoutingSolution
 from ware_ops_algos.domain_models import Resource, OrderPosition, Article, StorageLocations
 from ware_ops_algos.algorithms.routing.dynamic_programming_helpers import (
@@ -38,10 +38,12 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
                  idx_to_node: dict = None,
                  distance_matrix: pd.DataFrame | None = None,
                  predecessor_matrix: np.array = None,
+                 routing_origin: RoutingOrigin | None = None,
                  **kwargs):
         super().__init__(**kwargs)
 
-        self.start_node = start_node
+        self.routing_origin = routing_origin
+        self.start_node = routing_origin.position if routing_origin else start_node
         self.end_node = end_node
         self.closest_node_to_start = closest_node_to_start
         self.min_aisle_position = min_aisle_position
@@ -76,6 +78,11 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
 
     def _get_distance(self, source, target) -> float:
         """Fast distance lookup."""
+        if (self.routing_origin and source == self.routing_origin.position and
+                self.routing_origin.edge_destination and source != self.routing_origin.edge_destination):
+            destination = self.routing_origin.edge_destination
+            return (self.routing_origin.distance_to_destination
+                    + self._dist_array[self._node_to_idx[destination], self._node_to_idx[target]])
         return self._dist_array[self._node_to_idx[source], self._node_to_idx[target]]
 
     def reset_parameters(self):
@@ -92,6 +99,17 @@ class Routing(Algorithm[list[PickPosition] | list[OrderPosition], RoutingSolutio
         return {aisle: (aisle, min(ys)) for aisle, ys in aisles.items()}
 
     def _get_route_for_tour(self, source, target, with_last_element: bool = False):
+        if (self.routing_origin and source == self.routing_origin.position and
+                self.routing_origin.edge_destination and source != self.routing_origin.edge_destination):
+            destination = self.routing_origin.edge_destination
+            self.route.append(source)
+            self.annotated_route.append(RouteNode(source, NodeType.ROUTE))
+            if destination != target:
+                self._get_route_for_tour(destination, target, with_last_element)
+            else:
+                self.route.append(destination)
+                self.annotated_route.append(RouteNode(destination, NodeType.ROUTE))
+            return
         source_idx = self.node_to_idx[source]
         target_idx = self.node_to_idx[target]
 
@@ -276,7 +294,8 @@ class SShapeRouting(HeuristicRouting):
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
-                      annotated_route=self.annotated_route
+                      annotated_route=self.annotated_route,
+                      routing_origin=self.routing_origin,
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
 

@@ -1,0 +1,22 @@
+algo_name: AnalyticStochasticWaiting
+problem_type: waiting
+description: Causal exponential-arrival release decision for single-line S-shape picking.
+requirements:
+  layout:
+    type: [conventional]
+    features: [n_blocks]
+    constraints:
+      n_blocks: {equals: 1}
+  warehouse_info:
+    type: [online]
+    features: [arrival_process, mean_interarrival_time_s, order_lines_per_order, pick_location_distribution]
+    constraints:
+      arrival_process: {equals: exponential}
+      order_lines_per_order: {equals: 1}
+      pick_location_distribution: {equals: uniform_iid}
+      mean_interarrival_time_s: {greater_than: 0}
+objective: makespan
+implementation:
+  class_name: AnalyticStochasticWaiting
+  component_name: AnalyticWaitingNode
+  type: policy

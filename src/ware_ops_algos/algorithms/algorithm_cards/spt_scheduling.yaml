@@ -17,7 +17,6 @@ requirements:
     type:
       - any
     features:
-      - due_date
       - order_date
 
   storage:
@@ -29,6 +28,6 @@ objective: Distance
 
 implementation:
   class_name: SPTScheduling
-  component_name: SPTScheduling
+  component_name: SPTScheduler
   solver:
   type: heuristic

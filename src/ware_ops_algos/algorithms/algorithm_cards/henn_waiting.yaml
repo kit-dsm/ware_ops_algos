@@ -1,0 +1,12 @@
+algo_name: HennWaiting
+problem_type: waiting
+description: Henn release threshold using service times from the configured router.
+requirements:
+  orders:
+    type: [standard]
+    features: [order_date]
+objective: makespan
+implementation:
+  class_name: HennWaiting
+  component_name: HennWaitingNode
+  type: policy
