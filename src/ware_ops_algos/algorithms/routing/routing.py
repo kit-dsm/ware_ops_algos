@@ -291,6 +291,11 @@ class SShapeRouting(HeuristicRouting):
             current_source = self._process_aisle(current_source, aisle_min, walking_up)
 
         self._go_to_end_node(current_source)
+        if (self.routing_origin is not None and
+                (not self.annotated_route or self.annotated_route[0].position != self.routing_origin.position)):
+            self.annotated_route.insert(0, RouteNode(self.routing_origin.position, NodeType.ROUTE))
+            if not self.route or self.route[0] != self.routing_origin.position:
+                self.route.insert(0, self.routing_origin.position)
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,

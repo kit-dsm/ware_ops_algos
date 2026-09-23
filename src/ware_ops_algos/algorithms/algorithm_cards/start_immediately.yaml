@@ -1,0 +1,12 @@
+algo_name: StartImmediatelyWaiting
+problem_type: waiting
+description: Start a real empty aisle patrol when the picker is idle and no order is visible.
+requirements:
+  layout:
+    type: [conventional]
+    features: [n_blocks, n_aisles]
+objective: mean_order_completion_time
+implementation:
+  class_name: StartImmediatelyWaiting
+  component_name: StartImmediatelyNode
+  type: policy

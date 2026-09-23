@@ -89,10 +89,10 @@ class FifoBatching(PriorityBatching):
         return sorted(self.order_list, key=lambda o: o.order_date)
 
 
-class RemainingRouteFifoBatching(Batching):
+class RemainingRouteAdmission(Batching):
     """Paper intervention: admit only new orders entirely on the unserved route."""
 
-    algo_name = "RemainingRouteFifoBatching"
+    algo_name = "RemainingRouteAdmission"
 
     def __init__(self, pick_cart: PickCart, articles: Articles, *,
                  active_order_ids: frozenset[int], candidate_order_ids: frozenset[int],

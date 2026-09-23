@@ -1,4 +1,4 @@
-algo_name: RemainingRouteFifoBatching
+algo_name: RemainingRouteAdmission
 problem_type: batching
 description: Admit arriving orders only when every pick lies on the unserved route and a cart bin is free.
 requirements:
@@ -7,6 +7,6 @@ requirements:
     features: [capacities, dimensions_type]
 objective: distance
 implementation:
-  class_name: RemainingRouteFifoBatching
-  component_name: RemainingRouteFiFo
+  class_name: RemainingRouteAdmission
+  component_name: RemainingRouteAdmissionNode
   type: heuristic
