@@ -1,0 +1,9 @@
+algo_name: WaitForFour
+problem_type: waiting
+description: Paper wait-4 release rule.
+requirements: {}
+objective: mean_order_completion_time
+implementation:
+  class_name: OrderCountWaiting
+  component_name: WaitForFour
+  type: policy

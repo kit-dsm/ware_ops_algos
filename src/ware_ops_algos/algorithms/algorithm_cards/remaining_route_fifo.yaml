@@ -1,0 +1,12 @@
+algo_name: RemainingRouteFifoBatching
+problem_type: batching
+description: Admit arriving orders only when every pick lies on the unserved route and a cart bin is free.
+requirements:
+  resources:
+    type: [human]
+    features: [capacities, dimensions_type]
+objective: distance
+implementation:
+  class_name: RemainingRouteFifoBatching
+  component_name: RemainingRouteFiFo
+  type: heuristic

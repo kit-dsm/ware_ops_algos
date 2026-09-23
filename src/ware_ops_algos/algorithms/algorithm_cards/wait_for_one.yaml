@@ -1,0 +1,9 @@
+algo_name: WaitForOne
+problem_type: waiting
+description: Paper wait-1 release rule.
+requirements: {}
+objective: mean_order_completion_time
+implementation:
+  class_name: OrderCountWaiting
+  component_name: WaitForOne
+  type: policy

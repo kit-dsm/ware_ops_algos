@@ -1,0 +1,9 @@
+algo_name: WaitForThree
+problem_type: waiting
+description: Paper wait-3 release rule.
+requirements: {}
+objective: mean_order_completion_time
+implementation:
+  class_name: OrderCountWaiting
+  component_name: WaitForThree
+  type: policy

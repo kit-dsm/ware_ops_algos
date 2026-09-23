@@ -58,6 +58,27 @@ class NoWaiting(Algorithm[WaitingInput, WaitingSolution]):
         return WaitingSolution(jobs=data.candidates)
 
 
+class OrderCountWaiting(Algorithm[WaitingInput, WaitingSolution]):
+    """Release the first FCFS batch once ``min_orders`` are present (wait-k)."""
+
+    algo_name = "OrderCountWaiting"
+
+    def __init__(self, min_orders: int):
+        super().__init__()
+        if min_orders < 1:
+            raise ValueError("wait-0 requires an initial empty tour, not OrderCountWaiting")
+        self.min_orders = min_orders
+
+    def _run(self, data: WaitingInput) -> WaitingSolution:
+        if not data.candidates:
+            return WaitingSolution(action="wait")
+        first = data.candidates[0]
+        count = len(first.job.route.batch.orders)
+        if data.input_closed or count >= self.min_orders:
+            return WaitingSolution(jobs=(first,))
+        return WaitingSolution(action="wait")
+
+
 class HennWaiting(Algorithm[WaitingInput, WaitingSolution]):
     """Henn's release threshold, applied to the first scheduled batch."""
 
@@ -97,6 +118,10 @@ class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
         orders = job.job.route.batch.orders
         if data.input_closed or data.deadline_reached or len(orders) >= self.target_batch_size_orders:
             return WaitingSolution(jobs=(job,))
+        if len(orders) != self.target_batch_size_orders - 1:
+            raise ValueError(
+                "Analytical waiting requires exactly q-1 known orders before the missing order"
+            )
         info = data.warehouse_info
         if (info.arrival_process != "exponential" or
                 info.order_lines_per_order != 1 or
