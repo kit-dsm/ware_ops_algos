@@ -8,7 +8,7 @@ from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque, Literal
 import time
 import logging
 
-from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, OrderPosition, Resource
+from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, OrderPosition, Resource, PickCart
 
 I = TypeVar("I")  # input type
 O = TypeVar("O")  # output type
@@ -191,6 +191,25 @@ class BatchingState:
 @dataclass
 class BatchingSolution(AlgorithmSolution):
     batches: list[BatchObject] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class AdmissionInput:
+    """Visible orders and the unserved route of a started tour."""
+
+    orders: tuple[WarehouseOrder, ...]
+    pick_cart: PickCart
+    active_order_ids: frozenset[int]
+    candidate_order_ids: frozenset[int]
+    remaining_route: tuple[tuple[float, float], ...]
+    occupied_bins: int
+
+
+@dataclass
+class AdmissionSolution(AlgorithmSolution):
+    """New orders accepted into the current tour, in admission order."""
+
+    accepted_order_ids: tuple[int, ...] = ()
 
 @dataclass
 class RoutingSolution(AlgorithmSolution):

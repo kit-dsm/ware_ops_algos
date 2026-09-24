@@ -1,6 +1,6 @@
 algo_name: RemainingRouteAdmission
-problem_type: batching
-description: Admit arriving orders only when every pick lies on the unserved route and a cart bin is free.
+problem_type: admission
+description: Active-tour admission policy; the CoSy node exposes its accepted IDs as a batch for the existing routing pipeline.
 requirements:
   resources:
     type: [human]

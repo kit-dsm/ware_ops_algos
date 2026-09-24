@@ -1,6 +1,7 @@
 from .algorithm_interfaces import *
 from .routing import *
 from .batching import *
+from .admission import RemainingRouteAdmission
 from .item_assignment import *
 from .scheduling import *
 from .routing_and_batching import *
