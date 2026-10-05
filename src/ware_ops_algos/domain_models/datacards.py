@@ -7,7 +7,17 @@ import yaml
 
 from .base_domain import BaseWarehouseDomain
 from .base_domain_object import BaseDomainObject
-from .planner_information import information_card_section
+
+
+def information_card_section(raw: dict | None) -> dict[str, Any]:
+    """Expose declared process representations to algorithm-card matching."""
+    if raw is None:
+        return {"type": None, "features": {}}
+    processes = raw["processes"]
+    features = {process["id"]: process["type"] for process in processes}
+    if len(features) != len(processes):
+        raise ValueError("Duplicate planner-information process ID")
+    return {"type": "process_information", "features": features}
 
 
 @dataclass
