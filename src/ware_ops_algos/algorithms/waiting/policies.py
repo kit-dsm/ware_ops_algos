@@ -9,7 +9,9 @@ from ware_ops_algos.algorithms.algorithm_interfaces import (
     Algorithm, Job, ScheduledJob, WaitingSolution,
 )
 from ware_ops_algos.algorithms.routing.patrol import all_aisles_patrol_route
-from ware_ops_algos.domain_models import LayoutData, Resource, WarehouseInfo
+from ware_ops_algos.domain_models import (
+    ExponentialSingleLineUniformLocationOrderStream, LayoutData, PlannerInformation, Resource,
+)
 
 from .analytic_progress.optimal_waiting import solve_optimal_wait
 from .analytic_progress.models import WarehouseInstance
@@ -47,7 +49,7 @@ class WaitingInput:
     input_closed: bool
     picker: Resource
     layout: LayoutData
-    warehouse_info: WarehouseInfo | None
+    information: PlannerInformation | None
     deadline_reached: bool = False
     single_order_service_times: dict[int, float] | None = None
 
@@ -145,25 +147,23 @@ class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
         if len(data.candidates) != 1:
             raise ValueError("Analytical waiting requires one scheduled candidate")
         job = data.candidates[0]
+        if data.information is None:
+            raise ValueError("Analytical waiting requires planner information")
+        order_stream = data.information.require("incoming_orders", ExponentialSingleLineUniformLocationOrderStream)
         orders = job.job.route.batch.orders
-        if data.input_closed or data.deadline_reached or len(orders) >= self.target_batch_size_orders:
+        if (data.input_closed or data.deadline_reached
+                or len(orders) >= self.target_batch_size_orders):
             return WaitingSolution(jobs=(job,))
         if len(orders) != self.target_batch_size_orders - 1:
             raise ValueError(
                 "Analytical waiting requires exactly q-1 known orders before the missing order"
             )
-        info = data.warehouse_info
-        if (info.arrival_process != "exponential" or
-                info.order_lines_per_order != 1 or
-                info.pick_location_distribution != "uniform_iid" or
-                info.mean_interarrival_time_s is None):
-            raise ValueError("Unsupported analytical waiting forecast")
         if any(len(order.pick_positions) != 1 for order in orders):
             raise ValueError("Analytical waiting supports one line per order")
         instance = _warehouse_instance(data.layout, data.picker, orders)
         result = solve_optimal_wait(
             instance,
-            mean_interarrival_time=info.mean_interarrival_time_s,
+            mean_interarrival_time=order_stream.mean_interarrival_time_s,
             remaining_arrivals_after_miss=self.target_batch_size_orders - 1,
         )
         if result.wait_duration <= 1e-9:

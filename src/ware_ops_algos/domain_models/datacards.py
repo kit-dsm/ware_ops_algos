@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Any
 import yaml
 
 from .base_domain import BaseWarehouseDomain
 from .base_domain_object import BaseDomainObject
+from .planner_information import information_card_section
 
 
 @dataclass
@@ -21,6 +22,7 @@ class DataCard:
     storage: dict[str, Any]
     warehouse_info: dict[str, Any]
     sources: Optional[dict[str, Any]] = None
+    information: dict[str, Any] = field(default_factory=lambda: {"type": None, "features": {}})
 
 
 def _section(obj: BaseDomainObject) -> dict[str, Any]:
@@ -61,6 +63,7 @@ def load_and_flatten_data_card(card_path: str | Path) -> DataCard:
         resources=section(raw.get("resources", {})),
         storage=section(raw.get("storage", {})),
         warehouse_info=section(raw.get("warehouse_info", {})),
+        information=information_card_section(raw.get("information")),
     )
 
 def datacard_from_instance(domain: BaseWarehouseDomain,
@@ -90,7 +93,9 @@ def datacard_from_instance(domain: BaseWarehouseDomain,
         resources=_section(domain.resources),
         storage=_section(domain.storage),
         warehouse_info=_section(domain.warehouse_info),
-        sources=sources
+        sources=sources,
+        information={"type": domain.information.get_type_value() if domain.information else None,
+                     "features": domain.information.get_features() if domain.information else {}},
     )
 
 def validate_against_card(domain: BaseWarehouseDomain, card: DataCard) -> tuple[bool, list[str]]:
@@ -116,6 +121,13 @@ def validate_against_card(domain: BaseWarehouseDomain, card: DataCard) -> tuple[
             errors.append("warehouse_info required but missing")
         else:
             check("warehouse_info", domain.warehouse_info, card.warehouse_info)
+    if card.information.get("features"):
+        if domain.information is None:
+            errors.append("planner information required but missing")
+        else:
+            for name, representation in card.information["features"].items():
+                if domain.information.get_features().get(name) != representation:
+                    errors.append(f"information.{name} requires {representation}")
     return (len(errors) == 0, errors)
 
 

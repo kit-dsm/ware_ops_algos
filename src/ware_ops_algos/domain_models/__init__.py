@@ -4,6 +4,7 @@ from .orders import *
 from .resources import *
 from .storage import *
 from .warehouse_info import *
+from .planner_information import *
 from .base_domain import *
 from .base_domain_object import *
 from .datacards import *

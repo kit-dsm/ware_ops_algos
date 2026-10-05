@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 import operator
 
-from ware_ops_algos.domain_models import BaseWarehouseDomain
+from ware_ops_algos.domain_models import BaseWarehouseDomain, DataCard
 from ware_ops_algos.algorithms.algorithm_cards import AlgorithmCard
 
 
@@ -89,7 +89,7 @@ class DomainAlgorithmMapper:
         self.subproblems = subproblems
         self.evaluator = ConstraintEvaluator()
 
-    def filter(self, algorithms: List['AlgorithmCard'], instance: 'BaseWarehouseDomain',
+    def filter(self, algorithms: List['AlgorithmCard'], instance: BaseWarehouseDomain | DataCard,
                verbose: bool = False) -> List['AlgorithmCard']:
         """
         Filter algorithms to find those feasible for the given instance.
@@ -139,7 +139,7 @@ class DomainAlgorithmMapper:
         return compatible_algorithms
 
     def _filter_by_requirements(self, algorithms: List['AlgorithmCard'],
-                                instance: 'BaseWarehouseDomain',
+                                instance: BaseWarehouseDomain | DataCard,
                                 verbose: bool = False) -> List['AlgorithmCard']:
         """
         Filter algorithms by domain requirements.
@@ -170,7 +170,7 @@ class DomainAlgorithmMapper:
 
         return feasible_algorithms
 
-    def _is_feasible(self, algorithm: 'AlgorithmCard', instance: 'BaseWarehouseDomain',
+    def _is_feasible(self, algorithm: 'AlgorithmCard', instance: BaseWarehouseDomain | DataCard,
                      verbose: bool = False) -> bool:
         """
         Check if an algorithm is feasible for the given instance.
@@ -197,7 +197,7 @@ class DomainAlgorithmMapper:
 
         # Check each domain requirement (layout, resources, orders, storage)
         for domain_name, requirements in algorithm.requirements.items():
-            domain = getattr(instance, domain_name)
+            domain = getattr(instance, domain_name, None)
 
             if not self._check_domain_requirements(domain_name, domain, requirements, verbose):
                 return False
@@ -221,15 +221,17 @@ class DomainAlgorithmMapper:
         Returns:
             True if all requirements are satisfied
         """
-        # Get domain properties
-        try:
-            domain_type = domain.get_type_value()
-        except:
+        if domain is None:
+            return False
+        # Data cards and domain objects expose the same type/features contract.
+        if isinstance(domain, dict):
             domain_type = domain["type"]
-        try:
-            domain_features = domain.get_features()
-        except:
             domain_features = domain["features"]
+            domain_features = {name: value for name, value in domain_features.items()
+                               if str(value) == "0" or value}
+        else:
+            domain_type = domain.get_type_value()
+            domain_features = domain.get_features()
 
         # Get algorithm requirements
         required_types = requirements.get("type", [])
