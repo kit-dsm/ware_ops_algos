@@ -10,13 +10,16 @@ from .base_domain_object import BaseDomainObject
 
 
 def information_card_section(raw: dict | None) -> dict[str, Any]:
-    """Expose declared process representations to algorithm-card matching."""
+    """Flatten named information objects without mixing their features."""
     if raw is None:
         return {"type": None, "features": {}}
-    processes = raw["processes"]
-    features = {process["id"]: process["type"] for process in processes}
-    if len(features) != len(processes):
-        raise ValueError("Duplicate planner-information process ID")
+    features = {}
+    for obj in raw["objects"]:
+        for feature in obj["features"]:
+            key = f'{obj["name"]}.{feature["name"]}'
+            if key in features:
+                raise ValueError(f"Duplicate information feature: {key}")
+            features[key] = feature.get("value", True)
     return {"type": raw["type"], "features": features}
 
 

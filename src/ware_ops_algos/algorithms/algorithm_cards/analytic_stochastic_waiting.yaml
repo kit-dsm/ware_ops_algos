@@ -9,9 +9,9 @@ requirements:
       n_blocks: {equals: 1}
   information:
     type: [process_information]
-    features: [incoming_orders]
+    features: [incoming_orders.type]
     constraints:
-      incoming_orders: {equals: exponential_single_line_uniform_location_order_stream}
+      incoming_orders.type: {equals: exponential_single_line_uniform_location_order_stream}
 objective: makespan
 implementation:
   class_name: AnalyticStochasticWaiting

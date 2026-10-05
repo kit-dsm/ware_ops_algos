@@ -1,6 +1,6 @@
 """Forecasts available to algorithms, separate from realized simulation events."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from math import isfinite
 from typing import Any, ClassVar
@@ -38,5 +38,12 @@ class PlannerInformation(BaseDomainObject):
             raise TypeError(f"{name} requires {expected_type.__name__}")
         return description
 
-    def get_features(self) -> dict[str, str]:
-        return {name: description.representation for name, description in self.processes.items()}
+    def get_features(self) -> dict[str, Any]:
+        features = {}
+        for name, description in self.processes.items():
+            features[f"{name}.type"] = description.representation
+            for field in fields(description):
+                value = getattr(description, field.name)
+                if value is not None:
+                    features[f"{name}.{field.name}"] = value
+        return features
