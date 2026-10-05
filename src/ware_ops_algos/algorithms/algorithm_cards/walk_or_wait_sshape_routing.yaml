@@ -1,0 +1,36 @@
+algo_name: WalkOrWaitSShape
+problem_type: routing
+
+description: >
+  S-shape traversal used by the original waiting simulator. Completes the
+  final aisle and constructs cross-aisle travel through the path matrix.
+
+requirements:
+  layout:
+    type:
+      - conventional
+    features:
+      - start_node
+      - end_node
+      - closest_node_to_start
+      - min_aisle_position
+      - max_aisle_position
+      - distance_matrix
+      - predecessor_matrix
+  resources:
+    type:
+      - human
+  orders:
+    type:
+      - any
+  storage:
+    type:
+      - any
+
+objective: Distance
+
+implementation:
+  class_name: WalkOrWaitSShapeRouting
+  component_name: WalkOrWaitSShape
+  solver:
+  type: heuristic
