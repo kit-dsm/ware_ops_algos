@@ -17,7 +17,7 @@ def information_card_section(raw: dict | None) -> dict[str, Any]:
     features = {process["id"]: process["type"] for process in processes}
     if len(features) != len(processes):
         raise ValueError("Duplicate planner-information process ID")
-    return {"type": "process_information", "features": features}
+    return {"type": raw["type"], "features": features}
 
 
 @dataclass
@@ -104,8 +104,7 @@ def datacard_from_instance(domain: BaseWarehouseDomain,
         storage=_section(domain.storage),
         warehouse_info=_section(domain.warehouse_info),
         sources=sources,
-        information={"type": domain.information.get_type_value() if domain.information else None,
-                     "features": domain.information.get_features() if domain.information else {}},
+        information=_section(domain.information) if domain.information else {"type": None, "features": {}},
     )
 
 def validate_against_card(domain: BaseWarehouseDomain, card: DataCard) -> tuple[bool, list[str]]:

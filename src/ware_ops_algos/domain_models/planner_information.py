@@ -1,8 +1,15 @@
 """Forecasts available to algorithms, separate from realized simulation events."""
 
 from dataclasses import dataclass
+from enum import Enum
 from math import isfinite
 from typing import Any, ClassVar
+
+from .base_domain_object import BaseDomainObject
+
+
+class InformationType(str, Enum):
+    PROCESS_INFORMATION = "process_information"
 
 
 @dataclass(frozen=True)
@@ -19,9 +26,10 @@ class ExponentialSingleLineUniformLocationOrderStream:
 
 
 @dataclass
-class PlannerInformation:
+class PlannerInformation(BaseDomainObject):
     """Named forecasts known to the decision maker at the current decision."""
 
+    tpe: InformationType
     processes: dict[str, Any]
 
     def require(self, name: str, expected_type: type):
@@ -29,9 +37,6 @@ class PlannerInformation:
         if not isinstance(description, expected_type):
             raise TypeError(f"{name} requires {expected_type.__name__}")
         return description
-
-    def get_type_value(self) -> str:
-        return "process_information"
 
     def get_features(self) -> dict[str, str]:
         return {name: description.representation for name, description in self.processes.items()}
