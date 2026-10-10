@@ -2,56 +2,13 @@
 
 from __future__ import annotations
 
-from collections import Counter
-from dataclasses import dataclass
-
 from ware_ops_algos.algorithms.algorithm_interfaces import (
-    Algorithm, Job, ScheduledJob, WaitingSolution,
+    Algorithm, Job, ScheduledJob, WaitingInput, WaitingSolution,
 )
 from ware_ops_algos.algorithms.routing.patrol import all_aisles_patrol_route
-from ware_ops_algos.domain_models import (
-    ExponentialSingleLineUniformLocationOrderStream, LayoutData, PlannerInformation, Resource,
-)
+from ware_ops_algos.domain_models import ExponentialSingleLineUniformLocationOrderStream
 
 from .analytic_progress.optimal_waiting import solve_optimal_wait
-from .analytic_progress.models import WarehouseInstance
-
-
-def _warehouse_instance(layout: LayoutData, picker: Resource, orders) -> WarehouseInstance:
-    """Translate visible orders into the existing single-line analytical model."""
-    params = layout.graph_data
-    positions = [
-        pick.pick_node
-        for order in orders
-        for pick in order.pick_positions
-        for _ in range(int(pick.in_store or pick.amount))
-    ]
-    aisle_counts = Counter(int(aisle) for aisle, _ in positions)
-    aisles = sorted(aisle_counts)
-    return WarehouseInstance(
-        M=int(params.n_aisles),
-        N_L=int(params.n_pick_locations),
-        w=float(params.dist_aisle),
-        L=float(params.dist_pick_locations) * params.n_pick_locations,
-        A=aisles,
-        n_list=[aisle_counts[aisle] for aisle in aisles],
-        v=float(picker.speed),
-        t_p=float(picker.time_per_pick),
-        P=[(int(aisle), int(y)) for aisle, y in positions],
-        arrival_times=[float(order.order_date) for order in orders],
-    )
-
-
-@dataclass(frozen=True)
-class WaitingInput:
-    candidates: tuple[ScheduledJob, ...]
-    current_time: float
-    input_closed: bool
-    picker: Resource
-    layout: LayoutData
-    information: PlannerInformation | None
-    deadline_reached: bool = False
-    single_order_service_times: dict[int, float] | None = None
 
 
 class NoWaiting(Algorithm[WaitingInput, WaitingSolution]):
@@ -149,7 +106,6 @@ class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
         job = data.candidates[0]
         if data.information is None:
             raise ValueError("Analytical waiting requires planner information")
-        order_stream = data.information.require("incoming_orders", ExponentialSingleLineUniformLocationOrderStream)
         orders = job.job.route.batch.orders
         if (data.input_closed or data.deadline_reached
                 or len(orders) >= self.target_batch_size_orders):
@@ -160,9 +116,11 @@ class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
             )
         if any(len(order.pick_positions) != 1 for order in orders):
             raise ValueError("Analytical waiting supports one line per order")
-        instance = _warehouse_instance(data.layout, data.picker, orders)
+        order_stream = data.information.require(
+            "incoming_orders", ExponentialSingleLineUniformLocationOrderStream
+        )
         result = solve_optimal_wait(
-            instance,
+            data,
             mean_interarrival_time=order_stream.mean_interarrival_time_s,
             remaining_arrivals_after_miss=self.target_batch_size_orders - 1,
         )

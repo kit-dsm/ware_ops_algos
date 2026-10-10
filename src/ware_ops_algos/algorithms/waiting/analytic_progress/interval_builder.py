@@ -6,7 +6,11 @@ from dataclasses import dataclass
 
 from . import continuous_calculation
 from .core import compute_segment_times
-from .models import WarehouseInstance
+from . import geometry as g
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...algorithm_interfaces import WaitingInput
 
 
 @dataclass(frozen=True)
@@ -54,14 +58,14 @@ def _lagrange_quadratic(
 def _sample_phase(
     t_start: float,
     t_end: float,
-    instance: WarehouseInstance,
+    data: WaitingInput,
     times_in: dict[int, float],
     times_out: dict[int, float],
 ) -> tuple[float, float, float]:
     duration = t_end - t_start
     if duration <= 4.0 * _BOUNDARY_OFFSET:
         estimate = continuous_calculation.continuous_expected_detour(
-            0.5 * (t_start + t_end), instance, times_in, times_out
+            0.5 * (t_start + t_end), data, times_in, times_out
         )
         return float(estimate.expected_detour), 0.0, 0.0
 
@@ -73,7 +77,7 @@ def _sample_phase(
     samples = []
     for local_time in local_times:
         estimate = continuous_calculation.continuous_expected_detour(
-            t_start + local_time, instance, times_in, times_out
+            t_start + local_time, data, times_in, times_out
         )
         samples.append((local_time, float(estimate.expected_detour)))
     return _lagrange_quadratic(samples)
@@ -83,7 +87,7 @@ def _interval(
     t_start: float,
     t_end: float,
     label: str,
-    instance: WarehouseInstance,
+    data: WaitingInput,
     times_in: dict[int, float],
     times_out: dict[int, float],
 ) -> IntervalData:
@@ -92,16 +96,16 @@ def _interval(
         t_end=float(t_end),
         phase_label=label,
         ed_coeffs=_sample_phase(
-            t_start, t_end, instance, times_in, times_out
+            t_start, t_end, data, times_in, times_out
         ),
     )
 
 
 def build_interval_data(
-    instance: WarehouseInstance,
+    data: WaitingInput,
 ) -> tuple[list[IntervalData], float]:
     """Build the route phases used by the validated analytical cost model."""
-    times_in, times_out, route_duration = compute_segment_times(instance)
+    times_in, times_out, route_duration = compute_segment_times(data)
     sequence = [
         index for index, _ in sorted(times_in.items(), key=lambda item: item[1])
     ]
@@ -112,29 +116,29 @@ def build_interval_data(
             0.0,
             times_in[first],
             "phase_1_to_first_entry",
-            instance,
+            data,
             times_in,
             times_out,
         )
     )
 
-    has_return_aisle = instance.k % 2 == 1
+    has_return_aisle = g.k(data) % 2 == 1
     for rank, index in enumerate(sequence):
         t_in = times_in[index]
         t_out = times_out[index]
         if has_return_aisle and index == sequence[-1]:
             vertical_speed = (
                 continuous_calculation.effective_vertical_speed_for_aisle(
-                    instance, index
+                    data, index
                 )
             )
-            split = t_in + instance.L / vertical_speed
+            split = t_in + g.L(data) / vertical_speed
             intervals.append(
                 _interval(
                     t_in,
                     split,
                     "phase_n_2_ret_up",
-                    instance,
+                    data,
                     times_in,
                     times_out,
                 )
@@ -144,7 +148,7 @@ def build_interval_data(
                     split,
                     t_out,
                     "phase_n_1_ret_down",
-                    instance,
+                    data,
                     times_in,
                     times_out,
                 )
@@ -155,20 +159,20 @@ def build_interval_data(
                     t_in,
                     t_out,
                     "phase_2_vertical",
-                    instance,
+                    data,
                     times_in,
                     times_out,
                 )
             )
 
-        if rank < instance.k - 1:
+        if rank < g.k(data) - 1:
             next_index = sequence[rank + 1]
             intervals.append(
                 _interval(
                     t_out,
                     times_in[next_index],
                     "phase_3_horizontal",
-                    instance,
+                    data,
                     times_in,
                     times_out,
                 )
@@ -180,7 +184,7 @@ def build_interval_data(
             times_out[last],
             route_duration,
             "phase_4_after_last_aisle",
-            instance,
+            data,
             times_in,
             times_out,
         )

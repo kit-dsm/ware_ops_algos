@@ -3,15 +3,19 @@ from dataclasses import dataclass
 from math import isclose
 from typing import List, Optional
 
-from .models import WarehouseInstance
+from . import geometry as g
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...algorithm_interfaces import WaitingInput
 
 
-def _to_picking_on_lower_cross_aisle(inst: WarehouseInstance, t: float, yStart: float, isReturnPhase: bool) -> bool:
+def _to_picking_on_lower_cross_aisle(data: WaitingInput, t: float, yStart: float, isReturnPhase: bool) -> bool:
     """True, wenn der Picker auf y=0 im Hinweg ist und deshalb kein Umweg zählt."""
-    return (abs(yStart) < 1e-9) and (not isReturnPhase) and ((t * inst.v) <= inst.M)
+    return (abs(yStart) < 1e-9) and (not isReturnPhase) and ((t * g.v(data)) <= g.M(data))
 
 
-def compute_detour_route_back(inst: WarehouseInstance, xStart: float, yStart: float, t: float, isReturnPhase: bool
+def compute_detour_route_back(data: WaitingInput, xStart: float, yStart: float, t: float, isReturnPhase: bool
 ) -> float:
     """
 
@@ -28,14 +32,14 @@ def compute_detour_route_back(inst: WarehouseInstance, xStart: float, yStart: fl
         avg detour for going back(float)
     """
 
-    if _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase):
+    if _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase):
         return 0.0
 
     useCrossStart = False
-    L = inst.L
-    N_L = inst.N_L
-    w = inst.w
-    A = inst.A
+    L = g.L(data)
+    N_L = g.N_L(data)
+    w = g.w(data)
+    A = g.A(data)
     k = len(A)
     iRet = None
     aRet = None
@@ -63,7 +67,7 @@ def compute_detour_route_back(inst: WarehouseInstance, xStart: float, yStart: fl
         and (iRet is not None)
         and (aRet is not None)
         and (abs(yStart) < eps)
-        and (not _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase))
+        and (not _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase))
         and (xStart < aRet)
     )
 
@@ -280,7 +284,7 @@ def compute_detour_route_back(inst: WarehouseInstance, xStart: float, yStart: fl
 
 
 def compute_detour_route_back_exact(
-    inst: WarehouseInstance,
+    data: WaitingInput,
     xStart: float,
     yStart: float,
     target_aisle: int,
@@ -289,21 +293,21 @@ def compute_detour_route_back_exact(
     isReturnPhase: bool = False,
 ) -> float:
     """Exakter Backtrack-Umweg entlang derselben S-Shape-Route zum Zielknoten und zurueck."""
-    if target_aisle < 1 or target_aisle > inst.M:
+    if target_aisle < 1 or target_aisle > g.M(data):
         raise ValueError(f"target_aisle out of bounds: {target_aisle}")
-    if target_y_node < 1 or target_y_node > inst.N_L:
+    if target_y_node < 1 or target_y_node > g.N_L(data):
         raise ValueError(f"target_y_node out of bounds: {target_y_node}")
-    if target_aisle not in inst.A:
+    if target_aisle not in g.A(data):
         raise ValueError(f"target_aisle={target_aisle} is not part of visited aisle set A")
 
-    if (t is not None) and _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase):
+    if (t is not None) and _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase):
         return 0.0
 
     useCrossStart = False
-    L = inst.L
-    N_L = inst.N_L
-    w = inst.w
-    A = inst.A
+    L = g.L(data)
+    N_L = g.N_L(data)
+    w = g.w(data)
+    A = g.A(data)
     k = len(A)
     iRet = None
     aRet = None
@@ -451,7 +455,7 @@ def compute_detour_route_back_exact(
 
 
 def compute_detour_apass(
-    inst: WarehouseInstance,
+    data: WaitingInput,
     xStart: float,
     yStart: float,
     t: float,
@@ -464,12 +468,12 @@ def compute_detour_apass(
     aber passierten Gasse (A_pass(a_j)).
     """
 
-    if _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase):
+    if _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase):
         return 0.0
 
-    w = inst.w
-    L = inst.L
-    A = inst.A
+    w = g.w(data)
+    L = g.L(data)
+    A = g.A(data)
 
     A_sorted = sorted(A)
     k = len(A_sorted)
@@ -488,7 +492,7 @@ def compute_detour_apass(
     # Auf dem Rueckweg (nach a_ret) gilt unten D_pass=2(L+dx).
     if k == 1:
         a_ret = A_sorted[0]
-        if _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase) and (xStart < a_ret - eps):
+        if _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase) and (xStart < a_ret - eps):
             return 0.0
 
     def delta_x_pass() -> float:
@@ -508,7 +512,7 @@ def compute_detour_apass(
     dx = delta_x_pass()
 
     if k == 1 and abs(yStart) < eps and (xStart < A_sorted[0] - eps):
-        if not _to_picking_on_lower_cross_aisle(inst, t, yStart, isReturnPhase):
+        if not _to_picking_on_lower_cross_aisle(data, t, yStart, isReturnPhase):
             return 2.0 * (dx + L)
 
     if k % 2 == 0:
@@ -531,7 +535,7 @@ def compute_detour_apass(
 
 
 def compute_detour_aup(
-    inst: WarehouseInstance,
+    data: WaitingInput,
     xStart: float,
     yStart: float,
     gFront: List[int],
@@ -544,9 +548,9 @@ def compute_detour_aup(
     vor dem Picker liegenden Gasse (A_up(a_j), also a_i < a_j).
     """
 
-    L = inst.L
-    w = inst.w
-    A = inst.A
+    L = g.L(data)
+    w = g.w(data)
+    A = g.A(data)
 
     A_sorted = sorted(A)
     k = len(A_sorted)
@@ -642,7 +646,7 @@ class DetourEstimate:
     avg_arrival_time: float
 
 
-def calculate_detour(inst: WarehouseInstance,
+def calculate_detour(data: WaitingInput,
                      t: float,
                      xStart: float,
                      yStart: float,
@@ -653,7 +657,7 @@ def calculate_detour(inst: WarehouseInstance,
                      isReturnPhase: bool = False) -> float:
 
     estimate = calculate_detour_estimate(
-        inst=inst,
+        data=data,
         t=t,
         xStart=xStart,
         yStart=yStart,
@@ -667,7 +671,7 @@ def calculate_detour(inst: WarehouseInstance,
 
 
 def calculate_detour_estimate(
-    inst: WarehouseInstance,
+    data: WaitingInput,
     t: float,
     xStart: float,
     yStart: float,
@@ -679,18 +683,18 @@ def calculate_detour_estimate(
 ) -> DetourEstimate:
     """Schaetzt den mittleren Umweg ueber p1..p4 und prueft p1+p2+p3+p4=1."""
 
-    detour_route_back = compute_detour_route_back(inst, xStart, yStart, t, isReturnPhase)
-    detour_apass = compute_detour_apass(inst, xStart, yStart, t, gPass, isReturnPhase)
-    detour_aup = compute_detour_aup(inst, xStart, yStart, gFront, v_nodes_count == 0, isReturnPhase)
+    detour_route_back = compute_detour_route_back(data, xStart, yStart, t, isReturnPhase)
+    detour_apass = compute_detour_apass(data, xStart, yStart, t, gPass, isReturnPhase)
+    detour_aup = compute_detour_aup(data, xStart, yStart, gFront, v_nodes_count == 0, isReturnPhase)
 
-    total_nodes = inst.N_L * inst.M
+    total_nodes = g.N_L(data) * g.M(data)
     if total_nodes <= 0:
         raise ValueError("N = N_L * M must be > 0")
 
     p1_route = r_nodes_count / total_nodes
     p2_backtrack = v_nodes_count / total_nodes
-    p3_pass = (len(gPass) * inst.N_L) / total_nodes
-    p4_front = (len(gFront) * inst.N_L) / total_nodes
+    p3_pass = (len(gPass) * g.N_L(data)) / total_nodes
+    p4_front = (len(gFront) * g.N_L(data)) / total_nodes
 
     p_sum = p1_route + p2_backtrack + p3_pass + p4_front
     if not isclose(p_sum, 1.0, rel_tol=0.0, abs_tol=1e-9):
@@ -705,7 +709,7 @@ def calculate_detour_estimate(
         + p4_front * detour_aup
     )
 
-    avg_arrival_time = sum(inst.arrival_times) / len(inst.arrival_times) if inst.arrival_times else 0.0
+    avg_arrival_time = sum(g.arrival_times(data)) / len(g.arrival_times(data)) if g.arrival_times(data) else 0.0
 
     return DetourEstimate(
         expected_detour=expected_detour,

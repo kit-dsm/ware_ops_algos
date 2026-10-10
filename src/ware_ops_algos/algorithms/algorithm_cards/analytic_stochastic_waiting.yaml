@@ -1,18 +1,29 @@
 algo_name: AnalyticStochasticWaiting
 problem_type: waiting
-description: Causal exponential-arrival release decision for single-line S-shape picking.
+description: Causal exponential-arrival release decision for one-item orders; the analytical route assumes WalkOrWaitSShape routing.
 requirements:
   layout:
     type: [conventional]
-    features: [n_blocks]
+    features: [n_blocks, n_aisles, n_pick_locations, dist_aisle, dist_pick_locations, dist_bottom_to_pick_location, dist_top_to_pick_location, depot_location, dist_start, dist_end]
     constraints:
       n_blocks: {equals: 1}
+      depot_location: {equals: front_left}
   information:
     type: [process_information]
-    features: [incoming_orders.type]
+    features: [incoming_orders.type, incoming_orders.mean_interarrival_time_s]
     constraints:
       incoming_orders.type: {equals: exponential_single_line_uniform_location_order_stream}
-objective: makespan
+      incoming_orders.mean_interarrival_time_s: {greater_than: 0}
+  resources:
+    type: [human]
+    features: [speed, time_per_pick]
+  orders:
+    type: [standard]
+    features: [order_date, order_lines_per_order, amount]
+    constraints:
+      order_lines_per_order: {equals: 1}
+      amount: {equals: 1}
+objective: mean_order_completion_time
 implementation:
   class_name: AnalyticStochasticWaiting
   component_name: AnalyticWaitingNode

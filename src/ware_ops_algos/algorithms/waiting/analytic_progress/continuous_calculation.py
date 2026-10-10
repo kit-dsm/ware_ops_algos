@@ -6,7 +6,11 @@ from typing import Dict, Tuple
 
 from . import core as core_mod
 from . import detour as detour_mod
-from .models import WarehouseInstance
+from . import geometry as g
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...algorithm_interfaces import WaitingInput
 
 
 @dataclass(frozen=True)
@@ -47,21 +51,21 @@ def _route_progress(t: float, t_end: float) -> float:
     return max(0.0, min(1.0, float(t) / float(t_end)))
 
 
-def effective_vertical_speed_for_aisle(inst: WarehouseInstance, j: int) -> float:
+def effective_vertical_speed_for_aisle(data: WaitingInput, j: int) -> float:
     """Effektive Vertikalgeschwindigkeit in Gasse j inkl. Pickzeit der Gasse."""
-    if j < 1 or j > inst.k:
+    if j < 1 or j > g.k(data):
         raise ValueError(f"aisle index j={j} out of range")
-    n_j = inst.n_list[j - 1]
-    return inst.L / (inst.L / inst.v + n_j * inst.t_p)
+    n_j = g.n_list(data)[j - 1]
+    return g.L(data) / (g.L(data) / g.v(data) + n_j * g.t_p(data))
 
 
 def _ordered_aisles_by_entry(T_in: Dict[int, float]) -> list[int]:
     return [j for j, _ in sorted(T_in.items(), key=lambda item: item[1])]
 
 
-def _get_return_aisle_index(inst: WarehouseInstance) -> int | None:
+def _get_return_aisle_index(data: WaitingInput) -> int | None:
     """1-basierter Index der Return-Gasse im Besuchsset A (nur bei ungeradem k)."""
-    if inst.k % 2 == 0 or inst.k == 0:
+    if g.k(data) % 2 == 0 or g.k(data) == 0:
         return None
     # In diesem Modell ist die Return-Gasse die kleinste besuchte Gasse (a_1).
     return 1
@@ -71,24 +75,24 @@ def estimate_continuous_route_state(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> ContinuousRouteState:
     """Schaetzt die kontinuierliche Position (x,y) entlang der S-Shape-Route ueber T_in/T_out."""
-    if inst.k <= 0:
+    if g.k(data) <= 0:
         return ContinuousRouteState(x=0.0, y=0.0, is_return_phase=False, phase_label="empty", active_j=None)
 
-    _, _, t_end = core_mod.compute_segment_times(inst)
+    _, _, t_end = core_mod.compute_segment_times(data)
     clamped_t = max(0.0, min(float(t), t_end))
     seq = _ordered_aisles_by_entry(T_in)
     first_j = seq[0]
-    first_aisle = float(inst.A[first_j - 1])
+    first_aisle = float(g.A(data)[first_j - 1])
     eps = 1e-12
 
     def horizontal_x(x_from: float, x_to: float, t_start: float, t_current: float) -> float:
-        if inst.w <= 0.0:
+        if g.w(data) <= 0.0:
             return x_to
         direction = 1.0 if x_to >= x_from else -1.0
-        x = x_from + direction * ((t_current - t_start) * inst.v / inst.w)
+        x = x_from + direction * ((t_current - t_start) * g.v(data) / g.w(data))
         if direction > 0.0:
             return min(x, x_to)
         return max(x, x_to)
@@ -97,27 +101,27 @@ def estimate_continuous_route_state(
         x = horizontal_x(0.0, first_aisle, 0.0, clamped_t)
         return ContinuousRouteState(x=x, y=0.0, is_return_phase=False, phase_label="phase_1_to_first_entry", active_j=None)
 
-    a_ret = inst.A[0] if (inst.k % 2 == 1) else None
+    a_ret = g.A(data)[0] if (g.k(data) % 2 == 1) else None
 
     for pos, j in enumerate(seq):
-        aisle_x = float(inst.A[j - 1])
+        aisle_x = float(g.A(data)[j - 1])
         t_in_j = T_in[j]
         t_out_j = T_out[j]
-        direction = core_mod.delta_j(inst, j, curr_ret=False)
-        entry_y = 0.0 if direction == +1 else inst.L
-        exit_y = inst.L if direction == +1 else 0.0
+        direction = core_mod.delta_j(data, j, curr_ret=False)
+        entry_y = 0.0 if direction == +1 else g.L(data)
+        exit_y = g.L(data) if direction == +1 else 0.0
 
         if t_in_j - eps <= clamped_t <= t_out_j + eps:
             local_t = max(0.0, clamped_t - t_in_j)
 
-            if (a_ret is not None) and (inst.A[j - 1] == a_ret):
-                v_eff_up = effective_vertical_speed_for_aisle(inst, j)
-                up_duration = inst.L / v_eff_up
-                down_duration = inst.L / inst.v
+            if (a_ret is not None) and (g.A(data)[j - 1] == a_ret):
+                v_eff_up = effective_vertical_speed_for_aisle(data, j)
+                up_duration = g.L(data) / v_eff_up
+                down_duration = g.L(data) / g.v(data)
                 if local_t <= up_duration + eps:
-                    travelled = min(inst.L, max(0.0, local_t * v_eff_up))
+                    travelled = min(g.L(data), max(0.0, local_t * v_eff_up))
                     y = entry_y + direction * travelled
-                    y = max(0.0, min(inst.L, y))
+                    y = max(0.0, min(g.L(data), y))
                     return ContinuousRouteState(
                         x=aisle_x,
                         y=y,
@@ -127,9 +131,9 @@ def estimate_continuous_route_state(
                     )
 
                 down_t = min(max(0.0, local_t - up_duration), down_duration)
-                travelled = min(inst.L, max(0.0, down_t * inst.v))
+                travelled = min(g.L(data), max(0.0, down_t * g.v(data)))
                 y = exit_y - direction * travelled
-                y = max(0.0, min(inst.L, y))
+                y = max(0.0, min(g.L(data), y))
                 return ContinuousRouteState(
                     x=aisle_x,
                     y=y,
@@ -138,10 +142,10 @@ def estimate_continuous_route_state(
                     active_j=j,
                 )
 
-            v_eff = effective_vertical_speed_for_aisle(inst, j)
-            travelled = min(inst.L, max(0.0, local_t * v_eff))
+            v_eff = effective_vertical_speed_for_aisle(data, j)
+            travelled = min(g.L(data), max(0.0, local_t * v_eff))
             y = entry_y + direction * travelled
-            y = max(0.0, min(inst.L, y))
+            y = max(0.0, min(g.L(data), y))
             return ContinuousRouteState(
                 x=aisle_x,
                 y=y,
@@ -154,7 +158,7 @@ def estimate_continuous_route_state(
             j_next = seq[pos + 1]
             t_next = T_in[j_next]
             if t_out_j + eps < clamped_t < t_next - eps:
-                x_to = float(inst.A[j_next - 1])
+                x_to = float(g.A(data)[j_next - 1])
                 x = horizontal_x(aisle_x, x_to, t_out_j, clamped_t)
                 return ContinuousRouteState(
                     x=x,
@@ -164,7 +168,7 @@ def estimate_continuous_route_state(
                     active_j=None,
                 )
 
-    x = horizontal_x(float(inst.A[0]), 0.0, T_out[1], clamped_t)
+    x = horizontal_x(float(g.A(data)[0]), 0.0, T_out[1], clamped_t)
     return ContinuousRouteState(x=x, y=0.0, is_return_phase=False, phase_label="phase_4_after_last_aisle", active_j=None)
 
 
@@ -172,10 +176,10 @@ def _continuous_vr_state(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[float, float, str, int | None, float]:
     """Kontinuierliche V/R-Anteile auf den besuchten Gassen, normalisiert auf [0,1]."""
-    k = inst.k
+    k = g.k(data)
     if k <= 0:
         return 0.0, 1.0, "empty", None, 0.0
 
@@ -186,8 +190,8 @@ def _continuous_vr_state(
     if t <= T_in[first_j] + eps:
         return 0.0, 1.0, "phase_1_to_first_entry", None, 0.0
 
-    route_state = estimate_continuous_route_state(t, T_in, T_out, inst)
-    a_ret = inst.A[0] if (k % 2 == 1) else None
+    route_state = estimate_continuous_route_state(t, T_in, T_out, data)
+    a_ret = g.A(data)[0] if (k % 2 == 1) else None
 
     for i, j in enumerate(seq):
         t_in_j = T_in[j]
@@ -195,18 +199,18 @@ def _continuous_vr_state(
 
         if t_in_j - eps <= t <= t_out_j + eps:
             local = 0.0
-            aisle_idx = inst.A[j - 1]
+            aisle_idx = g.A(data)[j - 1]
             is_same_aisle = int(round(route_state.x)) == aisle_idx
 
             if t >= t_out_j - eps:
                 local = 1.0
-            elif is_same_aisle and route_state.y > 0.0 and route_state.y < inst.L:
+            elif is_same_aisle and route_state.y > 0.0 and route_state.y < g.L(data):
                 if (a_ret is not None) and (aisle_idx == a_ret):
                     # Phase n-2 (Aufstieg a_ret): konstant.
                     # Phase n-1 (Rueckweg a_ret): Fortschritt bis 1.0.
-                    local = (inst.L - route_state.y) / inst.L if route_state.is_return_phase else 0.0
+                    local = (g.L(data) - route_state.y) / g.L(data) if route_state.is_return_phase else 0.0
                 else:
-                    local = route_state.y / inst.L if core_mod.delta_j(inst, j, curr_ret=False) == +1 else (inst.L - route_state.y) / inst.L
+                    local = route_state.y / g.L(data) if core_mod.delta_j(data, j, curr_ret=False) == +1 else (g.L(data) - route_state.y) / g.L(data)
                 local = max(0.0, min(1.0, local))
 
             v_cont = (i + local) / k
@@ -232,7 +236,7 @@ def _horizontal_phase_bounds(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> tuple[float, float] | None:
     """
     Liefert (x_min, x_max) der aktuellen horizontalen Phase für Alternative A.
@@ -245,7 +249,7 @@ def _horizontal_phase_bounds(
 
     # Gassen nach Entry-Zeit sortieren (wie im continuous_code)
     seq = _ordered_aisles_by_entry(T_in)
-    k = inst.k
+    k = g.k(data)
 
     if phase_label.startswith("phase_3"):
         eps = 1e-9
@@ -257,14 +261,14 @@ def _horizontal_phase_bounds(
             t_in_next = T_in[j_next]
             if t_out_j + eps < t <= t_in_next + eps:
                 # Horizontal von A[j] nach A[j_next]
-                x1 = float(inst.A[j - 1])
-                x2 = float(inst.A[j_next - 1])
+                x1 = float(g.A(data)[j - 1])
+                x2 = float(g.A(data)[j_next - 1])
                 return (min(x1, x2), max(x1, x2))
         return None
 
     if phase_label.startswith("phase_4_after_last_aisle"):
         j_last = seq[-1]
-        x1 = float(inst.A[j_last - 1])
+        x1 = float(g.A(data)[j_last - 1])
         x2 = 0.0
         return (min(x1, x2), max(x1, x2))
 
@@ -277,20 +281,20 @@ def _continuous_p3_p4_length_based(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> tuple[float, float]:
 
 
     # Alle Gassen und nicht-besuchte Kandidaten
-    I_all = set(range(1, inst.M + 1))
-    A_set = set(inst.A)
+    I_all = set(range(1, g.M(data) + 1))
+    A_set = set(g.A(data))
     candidates = I_all - A_set
     num_cand = len(candidates)
     if num_cand <= 0:
         return 0.0, 0.0
 
     # Bounds der horizontalen Phase holen
-    bounds = _horizontal_phase_bounds(phase_label, t, T_in, T_out, inst)
+    bounds = _horizontal_phase_bounds(phase_label, t, T_in, T_out, data)
     if bounds is None:
         # Keine horizontale Phase: hier keine Alternative-A-Anpassung
         return 0.0, 0.0
@@ -300,15 +304,15 @@ def _continuous_p3_p4_length_based(
         return 0.0, 0.0
 
 
-    cand_share = num_cand / inst.M
+    cand_share = num_cand / g.M(data)
     candidates_left_max = [c for c in candidates if c < x_max]
     candidates_left_min = [c for c in candidates if c < x_min]
 
     candidates_in_segment = [c for c in candidates if x_min <= c <= x_max]
     boundary_extra = 1 if candidates_in_segment else 0
 
-    p4_max = (len(candidates_left_max) + boundary_extra) / inst.M
-    p4_min = len(candidates_left_min) / inst.M
+    p4_max = (len(candidates_left_max) + boundary_extra) / g.M(data)
+    p4_min = len(candidates_left_min) / g.M(data)
 
     u = (x - x_min) / (x_max - x_min)
 
@@ -321,35 +325,35 @@ def continuous_class_probabilities(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[float, float, float, float, float, float, float]:
     """
     Kontinuierliche Approximation von p1..p4.
     Rückgabe: (p1_route, p2_backtrack, p3_pass, p4_front, p_sum).
     """
-    if inst.k <= 0:
+    if g.k(data) <= 0:
         raise ValueError("Instance has no visited aisles (k=0).")
 
-    v_cont, r_cont, phase_label, active_j, local_progress = _continuous_vr_state(t, T_in, T_out, inst)
+    v_cont, r_cont, phase_label, active_j, local_progress = _continuous_vr_state(t, T_in, T_out, data)
 
-    route_share = inst.k / inst.M
+    route_share = g.k(data) / g.M(data)
 
     p1 = route_share * r_cont
     p2 = route_share * v_cont
 
-    route_state = estimate_continuous_route_state(t, T_in, T_out, inst)
+    route_state = estimate_continuous_route_state(t, T_in, T_out, data)
     x = route_state.x
-    g_pass = core_mod.G_pass(x, t, inst)
-    g_front = core_mod.G_front(x, t, inst)
+    g_pass = core_mod.G_pass(x, t, data)
+    g_front = core_mod.G_front(x, t, data)
 
-    num_non_base = inst.M - inst.k
+    num_non_base = g.M(data) - g.k(data)
     if num_non_base > 0:
         if phase_label.startswith("phase_3") or phase_label.startswith("phase_4"):
-            p3, p4 = _continuous_p3_p4_length_based(x, phase_label, t, T_in, T_out, inst)
+            p3, p4 = _continuous_p3_p4_length_based(x, phase_label, t, T_in, T_out, data)
 
         else:
-            p3 = (len(g_pass) / num_non_base) * ((inst.M - inst.k) / inst.M)  # = len(g_pass)/M
-            p4 = (len(g_front) / num_non_base) * ((inst.M - inst.k) / inst.M)  # = len(g_front)/M
+            p3 = (len(g_pass) / num_non_base) * ((g.M(data) - g.k(data)) / g.M(data))  # = len(g_pass)/M
+            p4 = (len(g_front) / num_non_base) * ((g.M(data) - g.k(data)) / g.M(data))  # = len(g_front)/M
     else:
         p3 = 0.0
         p4 = 0.0
@@ -367,7 +371,7 @@ def continuous_backtrack_detour(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> float:
     """
     Kontinuierliche Backtrack-Approximation (Round-Trip, Faktor 2 bereits enthalten)
@@ -385,30 +389,30 @@ def continuous_backtrack_detour(
       - In der Return-Gasse zaehlt der Aufstieg nicht als besucht; beim
         Rueckweg wird L_y = L - y verwendet.
     """
-    route_state = estimate_continuous_route_state(t, T_in, T_out, inst)
+    route_state = estimate_continuous_route_state(t, T_in, T_out, data)
     phase_label = route_state.phase_label
     if phase_label == "phase_1_to_first_entry":
         return 0.0
 
-    A = inst.A
-    w = inst.w
-    L = inst.L
+    A = g.A(data)
+    w = g.w(data)
+    L = g.L(data)
     x = route_state.x
     y = route_state.y
     active_j = route_state.active_j
-    i_ret = _get_return_aisle_index(inst)
+    i_ret = _get_return_aisle_index(data)
     eps = 1e-9
 
     # Spezialfall: ungerades k, letzte Phase nach der Return-Gasse auf y=0 und links von a_ret.
     # Dann muss fuer alle Nicht-Return-Gassen ein zusaetzlicher 2L-Anteil beruecksichtigt werden,
     # weil die Return-Gasse fuer den Backtrack durchquert werden muss.
     if (
-        (inst.k % 2 == 1)
+        (g.k(data) % 2 == 1)
         and (phase_label == "phase_4_after_last_aisle")
         and (abs(y) <= eps)
         and (i_ret is not None)
     ):
-        a_ret = inst.A[i_ret - 1]
+        a_ret = g.A(data)[i_ret - 1]
         if x < a_ret - eps:
             k = len(A)
             if k <= 0:
@@ -429,7 +433,7 @@ def continuous_backtrack_detour(
             return total + 2.0 * L
 
     def _delta_dir(j: int) -> int:
-        return core_mod.delta_j(inst, j, curr_ret=False)
+        return core_mod.delta_j(data, j, curr_ret=False)
 
     # Vertikal bereits durchlaufene Strecke in der aktuellen Gasse.
     L_y = 0.0
@@ -463,7 +467,7 @@ def continuous_backtrack_detour(
     return current_weighted + completed_weighted
 
 def _continuous_detour_apass(
-        inst: WarehouseInstance,
+        data: WaitingInput,
         x: float,
         y: float,
         t: float,
@@ -478,13 +482,13 @@ def _continuous_detour_apass(
     if not g_pass:
         return 0.0
 
-    w = inst.w
-    L = inst.L
-    A_sorted = sorted(inst.A)
+    w = g.w(data)
+    L = g.L(data)
+    A_sorted = sorted(g.A(data))
     k = len(A_sorted)
     eps = 1e-9
 
-    _, _, phase_label, _, _ = _continuous_vr_state(t, T_in, T_out, inst)
+    _, _, phase_label, _, _ = _continuous_vr_state(t, T_in, T_out, data)
 
     if phase_label == "phase_1_to_first_entry":
         return 0.0
@@ -495,10 +499,10 @@ def _continuous_detour_apass(
     )
 
     if is_horizontal and detour_mod._to_picking_on_lower_cross_aisle(
-            inst, t, y, is_return_phase):
+            data, t, y, is_return_phase):
         return 0.0
 
-    non_visited = sorted(set(range(1, inst.M + 1)) - set(inst.A))
+    non_visited = sorted(set(range(1, g.M(data) + 1)) - set(g.A(data)))
 
     def dx_at(pos_x: float) -> float:
         candidates = [aisle for aisle in non_visited if float(aisle) > pos_x]
@@ -508,7 +512,7 @@ def _continuous_detour_apass(
 
 
     if phase_label.startswith("phase_3") or phase_label.startswith("phase_4"):
-        bounds = _horizontal_phase_bounds(phase_label, t, T_in, T_out, inst)
+        bounds = _horizontal_phase_bounds(phase_label, t, T_in, T_out, data)
         if bounds is not None:
             x_min, x_max = bounds
             if x_max > x_min + eps:
@@ -545,7 +549,7 @@ def _continuous_detour_apass(
 
 
 def _continuous_detour_aup(
-    inst: WarehouseInstance,
+    data: WaitingInput,
     x: float,
     y: float,
     g_front: list[int],
@@ -555,9 +559,9 @@ def _continuous_detour_aup(
     """
     Kontinuierliche Variante von compute_detour_aup.
     """
-    L = inst.L
-    w = inst.w
-    A = inst.A
+    L = g.L(data)
+    w = g.w(data)
+    A = g.A(data)
     A_sorted = sorted(A)
     k = len(A_sorted)
     max_a = A_sorted[-1]
@@ -654,7 +658,7 @@ def _continuous_detour_aup(
 
 def continuous_expected_detour(
     t: float,
-    inst: WarehouseInstance,
+    data: WaitingInput,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
 ) -> ContinuousDetourEstimate:
@@ -672,25 +676,25 @@ def continuous_expected_detour(
       gemittelt über alle beteiligten Gassen.
     """
 
-    p1, p2, p3, p4, p_sum, v_cont, r_cont = continuous_class_probabilities(t, T_in, T_out, inst)
+    p1, p2, p3, p4, p_sum, v_cont, r_cont = continuous_class_probabilities(t, T_in, T_out, data)
 
-    _, _, t_end = core_mod.compute_segment_times(inst)
+    _, _, t_end = core_mod.compute_segment_times(data)
     progress = _route_progress(t, t_end)
 
-    route_state = estimate_continuous_route_state(t, T_in, T_out, inst)
+    route_state = estimate_continuous_route_state(t, T_in, T_out, data)
     point = core_mod.RoutePoint(route_state.x, route_state.y, route_state.is_return_phase)
-    g_pass = core_mod.G_pass(point.x, t, inst)
-    g_front = core_mod.G_front(point.x, t, inst)
+    g_pass = core_mod.G_pass(point.x, t, data)
+    g_front = core_mod.G_front(point.x, t, data)
 
     # Phasenbasierte Outbound-Definition (vermeidet Fehlklassifikation ueber all(T_out>t)).
     outbound = route_state.phase_label == "phase_1_to_first_entry"
 
-    d_rb = continuous_backtrack_detour(t, T_in, T_out, inst)
+    d_rb = continuous_backtrack_detour(t, T_in, T_out, data)
 
     d_pass = 0.0
     if g_pass:
         d_pass = _continuous_detour_apass(
-                inst,
+                data,
                 point.x,
                 point.y,
                 t,
@@ -703,7 +707,7 @@ def continuous_expected_detour(
     d_front = 0.0
     if g_front:
         d_front = _continuous_detour_aup(
-            inst,
+            data,
             point.x,
             point.y,
             g_front,

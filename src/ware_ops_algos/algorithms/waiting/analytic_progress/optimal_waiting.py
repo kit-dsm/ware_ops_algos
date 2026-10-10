@@ -6,7 +6,11 @@ from dataclasses import dataclass
 from math import exp, log
 
 from .interval_builder import IntervalData, build_interval_data
-from .models import WarehouseInstance
+from . import geometry as g
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...algorithm_interfaces import WaitingInput
 
 
 @dataclass(frozen=True)
@@ -74,7 +78,7 @@ def _initial_cost_derivative(
 
 
 def critical_mean_interarrival_time(
-    instance: WarehouseInstance,
+    data: WaitingInput,
     remaining_arrivals_after_miss: int = 3,
     search_bounds: tuple[float, float] = (1e-3, 1e5),
 ) -> float | None:
@@ -82,7 +86,7 @@ def critical_mean_interarrival_time(
     lower, upper = map(float, search_bounds)
     if lower <= 0.0 or upper <= lower:
         raise ValueError("search_bounds must be positive and increasing")
-    intervals, route_duration = build_interval_data(instance)
+    intervals, route_duration = build_interval_data(data)
 
     def derivative(value: float) -> float:
         return _initial_cost_derivative(
@@ -144,7 +148,7 @@ def expected_waiting_cost(
 
 
 def solve_optimal_wait(
-    instance: WarehouseInstance,
+    data: WaitingInput,
     mean_interarrival_time: float,
     remaining_arrivals_after_miss: int = 3,
 ) -> AnalyticWaitingResult:
@@ -154,7 +158,7 @@ def solve_optimal_wait(
     if remaining_arrivals_after_miss < 0:
         raise ValueError("remaining_arrivals_after_miss must be non-negative")
 
-    intervals, route_duration = build_interval_data(instance)
+    intervals, route_duration = build_interval_data(data)
     rate = 1.0 / mean_interarrival_time
     constant = _cost_constant(
         rate,
@@ -185,7 +189,7 @@ def solve_optimal_wait(
         immediate_dispatch_cost=float(immediate_cost),
         route_duration=float(route_duration),
         critical_mean_interarrival_time=critical_mean_interarrival_time(
-            instance,
+            data,
             remaining_arrivals_after_miss,
         ),
     )

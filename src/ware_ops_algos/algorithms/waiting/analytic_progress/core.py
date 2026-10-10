@@ -5,19 +5,23 @@ from dataclasses import dataclass
 from math import floor, isclose
 from typing import Dict, List, Optional, Tuple
 
-from .models import WarehouseInstance
+from . import geometry as g
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...algorithm_interfaces import WaitingInput
 
 
-def compute_segment_times(inst: WarehouseInstance) -> Tuple[Dict[int, float], Dict[int, float], float]:
+def compute_segment_times(data: WaitingInput) -> Tuple[Dict[int, float], Dict[int, float], float]:
     """
     Compute T_in^(j), T_out^(j), and T_end for S-shape routing with optional return aisle.
     """
-    k = inst.k
-    A = inst.A
-    n = inst.n_list
-    v = inst.v
-    L = inst.L
-    w = inst.w
+    k = g.k(data)
+    A = g.A(data)
+    n = g.n_list(data)
+    v = g.v(data)
+    L = g.L(data)
+    w = g.w(data)
 
     T_in = {j: 0.0 for j in range(1, k + 1)}
     T_out = {j: 0.0 for j in range(1, k + 1)}
@@ -32,20 +36,20 @@ def compute_segment_times(inst: WarehouseInstance) -> Tuple[Dict[int, float], Di
 
     # Time to reach the first visited aisle from depot row.
     T_in[k] = (A[-1] * w) / v
-    T_out[k] = T_in[k] + vertical_time(k) + n[k - 1] * inst.t_p
+    T_out[k] = T_in[k] + vertical_time(k) + n[k - 1] * g.t_p(data)
 
     for j in range(k - 1, 0, -1):
         a_j = A[j - 1]
         a_j1 = A[j]
         T_in[j] = T_out[j + 1] + ((a_j1 - a_j) * w) / v
-        T_out[j] = T_in[j] + vertical_time(j) + n[j - 1] * inst.t_p
+        T_out[j] = T_in[j] + vertical_time(j) + n[j - 1] * g.t_p(data)
 
     T_end = T_out[1] + (A[0] * w) / v
     return T_in, T_out, T_end
 
 
-def theoretical_route_duration(inst: WarehouseInstance) -> float:
-    _, _, T_end = compute_segment_times(inst)
+def theoretical_route_duration(data: WaitingInput) -> float:
+    _, _, T_end = compute_segment_times(data)
     return T_end
 
 
@@ -68,12 +72,12 @@ class _RouteCache:
     t_end: float
 
 
-def _level_step(inst: WarehouseInstance) -> float:
-    return inst.L / (inst.N_L + 1)
+def _level_step(data: WaitingInput) -> float:
+    return g.L(data) / (g.N_L(data) + 1)
 
 
-def delta_j(inst: WarehouseInstance, j: int, curr_ret: bool = False) -> int:
-    k = inst.k
+def delta_j(data: WaitingInput, j: int, curr_ret: bool = False) -> int:
+    k = g.k(data)
     if curr_ret:
         return -1
     if k % 2 == 0:
@@ -117,33 +121,33 @@ def _move_vertical(route: List[RoutePoint], x: float, y_from: float, y_to: float
     return y
 
 
-def build_discrete_route(inst: WarehouseInstance) -> List[RoutePoint]:
+def build_discrete_route(data: WaitingInput) -> List[RoutePoint]:
     """Baut die positionsdiskrete S-Shape-Route (Start -> letzte Gasse -> ... -> Depot)."""
     route: List[RoutePoint] = [RoutePoint(x=0.0, y=0.0, is_return_phase=False)]
-    if inst.k == 0:
+    if g.k(data) == 0:
         return route
 
-    step_y = _level_step(inst)
+    step_y = _level_step(data)
     x = 0.0
     y = 0.0
 
     # Start (0,0) -> erster Entry an der rechtesten Besuchsgasse.
-    x = _move_horizontal(route, x, float(inst.A[-1]), y, False)
+    x = _move_horizontal(route, x, float(g.A(data)[-1]), y, False)
 
-    for j in range(inst.k, 0, -1):
-        aisle = float(inst.A[j - 1])
+    for j in range(g.k(data), 0, -1):
+        aisle = float(g.A(data)[j - 1])
         if not isclose(x, aisle, abs_tol=1e-9):
             x = _move_horizontal(route, x, aisle, y, False)
 
-        upward = delta_j(inst, j, curr_ret=False) == +1
-        y_target = inst.L if upward else 0.0
+        upward = delta_j(data, j, curr_ret=False) == +1
+        y_target = g.L(data) if upward else 0.0
         y = _move_vertical(route, x, y, y_target, step_y, False)
 
         if j > 1:
-            x = _move_horizontal(route, x, float(inst.A[j - 2]), y, False)
+            x = _move_horizontal(route, x, float(g.A(data)[j - 2]), y, False)
 
     # Ungerade k: Return-Gasse wird in der Rueckphase von oben nach unten gelaufen.
-    if inst.k % 2 == 1 and not isclose(y, 0.0, abs_tol=1e-9):
+    if g.k(data) % 2 == 1 and not isclose(y, 0.0, abs_tol=1e-9):
         y = _move_vertical(route, x, y, 0.0, step_y, True)
 
     # Von der letzten Position horizontal zum Depot zurueck.
@@ -155,23 +159,23 @@ def build_discrete_route(inst: WarehouseInstance) -> List[RoutePoint]:
     return route
 
 
-def _node_from_xy(inst: WarehouseInstance, x: float, y: float) -> Optional[Tuple[int, int]]:
+def _node_from_xy(data: WaitingInput, x: float, y: float) -> Optional[Tuple[int, int]]:
     aisle = int(round(x))
-    if aisle not in inst.aisle_to_j:
+    if aisle not in g.aisle_to_j(data):
         return None
-    lv = _level_step(inst)
+    lv = _level_step(data)
     raw = y / lv if lv > 0 else -1.0
     y_node = int(round(raw))
-    if 1 <= y_node <= inst.N_L and isclose(raw, y_node, abs_tol=1e-6):
+    if 1 <= y_node <= g.N_L(data) and isclose(raw, y_node, abs_tol=1e-6):
         return aisle, y_node
     return None
 
 
-def _build_route_cache(inst: WarehouseInstance) -> _RouteCache:
-    route = build_discrete_route(inst)
+def _build_route_cache(data: WaitingInput) -> _RouteCache:
+    route = build_discrete_route(data)
 
     # Deterministische Pickzeiten je Knoten (Duplikate in P erhoehen die Anzahl).
-    pick_count_by_node: Counter[Tuple[int, int]] = Counter(inst.P)
+    pick_count_by_node: Counter[Tuple[int, int]] = Counter(g.P(data))
     picked_nodes: set[Tuple[int, int]] = set()
 
     time_by_index: List[float] = [0.0]
@@ -184,9 +188,9 @@ def _build_route_cache(inst: WarehouseInstance) -> _RouteCache:
     for idx in range(1, len(route)):
         prev = route[idx - 1]
         curr = route[idx]
-        dx = abs(curr.x - prev.x) * inst.w
+        dx = abs(curr.x - prev.x) * g.w(data)
         dy = abs(curr.y - prev.y)
-        dt = (dx + dy) / inst.v
+        dt = (dx + dy) / g.v(data)
         dt_list.append(dt)
         segment_move_time.append(dt)
         segment_pick_delay.append(0.0)
@@ -195,12 +199,12 @@ def _build_route_cache(inst: WarehouseInstance) -> _RouteCache:
     for idx in range(1, len(route)):
         prev = route[idx - 1]
         # Prüfe, ob an der vorherigen Position (prev) ein Pick stattfand.
-        prev_node = _node_from_xy(inst, prev.x, prev.y)
+        prev_node = _node_from_xy(data, prev.x, prev.y)
         if prev_node is not None and prev_node not in picked_nodes:
             picks_here = int(pick_count_by_node.get(prev_node, 0))
             if picks_here > 0:
                 # Addiere die Pickzeit zur aktuellen (nächsten) Position, nicht zur vorherigen.
-                pick_delay = picks_here * inst.t_p
+                pick_delay = picks_here * g.t_p(data)
                 dt_list[idx] += pick_delay
                 segment_pick_delay[idx] += pick_delay
                 picked_nodes.add(prev_node)
@@ -219,12 +223,12 @@ def _build_route_cache(inst: WarehouseInstance) -> _RouteCache:
     # In der Return-Gasse a_ret (nur bei ungeradem k) zaehlt der erste Aufstieg
     # noch nicht als "visited". Erst beim Herunterlaufen in der Return-Phase
     # werden die Knoten schrittweise von R nach V ueberfuehrt.
-    has_ret = (inst.k % 2 == 1)
-    a_ret = inst.A[0] if has_ret else None
+    has_ret = (g.k(data) % 2 == 1)
+    a_ret = g.A(data)[0] if has_ret else None
     ret_fallback_first_seen: Dict[Tuple[int, int], int] = {}
 
     for idx, point in enumerate(route):
-        node = _node_from_xy(inst, point.x, point.y)
+        node = _node_from_xy(data, point.x, point.y)
         if node is None or node in node_first_visit_index:
             continue
 
@@ -257,17 +261,13 @@ def _build_route_cache(inst: WarehouseInstance) -> _RouteCache:
     )
 
 
-def _get_route_cache(inst: WarehouseInstance) -> _RouteCache:
-    cache = getattr(inst, "_route_cache", None)
-    if cache is None:
-        cache = _build_route_cache(inst)
-        setattr(inst, "_route_cache", cache)
-    return cache
+def _get_route_cache(data: WaitingInput) -> _RouteCache:
+    return _build_route_cache(data)
 
 
-def map_time_to_route_index(t: float, inst: WarehouseInstance) -> int:
+def map_time_to_route_index(t: float, data: WaitingInput) -> int:
     """Mappt kontinuierliche Zeit auf den zuletzt bereits erreichten diskreten Routenindex."""
-    cache = _get_route_cache(inst)
+    cache = _get_route_cache(data)
     if not cache.route:
         return 0
     if cache.t_end <= 0:
@@ -278,61 +278,61 @@ def map_time_to_route_index(t: float, inst: WarehouseInstance) -> int:
     return max(0, min(idx, len(cache.route) - 1))
 
 
-def map_route_index_to_time(index: int, inst: WarehouseInstance) -> float:
-    cache = _get_route_cache(inst)
+def map_route_index_to_time(index: int, data: WaitingInput) -> float:
+    cache = _get_route_cache(data)
     if not cache.route:
         return 0.0
     idx = max(0, min(index, len(cache.route) - 1))
     return cache.time_by_index[idx]
 
 
-def route_point_at_index(index: int, inst: WarehouseInstance) -> RoutePoint:
-    cache = _get_route_cache(inst)
+def route_point_at_index(index: int, data: WaitingInput) -> RoutePoint:
+    cache = _get_route_cache(data)
     idx = max(0, min(index, len(cache.route) - 1))
     return cache.route[idx]
 
 
-def route_point_at_time(t: float, inst: WarehouseInstance) -> RoutePoint:
-    idx = map_time_to_route_index(t, inst)
-    return route_point_at_index(idx, inst)
+def route_point_at_time(t: float, data: WaitingInput) -> RoutePoint:
+    idx = map_time_to_route_index(t, data)
+    return route_point_at_index(idx, data)
 
 
 def active_aisle_index(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Optional[int]:
-    x, y = picker_position_2d(t, inst)
+    x, y = picker_position_2d(t, data)
     if x is None or y is None:
         return None
-    if y <= 0.0 or y >= inst.L:
+    if y <= 0.0 or y >= g.L(data):
         return None
     aisle = int(round(x))
-    return inst.aisle_to_j.get(aisle)
+    return g.aisle_to_j(data).get(aisle)
 
 
-def p_j(t: float, j: int, inst: WarehouseInstance, T_in: Dict[int, float]) -> float:
-    x, y = picker_position_2d(t, inst, T_in, {})
+def p_j(t: float, j: int, data: WaitingInput, T_in: Dict[int, float]) -> float:
+    x, y = picker_position_2d(t, data, T_in, {})
     if x is None or y is None:
         return 0.0
     aisle = int(round(x))
-    if inst.A[j - 1] != aisle:
+    if g.A(data)[j - 1] != aisle:
         return 0.0
-    return max(0.0, min(inst.L, y))
+    return max(0.0, min(g.L(data), y))
 
-def G_pass(x: float, t: float, inst: WarehouseInstance) -> List[int]:
+def G_pass(x: float, t: float, data: WaitingInput) -> List[int]:
     """Nicht-besuchte, bereits passierte Gassen relativ zur Bewegungsphase."""
-    I_all = set(range(1, inst.M + 1))
-    A_set = set(inst.A)
+    I_all = set(range(1, g.M(data) + 1))
+    A_set = set(g.A(data))
     candidates = I_all - A_set
 
     # k=1-Spezialfall:
     # Am exakten Eingangspunkt (a_ret, 0) bleiben rechte Gassen noch in G_front.
     # Erst sobald y>0 in der Return-Gasse ist, wechseln sie nach G_pass.
-    if inst.k == 1:
-        a_ret = inst.A[0]
-        _x, y_pos = picker_position_2d(t, inst)
+    if g.k(data) == 1:
+        a_ret = g.A(data)[0]
+        _x, y_pos = picker_position_2d(t, data)
         y_val = 0.0 if y_pos is None else float(y_pos)
         in_ret_after_entry = (x > float(a_ret) + 1e-9) or (
             abs(x - float(a_ret)) <= 1e-9 and y_val > 1e-9
@@ -340,7 +340,7 @@ def G_pass(x: float, t: float, inst: WarehouseInstance) -> List[int]:
         if in_ret_after_entry:
             return sorted(i for i in candidates if i > a_ret)
 
-    V_nodes, _, _, _ = V_R_global(t, {}, {}, inst)
+    V_nodes, _, _, _ = V_R_global(t, {}, {}, data)
     outbound = len(V_nodes) == 0
     if outbound:
         return []
@@ -348,19 +348,19 @@ def G_pass(x: float, t: float, inst: WarehouseInstance) -> List[int]:
     return sorted(i for i in candidates if i > x_idx)
 
 
-def G_front(x: float, t: float, inst: WarehouseInstance) -> List[int]:
+def G_front(x: float, t: float, data: WaitingInput) -> List[int]:
     """Nicht-besuchte, vor dem Picker liegende Gassen relativ zur Bewegungsphase."""
 
-    I_all = set(range(1, inst.M + 1))
-    A_set = set(inst.A)
+    I_all = set(range(1, g.M(data) + 1))
+    A_set = set(g.A(data))
     candidates = I_all - A_set
 
     # k=1-Spezialfall:
     # Am exakten Eingangspunkt (a_ret, 0) gehoeren rechte Gassen noch zu G_front.
     # Erst ab y>0 wechseln sie aus G_front nach G_pass.
-    if inst.k == 1:
-        a_ret = inst.A[0]
-        _x, y_pos = picker_position_2d(t, inst)
+    if g.k(data) == 1:
+        a_ret = g.A(data)[0]
+        _x, y_pos = picker_position_2d(t, data)
         y_val = 0.0 if y_pos is None else float(y_pos)
         in_ret_after_entry = (x > float(a_ret) + 1e-9) or (
             abs(x - float(a_ret)) <= 1e-9 and y_val > 1e-9
@@ -368,7 +368,7 @@ def G_front(x: float, t: float, inst: WarehouseInstance) -> List[int]:
         if in_ret_after_entry:
             return sorted(i for i in candidates if i < a_ret)
 
-    V_nodes, _, _, _ = V_R_global(t, {}, {}, inst)
+    V_nodes, _, _, _ = V_R_global(t, {}, {}, data)
     outbound = len(V_nodes) == 0
     if outbound:
         return sorted(candidates)
@@ -376,33 +376,33 @@ def G_front(x: float, t: float, inst: WarehouseInstance) -> List[int]:
     return sorted(i for i in candidates if i <= x_idx)
 
 
-def T_out_norm(j: int, T_in: Dict[int, float], inst: WarehouseInstance) -> float:
+def T_out_norm(j: int, T_in: Dict[int, float], data: WaitingInput) -> float:
     return T_in.get(j, 0.0)
 
 
 def p_eff_j(
     t: float,
     j: int,
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[float, bool]:
-    point = route_point_at_time(t, inst)
+    point = route_point_at_time(t, data)
     aisle = int(round(point.x))
-    if inst.A[j - 1] != aisle:
+    if g.A(data)[j - 1] != aisle:
         return 0.0, point.is_return_phase
-    return max(0.0, min(inst.L, point.y)), point.is_return_phase
+    return max(0.0, min(g.L(data), point.y)), point.is_return_phase
 
 
-def s_y(y: int, inst: WarehouseInstance) -> float:
-    return (y / inst.N_L) * inst.L
+def s_y(y: int, data: WaitingInput) -> float:
+    return (y / g.N_L(data)) * g.L(data)
 
 
 def horizontal_segment_info(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Optional[Tuple[int, int]]:
-    j_act = active_aisle_index(t, T_in, T_out, inst)
+    j_act = active_aisle_index(t, T_in, T_out, data)
     if j_act is None:
         return None
     if j_act > 1:
@@ -412,16 +412,16 @@ def horizontal_segment_info(
 
 def picker_position_2d(
     t: float,
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[Optional[float], Optional[float]]:
-    point = route_point_at_time(t, inst)
+    point = route_point_at_time(t, data)
     return point.x, point.y
 
 
-def nodes_in_aisle_order(inst: WarehouseInstance, j: int, curr_ret: bool = False) -> List[Tuple[int, int]]:
-    a_j = inst.A[j - 1]
-    d = delta_j(inst, j, curr_ret)
-    y_indices = range(1, inst.N_L + 1) if d == +1 else range(inst.N_L, 0, -1)
+def nodes_in_aisle_order(data: WaitingInput, j: int, curr_ret: bool = False) -> List[Tuple[int, int]]:
+    a_j = g.A(data)[j - 1]
+    d = delta_j(data, j, curr_ret)
+    y_indices = range(1, g.N_L(data) + 1) if d == +1 else range(g.N_L(data), 0, -1)
     return [(a_j, y) for y in y_indices]
 
 
@@ -430,15 +430,15 @@ def visited_and_remaining_nodes_in_current_aisle(
     j: int,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]], float, bool]:
-    cache = _get_route_cache(inst)
+    cache = _get_route_cache(data)
     clamped_t = max(0.0, min(float(t), cache.t_end))
-    p_eff, curr_ret = p_eff_j(t, j, T_in, T_out, inst)
+    p_eff, curr_ret = p_eff_j(t, j, T_in, T_out, data)
     V_j_nodes: List[Tuple[int, int]] = []
     R_j_nodes: List[Tuple[int, int]] = []
-    for y_node in range(1, inst.N_L + 1):
-        node = (inst.A[j - 1], y_node)
+    for y_node in range(1, g.N_L(data) + 1):
+        node = (g.A(data)[j - 1], y_node)
         first_t = cache.node_first_visit_time.get(node, float("inf"))
         if clamped_t + 1e-9 >= first_t:
             V_j_nodes.append(node)
@@ -451,18 +451,18 @@ def V_R_global(
     t: float,
     T_in: Dict[int, float],
     T_out: Dict[int, float],
-    inst: WarehouseInstance,
+    data: WaitingInput,
 ) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]], float, bool]:
-    cache = _get_route_cache(inst)
-    idx = map_time_to_route_index(t, inst)
+    cache = _get_route_cache(data)
+    idx = map_time_to_route_index(t, data)
     clamped_t = max(0.0, min(float(t), cache.t_end))
     curr_ret = cache.route[idx].is_return_phase
-    j_act = active_aisle_index(t, T_in, T_out, inst)
+    j_act = active_aisle_index(t, T_in, T_out, data)
     V_nodes: List[Tuple[int, int]] = []
     R_nodes: List[Tuple[int, int]] = []
 
-    for aisle in inst.A:
-        for y_node in range(1, inst.N_L + 1):
+    for aisle in g.A(data):
+        for y_node in range(1, g.N_L(data) + 1):
             node = (aisle, y_node)
             first_t = cache.node_first_visit_time.get(node, float("inf"))
             if clamped_t + 1e-9 >= first_t:
@@ -472,5 +472,5 @@ def V_R_global(
 
     p_eff = 0.0
     if j_act is not None:
-        p_eff = max(0.0, min(inst.L, cache.route[idx].y))
+        p_eff = max(0.0, min(g.L(data), cache.route[idx].y))
     return V_nodes, R_nodes, p_eff, curr_ret
