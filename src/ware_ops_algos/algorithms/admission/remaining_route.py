@@ -6,35 +6,51 @@ from ware_ops_algos.algorithms.algorithm_interfaces import (
 
 
 class RemainingRouteAdmission(Algorithm[AdmissionInput, AdmissionSolution]):
-    """Accept visible arrivals with a free bin and every pick still ahead."""
+    """Greedily assign visible orders to tours that can still pick them."""
 
     algo_name = "RemainingRouteAdmission"
 
     def _run(self, input_data: AdmissionInput) -> AdmissionSolution:
-        if input_data.pick_cart.box_can_mix_orders:
-            raise ValueError("Remaining-route admission requires one cart bin per order")
-        capacity = input_data.pick_cart.n_boxes or len(input_data.pick_cart.capacities or [])
-        if not 0 <= input_data.occupied_bins <= capacity:
-            raise ValueError("Invalid active cart occupancy")
         by_id = {order.order_id: order for order in input_data.orders}
         if len(by_id) != len(input_data.orders):
             raise ValueError("Admission input contains duplicate order IDs")
-        if input_data.active_order_ids & input_data.candidate_order_ids:
-            raise ValueError("Active and candidate order IDs overlap")
-        if not (input_data.active_order_ids | input_data.candidate_order_ids) <= by_id.keys():
-            raise ValueError("An active or candidate order was not resolved")
+        if not input_data.candidate_order_ids <= by_id.keys():
+            raise ValueError("A candidate order was not resolved")
 
-        remaining = frozenset(input_data.remaining_route)
+        tours = sorted(input_data.tours, key=lambda tour: tour.tour_id)
+        free_bins = {}
+        remaining = {}
+        for tour in tours:
+            cart = tour.pick_cart
+            if cart.box_can_mix_orders:
+                raise ValueError("Remaining-route admission requires one cart bin per order")
+            capacity = cart.n_boxes or len(cart.capacities or [])
+            free_bins[tour.tour_id] = capacity - tour.occupied_bins
+            remaining[tour.tour_id] = frozenset(tour.remaining_route)
+
         candidates = sorted(
             (by_id[order_id] for order_id in input_data.candidate_order_ids),
-            key=lambda order: (order.order_date, order.order_id),
+            key=lambda order: (order.order_date or 0.0, order.order_id),
         )
-        accepted = []
+        assignments = []
+        considered = []
         for order in candidates:
             if not order.pick_positions:
                 raise ValueError(f"Candidate order {order.order_id} has no resolved picks")
-            if input_data.occupied_bins + len(accepted) >= capacity:
-                break
-            if all(pick.pick_node in remaining for pick in order.pick_positions):
-                accepted.append(order.order_id)
-        return AdmissionSolution(accepted_order_ids=tuple(accepted))
+            for tour in tours:
+                pair = (tour.tour_id, order.order_id)
+                if (tour.picking_until is not None or
+                        pair in input_data.considered_pairs or
+                        order.order_id in tour.active_order_ids):
+                    continue
+                considered.append(pair)
+                if (free_bins[tour.tour_id] > 0 and
+                        all(pick.pick_node in remaining[tour.tour_id]
+                            for pick in order.pick_positions)):
+                    assignments.append(pair)
+                    free_bins[tour.tour_id] -= 1
+                    break
+        return AdmissionSolution(
+            assignments=tuple(assignments),
+            considered_pairs=tuple(considered),
+        )

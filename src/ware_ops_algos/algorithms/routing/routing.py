@@ -325,6 +325,38 @@ class WalkOrWaitSShapeRouting(SShapeRouting):
         return self._walk_to_target(current_source, (aisle_to_visit, current_source[1]))
 
 
+class _ActiveSShapeRerouting:
+    """Re-solve an active S-shape tour from either exit of the current aisle."""
+
+    def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
+        if self.routing_origin is None:
+            return super()._run(pick_list)
+
+        position = self.routing_origin.edge_destination or self.routing_origin.position
+        exits = ((position[0], self.min_aisle_position),
+                 (position[0], self.max_aisle_position))
+        best = None
+        for aisle_exit in dict.fromkeys(exits):
+            self.reset_parameters()
+            self.closest_node_to_start = aisle_exit
+            solution = super()._run(pick_list)
+            if best is None or solution.route.distance < best.route.distance:
+                best = solution
+        return best
+
+
+class ReroutableSShapeRouting(_ActiveSShapeRerouting, SShapeRouting):
+    """S-shape variant that re-solves the residual tour after admission."""
+
+    algo_name = "ReroutableSShapeRouting"
+
+
+class ReroutableWalkOrWaitSShapeRouting(_ActiveSShapeRerouting, WalkOrWaitSShapeRouting):
+    """Paper-style S-shape traversal with explicit active-tour rerouting."""
+
+    algo_name = "ReroutableWalkOrWaitSShapeRouting"
+
+
 class ReturnRouting(HeuristicRouting):
     """Implements Return routing."""
     algo_name = "ReturnRouting"

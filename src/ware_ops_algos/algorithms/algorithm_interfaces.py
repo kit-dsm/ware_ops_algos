@@ -8,7 +8,10 @@ from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque, Literal
 import time
 import logging
 
-from ware_ops_algos.domain_models import Order, ResolvedOrderPosition, OrderPosition, Resource, PickCart
+from ware_ops_algos.domain_models import (
+    LayoutData, Order, ResolvedOrderPosition, OrderPosition, PickCart,
+    PlannerInformation, Resource,
+)
 
 I = TypeVar("I")  # input type
 O = TypeVar("O")  # output type
@@ -194,22 +197,36 @@ class BatchingSolution(AlgorithmSolution):
 
 
 @dataclass(frozen=True)
-class AdmissionInput:
-    """Visible orders and the unserved route of a started tour."""
+class AdmissionTour:
+    """One started tour as observed when admission is considered."""
 
-    orders: tuple[WarehouseOrder, ...]
+    tour_id: int
+    picker_id: int
+    route_version: int
     pick_cart: PickCart
     active_order_ids: frozenset[int]
-    candidate_order_ids: frozenset[int]
     remaining_route: tuple[tuple[float, float], ...]
     occupied_bins: int
+    routing_origin: RoutingOrigin
+    picking_until: float | None = None
+
+
+@dataclass(frozen=True)
+class AdmissionInput:
+    """Visible orders and the started tours they may join."""
+
+    orders: tuple[WarehouseOrder, ...]
+    tours: tuple[AdmissionTour, ...]
+    candidate_order_ids: frozenset[int]
+    considered_pairs: frozenset[tuple[int, int]] = frozenset()
 
 
 @dataclass
 class AdmissionSolution(AlgorithmSolution):
-    """New orders accepted into the current tour, in admission order."""
+    """Accepted (tour, order) pairs and the pairs evaluated by admission."""
 
-    accepted_order_ids: tuple[int, ...] = ()
+    assignments: tuple[tuple[int, int], ...] = ()
+    considered_pairs: tuple[tuple[int, int], ...] = ()
 
 @dataclass
 class RoutingSolution(AlgorithmSolution):
@@ -224,6 +241,18 @@ class CombinedRoutingSolution(AlgorithmSolution):
 @dataclass
 class SchedulingSolution(AlgorithmSolution):
     jobs: list[ScheduledJob] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class WaitingInput:
+    candidates: tuple[ScheduledJob, ...]
+    current_time: float
+    input_closed: bool
+    picker: Resource
+    layout: LayoutData
+    information: PlannerInformation | None
+    deadline_reached: bool = False
+    single_order_service_times: dict[int, float] | None = None
 
 
 @dataclass
