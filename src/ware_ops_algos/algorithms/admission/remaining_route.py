@@ -22,10 +22,7 @@ class RemainingRouteAdmission(Algorithm[AdmissionInput, AdmissionSolution]):
         remaining = {}
         for tour in tours:
             cart = tour.pick_cart
-            if cart.box_can_mix_orders:
-                raise ValueError("Remaining-route admission requires one cart bin per order")
-            capacity = cart.n_boxes or len(cart.capacities or [])
-            free_bins[tour.tour_id] = capacity - tour.occupied_bins
+            free_bins[tour.tour_id] = cart.n_boxes - tour.occupied_bins
             remaining[tour.tour_id] = frozenset(tour.remaining_route)
 
         candidates = sorted(

@@ -228,7 +228,7 @@ class DomainAlgorithmMapper:
             domain_type = domain["type"]
             domain_features = domain["features"]
             domain_features = {name: value for name, value in domain_features.items()
-                               if str(value) == "0" or value}
+                               if value is not None}
         else:
             domain_type = domain.get_type_value()
             domain_features = domain.get_features()

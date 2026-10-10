@@ -1,11 +1,16 @@
 algo_name: RemainingRouteAdmission
 problem_type: admission
-description: Admit arrived orders to a started tour when their picks remain ahead and cart bins are free.
+description: Consider visible orders by arrival time and tour ID; admit each to the first tour with all picks ahead and a free order bin.
 requirements:
   resources:
     type: [human]
-    features: [capacities, dimensions_type]
-objective: distance
+    features: [capacities, dimensions_type, n_boxes, box_can_mix_orders]
+    constraints:
+      capacities: {equals: [1]}
+      dimensions_type: {equals: [orders]}
+      n_boxes: {greater_than: 0}
+      box_can_mix_orders: {equals: false}
+objective: null
 implementation:
   class_name: RemainingRouteAdmission
   component_name: RemainingRouteAdmissionNode
