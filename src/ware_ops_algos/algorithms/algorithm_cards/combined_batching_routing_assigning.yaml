@@ -36,6 +36,7 @@ requirements:
 objective: Distance
 
 implementation:
-  class_name: CombinedBatchingRoutingAssigning
+  class_name: ExactCombinedBatchingRouting
+  component_name: CombinedBatchingRoutingAssigning
   solver: Gurobi
   type: exact
