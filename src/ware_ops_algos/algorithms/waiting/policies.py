@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from ware_ops_algos.algorithms.algorithm_interfaces import WaitingInput, WaitingSolution
 from ware_ops_algos.domain_models import ExponentialSingleLineUniformLocationOrderStream
+from ware_ops_algos.algorithms.routing.routing import Routing
 
 from .analytic_progress.optimal_waiting import solve_optimal_wait
 from .waiting import Waiting
@@ -33,8 +36,8 @@ class OrderCountWaiting(Waiting):
         first = data.candidates[0]
         count = len(first.job.route.batch.orders)
         if data.input_closed or count >= self.min_orders:
-            return WaitingSolution(jobs=(first,))
-        return WaitingSolution(action="wait")
+            return WaitingSolution(jobs=data.candidates)
+        return WaitingSolution(jobs=data.candidates, action="wait")
 
 
 class HennWaiting(Waiting):
@@ -42,22 +45,44 @@ class HennWaiting(Waiting):
 
     algo_name = "HennWaiting"
 
+    def __init__(self, router: Routing):
+        super().__init__()
+        self.router = router
+
+    def _single_order_service_times(self, job, picker) -> dict[int, float]:
+        services = {}
+        for order in job.job.route.batch.orders:
+            self.router.reset_parameters()
+            route = self.router.solve(order.pick_positions).route
+            services[order.order_id] = (
+                picker.tour_setup_time + route.distance / picker.speed
+                + sum(pick.in_store for pick in order.pick_positions)
+                * picker.time_per_pick
+            )
+        return services
+
     def _run(self, data: WaitingInput) -> WaitingSolution:
         if not data.candidates:
             return WaitingSolution(jobs=())
-        job = data.candidates[0]
+        job = min(data.candidates, key=lambda item:
+                  (item.start_time, item.picker_id))
         if data.input_closed or len(data.candidates) > 1:
-            return WaitingSolution(jobs=(job,))
-        services = data.single_order_service_times
-        if not services:
-            raise ValueError("Henn waiting needs single-order service times")
+            return WaitingSolution(jobs=data.candidates)
+        services = self._single_order_service_times(job, data.picker)
         orders = job.job.route.batch.orders
         critical = max(orders, key=lambda o: services[o.order_id])
         batch_service = job.job.processing_time + data.picker.tour_setup_time
         threshold = 2 * critical.order_date + services[critical.order_id] - batch_service
         if data.current_time < threshold:
-            return WaitingSolution(action="wait", reconsider_at=threshold)
-        return WaitingSolution(jobs=(job,))
+            delay = max(0.0, threshold - job.start_time)
+            delayed = tuple(replace(candidate,
+                                    start_time=candidate.start_time + delay,
+                                    end_time=candidate.end_time + delay)
+                            if candidate.picker_id == job.picker_id else candidate
+                            for candidate in data.candidates)
+            return WaitingSolution(jobs=delayed, action="wait",
+                                   reconsider_at=threshold)
+        return WaitingSolution(jobs=data.candidates)
 
 
 class AnalyticStochasticWaiting(Waiting):
@@ -78,9 +103,9 @@ class AnalyticStochasticWaiting(Waiting):
         orders = job.job.route.batch.orders
         if (data.input_closed or data.deadline_reached
                 or len(orders) >= self.target_batch_size_orders):
-            return WaitingSolution(jobs=(job,))
+            return WaitingSolution(jobs=data.candidates)
         if len(orders) < self.target_batch_size_orders - 1:
-            return WaitingSolution(action="wait")
+            return WaitingSolution(jobs=data.candidates, action="wait")
         if len(orders) != self.target_batch_size_orders - 1:
             raise ValueError(
                 "Analytical waiting received more than q-1 known orders"
@@ -96,5 +121,6 @@ class AnalyticStochasticWaiting(Waiting):
             remaining_arrivals_after_miss=self.target_batch_size_orders - 1,
         )
         if result.wait_duration <= 1e-9:
-            return WaitingSolution(jobs=(job,))
-        return WaitingSolution(action="wait", reconsider_at=data.current_time + result.wait_duration)
+            return WaitingSolution(jobs=data.candidates)
+        return WaitingSolution(jobs=data.candidates, action="wait",
+                               reconsider_at=data.current_time + result.wait_duration)

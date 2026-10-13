@@ -285,7 +285,6 @@ class WaitingInput:
     layout: LayoutData
     information: PlannerInformation | None
     deadline_reached: bool = False
-    single_order_service_times: dict[int, float] | None = None
 
 
 @dataclass
