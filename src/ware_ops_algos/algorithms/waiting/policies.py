@@ -95,9 +95,10 @@ class AnalyticStochasticWaiting(Waiting):
         self.target_batch_size_orders = target_batch_size_orders
 
     def _run(self, data: WaitingInput) -> WaitingSolution:
-        if len(data.candidates) != 1:
-            raise ValueError("Analytical waiting requires one scheduled candidate")
-        job = data.candidates[0]
+        if not data.candidates:
+            return WaitingSolution(jobs=(), action="wait")
+        job = min(data.candidates, key=lambda item:
+                  (item.start_time, item.picker_id))
         if data.information is None:
             raise ValueError("Analytical waiting requires planner information")
         orders = job.job.route.batch.orders

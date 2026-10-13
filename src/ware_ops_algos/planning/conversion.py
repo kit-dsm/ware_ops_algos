@@ -83,8 +83,6 @@ def _(solution: SchedulingSolution, plan: PlanView) -> tuple[Command, ...]:
 
 @to_commands.register
 def _(solution: WaitingSolution, plan: PlanView) -> tuple[Command, ...]:
-    if solution.action == "wait":
-        return ()
     return _schedule_commands(solution.jobs, plan)
 
 
@@ -105,3 +103,19 @@ def _(solution: ActiveTourRoutingSolution, plan: PlanView) -> tuple[Command, ...
                      | (route.batch.order_numbers
                         - views[route.batch.tour_id].batch.order_numbers))),
     ) for route in solution.routes)
+
+
+@singledispatch
+def decision_effects(solution) -> tuple[bool, float | None, frozenset[tuple[int, int]]]:
+    """Return waiting and considered-admission bookkeeping for a solution."""
+    return False, None, frozenset()
+
+
+@decision_effects.register
+def _(solution: WaitingSolution) -> tuple[bool, float | None, frozenset[tuple[int, int]]]:
+    return solution.action == "wait", solution.reconsider_at, frozenset()
+
+
+@decision_effects.register
+def _(solution: ActiveTourRoutingSolution) -> tuple[bool, float | None, frozenset[tuple[int, int]]]:
+    return False, None, frozenset(solution.considered_pairs)

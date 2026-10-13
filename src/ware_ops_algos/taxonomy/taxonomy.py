@@ -1,22 +1,18 @@
-"""Shared warehouse problem taxonomy for applicability checks."""
-
-TAXONOMY = {'ATIP': {'variables': ['item_assignment', 'admission', 'active_tour_routing']},
- 'BSRP': {'variables': ['batching', 'routing']},
- 'OBP': {'variables': ['item_assignment', 'batching']},
- 'OBRP': {'objectives': ['distance', 'picking_time'],
-          'variables': ['item_assignment', 'batching', 'routing']},
- 'OBRSP': {'variables': ['item_assignment', 'batching', 'routing',
-                         'scheduling', 'sequencing', 'positioning']},
- 'OBSRP': {'objectives': ['distance',
-                          'makespan',
-                          'tardiness',
-                          'picking_time',
-                          'completion_time'],
-           'variables': ['item_assignment', 'batching', 'scheduling', 'routing']},
- 'ORP': {'variables': ['routing']},
- 'ORSP': {'variables': ['routing', 'scheduling']},
- 'OSBP': {'variables': ['order_splitting', 'item_assignment', 'batching']},
- 'RORSP': {'variables': ['routing', 'scheduling']},
- 'SPRP': {'objectives': ['distance', 'picking_time'], 'variables': ['routing']},
- 'SPRP-SS': {'objectives': ['distance', 'picking_time'],
-             'variables': ['item_assignment', 'order_selection', 'routing']}}
+TAXONOMY = {
+    "SPRP": {
+        "objectives": ["distance", "picking_time"],
+        "variables": ["item_assignment", "order_selection", "routing"]
+    },
+    "SPRP-SS": {
+            "objectives": ["distance", "picking_time"],
+            "variables": ["item_assignment", "order_selection", "routing"]
+        },
+    "OBRP": {
+        "objectives": ["distance", "picking_time"],
+        "variables": ["item_assignment", "batching", "routing", "batching_routing"]
+    },
+    "OBSRP": {
+        "objectives": ["distance", "makespan", "tardiness", "picking_time", "completion_time"],
+        "variables": ["item_assignment", "batching", "scheduling", "routing"]
+    }
+}
