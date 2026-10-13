@@ -12,3 +12,4 @@ from .commands import (
     Reschedule, Violation, ViolationCode,
 )
 from .decision_features import decision_features
+from .conversion import to_commands
