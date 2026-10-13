@@ -1,98 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Optional
 
 from ware_ops_algos.domain_models.lifecycle import TourStates
 
 if TYPE_CHECKING:
     from ware_ops_algos.algorithms.algorithm_interfaces import (
-        BatchObject, PickPosition, Route, RouteNode, RoutingOrigin, ScheduledJob,
+        BatchObject, PickPosition, Route, RouteNode, RoutingOrigin,
     )
-
-
-@dataclass(frozen=True)
-class RevisionRights:
-    """Describes to what degree an operational plan can be revised"""
-    membership: Literal["replace", "add_only", "fixed"] = "replace"
-    route: Literal["replace", "remaining", "fixed"] = "replace"
-    picker: bool = True
-    timing: bool = True
-
-
-FIXED = RevisionRights(
-    membership="fixed",
-    route="fixed",
-    picker=False,
-    timing=False,
-)
-
-
-@dataclass
-class PlanEntry:
-    id: int
-    decision: BatchObject | Route | ScheduledJob
-    revision: RevisionRights = field(default_factory=RevisionRights)
-    released: bool = False
-    tour_id: int | None = None
-
-    @property
-    def batch(self) -> BatchObject:
-        from ware_ops_algos.algorithms.algorithm_interfaces import BatchObject, Route
-
-        if isinstance(self.decision, BatchObject):
-            return self.decision
-        if isinstance(self.decision, Route):
-            return self.decision.batch
-        return self.decision.job.route.batch
-
-
-@dataclass
-class OperationalPlan:
-    entries: dict[int, PlanEntry] = field(default_factory=dict)
-    next_id: int = 1
-
-    def add_batch(self, batch: BatchObject):
-        entry = PlanEntry(
-            id=self.next_id,
-            decision=batch,
-        )
-        self.entries[entry.id] = entry
-        self.next_id += 1
-        return entry
-
-    def replace_draft(self, jobs: list[ScheduledJob]) -> None:
-        """Replace proposals while retaining released execution history."""
-        self.entries = {key: entry for key, entry in self.entries.items()
-                        if entry.released}
-        order_ids: set[int] = set()
-        for job in jobs:
-            overlapping = order_ids.intersection(job.order_numbers)
-            if overlapping:
-                raise ValueError(f"Orders occur in more than one draft job: {overlapping}")
-            order_ids.update(job.order_numbers)
-            self.entries[self.next_id] = PlanEntry(id=self.next_id, decision=job)
-            self.next_id += 1
-
-    def invalidate_draft(self) -> None:
-        self.entries = {key: entry for key, entry in self.entries.items()
-                        if entry.released}
-
-    def release_next_per_picker(self, picker_ids: set[int]) -> list[PlanEntry]:
-        """Release at most one earliest draft job for each available picker."""
-        from ware_ops_algos.algorithms.algorithm_interfaces import ScheduledJob
-
-        chosen: list[PlanEntry] = []
-        for picker_id in sorted(picker_ids):
-            eligible = [entry for entry in self.entries.values()
-                        if not entry.released
-                        and isinstance(entry.decision, ScheduledJob)
-                        and entry.decision.picker_id == picker_id]
-            if eligible:
-                entry = min(eligible, key=lambda e: (e.decision.start_time, e.id))
-                entry.released = True
-                chosen.append(entry)
-        return chosen
 
 
 @dataclass
