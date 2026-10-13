@@ -28,6 +28,7 @@ def _tour(status=TourStates.STARTED):
         batch=batch, route=route, start_time=0, end_time=10,
         pick_cart=PickCart(n_boxes=1), occupied_bins=1,
         pinned_prefix=(route.annotated_route[0],),
+        remaining_route=((1, 1), (0, 0)),
     )
 
 
@@ -38,8 +39,7 @@ def test_plan_detects_duplicate_order_and_lost_pick():
     duplicate = PlanView(0, order_buffer=(_order(),), tours=(tour,))
     assert any(v.code == "membership" for v in check_plan(duplicate))
 
-    short_route = replace(tour, route=replace(tour.route,
-        annotated_route=[RouteNode((0, 0), NodeType.ROUTE)]))
+    short_route = replace(tour, remaining_route=((0, 0),))
     assert any(v.code == "route" for v in check_plan(PlanView(0, tours=(short_route,))))
 
 

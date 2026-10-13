@@ -34,8 +34,6 @@ class TourView:
     occupied_bins: int | None = None
     picking_until: float | None = None
     holding: bool = False
-    positioning_mode: str | None = None
-    positioning_hold: bool = False
 
 
 @dataclass(frozen=True)

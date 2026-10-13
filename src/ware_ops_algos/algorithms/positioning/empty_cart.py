@@ -32,7 +32,6 @@ def center_relocation_route(layout: LayoutData) -> Route:
 
 class AislePatrolPositioning(Positioning):
     algo_name = "AislePatrolPositioning"
-    mode = "aisle_patrol"
 
     def _route(self, layout: LayoutData) -> Route:
         return all_aisles_patrol_route(layout)
@@ -40,7 +39,6 @@ class AislePatrolPositioning(Positioning):
 
 class CenterRelocationPositioning(Positioning):
     algo_name = "CenterRelocationPositioning"
-    mode = "center_relocation"
 
     def _route(self, layout: LayoutData) -> Route:
         return center_relocation_route(layout)

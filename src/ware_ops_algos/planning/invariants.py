@@ -69,9 +69,7 @@ def check_plan(plan: PlanView) -> tuple[InvariantViolation, ...]:
                 completed = Counter(node.position for node in tour.pinned_prefix
                                     if node.node_type is NodeType.PICK)
                 remaining = picks - completed
-                route_picks = Counter(node.position for node in
-                                      tour.route.annotated_route[len(tour.pinned_prefix):]
-                                      if node.node_type is NodeType.PICK)
+                route_picks = Counter(tour.remaining_route)
                 if not all(route_picks[node] >= count for node, count in remaining.items()):
                     violations.append(InvariantViolation(
                         "route", "Route omits an unpicked position", tour.tour_id))

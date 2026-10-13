@@ -14,17 +14,14 @@ from ..algorithm_interfaces import (
 class Positioning(Algorithm[PositioningInput, PositioningSolution], ABC):
     """Add ordinary empty-cart jobs to the proposed schedule."""
 
-    mode: str
-
     @abstractmethod
     def _route(self, layout: LayoutData) -> Route:
         """Choose the route of an empty-cart tour."""
 
     def _run(self, input_data: PositioningInput) -> PositioningSolution:
         jobs = list(input_data.schedule.jobs)
-        modes: dict[int, str] = {}
         if input_data.input_closed:
-            return PositioningSolution(jobs=jobs, modes=modes)
+            return PositioningSolution(jobs=jobs)
         assigned = {job.picker_id for job in jobs} | set(input_data.occupied_picker_ids)
         for picker in input_data.resources:
             if picker.id in assigned or picker.speed <= 0:
@@ -38,5 +35,4 @@ class Positioning(Algorithm[PositioningInput, PositioningSolution], ABC):
             jobs.append(ScheduledJob(job=job, picker_id=picker.id,
                                      start_time=input_data.current_time,
                                      end_time=input_data.current_time + duration))
-            modes[job.job_id] = self.mode
-        return PositioningSolution(jobs=jobs, modes=modes)
+        return PositioningSolution(jobs=jobs)

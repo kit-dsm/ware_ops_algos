@@ -269,9 +269,7 @@ class PositioningInput:
 
 @dataclass
 class PositioningSolution(SchedulingSolution):
-    """A complete schedule, with the modes of its empty positioning jobs."""
-
-    modes: dict[int, str] = field(default_factory=dict)
+    """A complete schedule including ordinary empty positioning tours."""
 
 
 @dataclass(frozen=True)
