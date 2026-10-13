@@ -9,7 +9,6 @@ from ware_ops_algos.domain_models.base_domain_object import BaseDomainObject
 if TYPE_CHECKING:
     from ware_ops_algos.algorithms.algorithm_interfaces import AdmissionTour, BatchObject
     from ware_ops_algos.algorithms.algorithm_interfaces import WarehouseOrder
-    from ware_ops_algos.domain_models.operational.models import TourPlanningState
     from ware_ops_algos.domain_models.resources.models import Resource
 
 
@@ -27,7 +26,7 @@ class WarehouseInfo(BaseDomainObject):
 class DynamicInfo(WarehouseInfo):
     time: float | None = None
     congestion_rate: dict[str, float] = field(default_factory=dict)
-    active_tours: list[TourPlanningState] = field(default_factory=list)
+    active_tours: list = field(default_factory=list)
     admission_tours: tuple[AdmissionTour, ...] = ()
     considered_active_orders: frozenset[tuple[int, int]] = frozenset()
     current_picker: Resource | None = None
