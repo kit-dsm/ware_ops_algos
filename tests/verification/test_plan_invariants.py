@@ -35,7 +35,7 @@ def test_plan_detects_duplicate_order_and_lost_pick():
     tour = _tour()
     assert check_plan(PlanView(0, tours=(tour,))) == ()
 
-    duplicate = PlanView(0, orders=(_order(),), tours=(tour,))
+    duplicate = PlanView(0, order_buffer=(_order(),), tours=(tour,))
     assert any(v.code == "membership" for v in check_plan(duplicate))
 
     short_route = replace(tour, route=replace(tour.route,
@@ -44,7 +44,7 @@ def test_plan_detects_duplicate_order_and_lost_pick():
 
 
 def test_progress_detects_lost_order_and_backward_time():
-    before = PlanView(10, orders=(_order(),))
+    before = PlanView(10, order_buffer=(_order(),))
     after = PlanView(9)
     codes = {violation.code for violation in check_progress(before, after)}
     assert codes == {"membership", "time"}

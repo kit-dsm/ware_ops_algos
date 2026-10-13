@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from math import isfinite
 
-from .lifecycle import Accepts, ResourceStates, TimeAttribute, TourStates
+from .lifecycle import Accepts, ResourceStates, TOUR_ORDER, TimeAttribute, TourStates
 
 
 @dataclass(frozen=True)
@@ -48,3 +48,9 @@ class RevisionScope:
         object.__setattr__(self, "frozen_accepts", Accepts(self.frozen_accepts))
         if self.frozen_accepts is Accepts.REBUILD:
             raise ValueError("scope.frozen_accepts must be none or insert")
+
+    def accepts(self, status: TourStates) -> Accepts:
+        """Return the revision level this scope gives a tour status."""
+        if TOUR_ORDER.index(status) < TOUR_ORDER.index(self.freeze_from):
+            return Accepts.REBUILD
+        return self.frozen_accepts

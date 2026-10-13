@@ -6,7 +6,7 @@ import pytest
 
 from ware_ops_algos.planning.lifecycle import (
     Accepts, PHYSICAL, TOUR_ORDER, TOUR_TRANSITIONS, TourStates,
-    accepts_at_least, accepts_for,
+    accepts_at_least,
 )
 from ware_ops_algos.planning.scope import RevisionScope, StateInformation
 from ware_ops_algos.planning.validation import check_scope
@@ -48,7 +48,7 @@ def test_scope_check_is_exhaustive_over_exposed_status_sets():
     for freeze_from in TourStates:
         for frozen_accepts in (Accepts.NONE, Accepts.INSERT):
             scope = RevisionScope(freeze_from, frozen_accepts)
-            levels = [accepts_for(status, freeze_from, frozen_accepts)
+            levels = [scope.accepts(status)
                       for status in TOUR_ORDER]
             assert all(accepts_at_least(a, b)
                        for a, b in zip(levels, levels[1:]))
@@ -57,7 +57,7 @@ def test_scope_check_is_exhaustive_over_exposed_status_sets():
                 expected = tuple(status for status in TourStates
                                  if status in exposed and not accepts_at_least(
                                      PHYSICAL[status],
-                                     accepts_for(status, freeze_from, frozen_accepts)))
+                                     scope.accepts(status)))
                 assert check_scope(information, scope) == expected
     for freeze_from in TourStates:
         with pytest.raises(ValueError, match="frozen_accepts"):

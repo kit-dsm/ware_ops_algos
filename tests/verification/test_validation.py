@@ -1,7 +1,6 @@
 from ware_ops_algos.algorithms import (
     BatchObject, PickCart, Route, RoutingOrigin, WarehouseOrder,
 )
-from ware_ops_algos.domain_models import Resource
 from ware_ops_algos.planning.commands import (
     CancelTour, CommitTour, CreatePickList, ReplaceSuffix, ViolationCode,
 )
@@ -31,8 +30,8 @@ def test_started_replacement_checks_membership_origin_and_boxes():
         routing_origin=origin, occupied_bins=1,
         pick_cart=PickCart(n_boxes=1, box_can_mix_orders=False),
     )
-    plan = PlanView(0, orders=(_order(2),), tours=(tour,),
-                    resources=(Resource(id=0),))
+    plan = PlanView(0, order_buffer=(_order(2),), tours=(tour,),
+                    available_from={0: 0})
     route = Route(0, batch=BatchObject(2, [_order(1), _order(2)]),
                   routing_origin=RoutingOrigin((1, 1)))
     codes = {v.code for v in check((ReplaceSuffix(1, route, (2,)),), plan)}
@@ -42,7 +41,7 @@ def test_started_replacement_checks_membership_origin_and_boxes():
 
 
 def test_pick_list_uses_exposed_orders():
-    plan = PlanView(0, orders=(_order(1),))
+    plan = PlanView(0, order_buffer=(_order(1),))
     assert check((CreatePickList(BatchObject(1, [_order(1)])),), plan) == ()
     assert check((CreatePickList(BatchObject(2, [_order(2)])),), plan)[0].code is (
         ViolationCode.STATE_INFORMATION)

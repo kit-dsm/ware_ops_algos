@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ware_ops_algos.algorithms.algorithm_interfaces import (
         BatchObject, Route, RouteNode, RoutingOrigin, WarehouseOrder,
     )
-    from ware_ops_algos.domain_models.resources.models import PickCart, Resource
+    from ware_ops_algos.domain_models.resources.models import PickCart
 
 
 @dataclass(frozen=True)
@@ -39,14 +39,13 @@ class TourView:
 @dataclass(frozen=True)
 class PlanView:
     time: float
-    orders: tuple[WarehouseOrder, ...] = ()
-    pick_lists: tuple[BatchObject, ...] = ()
+    order_buffer: tuple[WarehouseOrder, ...] = ()
+    pick_list_buffer: tuple[BatchObject, ...] = ()
     tours: tuple[TourView, ...] = ()
-    resources: tuple[Resource, ...] = ()
     available_from: Mapping[int, float] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        ordered = tuple(sorted(self.orders, key=lambda order:
+        ordered = tuple(sorted(self.order_buffer, key=lambda order:
                                (float("-inf") if order.order_date is None
                                 else order.order_date, order.order_id)))
-        object.__setattr__(self, "orders", ordered)
+        object.__setattr__(self, "order_buffer", ordered)

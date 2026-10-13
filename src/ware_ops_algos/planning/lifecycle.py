@@ -73,9 +73,3 @@ def accepts_at_least(actual: Accepts, required: Accepts) -> bool:
     return _ACCEPTS_ORDER.index(actual) >= _ACCEPTS_ORDER.index(required)
 
 
-def accepts_for(status: TourStates, freeze_from: TourStates,
-                frozen_accepts: Accepts) -> Accepts:
-    """Return the configured revision level at a lifecycle status."""
-    if TOUR_ORDER.index(status) < TOUR_ORDER.index(freeze_from):
-        return Accepts.REBUILD
-    return frozen_accepts

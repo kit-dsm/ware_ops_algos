@@ -6,9 +6,7 @@ from .commands import (
     CancelTour, Command, CommitTour, CreatePickList, CreateTour,
     ReplaceSuffix, Reschedule, Violation, ViolationCode,
 )
-from .lifecycle import (
-    Accepts, PHYSICAL, TourStates, accepts_at_least, accepts_for,
-)
+from .lifecycle import Accepts, PHYSICAL, TourStates, accepts_at_least
 from .models import PlanView, TourView
 from .scope import RevisionScope, StateInformation
 
@@ -18,8 +16,7 @@ def check_scope(state_information: StateInformation,
     """Statuses whose configured revision level exceeds their physical bound."""
     return tuple(status for status in TourStates
                  if status in state_information.tours and not accepts_at_least(
-                     PHYSICAL[status],
-                     accepts_for(status, scope.freeze_from, scope.frozen_accepts)))
+                     PHYSICAL[status], scope.accepts(status)))
 
 
 def _violation(code: ViolationCode, message: str,
@@ -48,8 +45,8 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
     views = {tour.tour_id: tour for tour in plan.tours}
     violations: list[Violation] = []
     created_count = 0
-    free_ids = {order.order_id for order in plan.orders}
-    free_ids.update(order_id for batch in plan.pick_lists
+    free_ids = {order.order_id for order in plan.order_buffer}
+    free_ids.update(order_id for batch in plan.pick_list_buffer
                     for order_id in batch.order_numbers)
     free_ids.update(order_id for command in commands
                     if isinstance(command, CancelTour)
@@ -66,7 +63,7 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
             created_count += 1
             continue
         if isinstance(command, CreatePickList):
-            exposed_ids = {order.order_id for order in plan.orders}
+            exposed_ids = {order.order_id for order in plan.order_buffer}
             if not command.batch.order_numbers <= exposed_ids:
                 violations.append(_violation(
                     ViolationCode.STATE_INFORMATION,
@@ -94,7 +91,7 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
         required = Accepts.INSERT if isinstance(command, ReplaceSuffix) else Accepts.REBUILD
         violations.extend(_check_tour(view, required))
         if isinstance(command, Reschedule):
-            if command.picker_id not in {resource.id for resource in plan.resources}:
+            if command.picker_id not in plan.available_from:
                 violations.append(_violation(
                     ViolationCode.STATE_INFORMATION,
                     "Reschedule picker is not exposed", tour_id))
@@ -112,7 +109,7 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
                 ViolationCode.MEMBERSHIP,
                 "Replacement must retain orders and name exactly the additions",
                 tour_id))
-        exposed_ids = {order.order_id for order in plan.orders}
+        exposed_ids = {order.order_id for order in plan.order_buffer}
         if not added <= exposed_ids:
             violations.append(_violation(
                 ViolationCode.STATE_INFORMATION,

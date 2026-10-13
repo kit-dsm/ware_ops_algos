@@ -23,8 +23,8 @@ def _orders_of(tour: TourView) -> tuple[int, ...]:
 
 
 def _visible_order_ids(plan: PlanView) -> set[int]:
-    ids = {order.order_id for order in plan.orders}
-    ids.update(order_id for batch in plan.pick_lists
+    ids = {order.order_id for order in plan.order_buffer}
+    ids.update(order_id for batch in plan.pick_list_buffer
                for order_id in batch.order_numbers)
     ids.update(order_id for tour in plan.tours
                if tour.status is not TourStates.CANCELLED
@@ -35,9 +35,9 @@ def _visible_order_ids(plan: PlanView) -> set[int]:
 def check_plan(plan: PlanView) -> tuple[InvariantViolation, ...]:
     violations: list[InvariantViolation] = []
     locations: dict[int, list[str]] = defaultdict(list)
-    for order in plan.orders:
+    for order in plan.order_buffer:
         locations[order.order_id].append("buffer")
-    for batch in plan.pick_lists:
+    for batch in plan.pick_list_buffer:
         for order_id in batch.order_numbers:
             locations[order_id].append(f"pick_list:{batch.batch_id}")
     for tour in plan.tours:
