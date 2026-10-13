@@ -36,6 +36,8 @@ class DataCard:
     warehouse_info: dict[str, Any]
     sources: Optional[dict[str, Any]] = None
     information: dict[str, Any] = field(default_factory=lambda: {"type": None, "features": {}})
+    decision_features: dict[str, Any] = field(
+        default_factory=lambda: {"type": "decision", "features": {"incumbent": False}})
 
 
 def _section(obj: BaseDomainObject) -> dict[str, Any]:

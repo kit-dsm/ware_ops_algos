@@ -1,5 +1,8 @@
 algo_name: ReroutableSShape
 problem_type: active_tour_routing
+capabilities:
+  active_origin: edge_aware
+  route_revision: remaining
 description: >
   Re-solve the unfinished S-shape tour from the picker's projected position,
   completing the current edge before taking the shorter of the two aisle exits.

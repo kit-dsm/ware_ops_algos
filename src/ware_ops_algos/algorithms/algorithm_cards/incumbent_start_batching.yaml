@@ -1,0 +1,19 @@
+algo_name: IncumbentStartBatching
+problem_type: batching
+description: Preserve selected draft batches and insert new orders at minimum incremental route distance.
+requirements:
+  decision_features:
+    type: [decision]
+    constraints:
+      incumbent: {equals: true}
+  resources:
+    type: [any]
+    features: [capacities, dimensions_type]
+  orders:
+    type: [any]
+    features: [order_date]
+objective: Distance
+implementation:
+  class_name: IncumbentStartBatching
+  component_name: IncumbentBatchingNode
+  type: heuristic

@@ -1,0 +1,11 @@
+algo_name: AislePatrolPositioning
+problem_type: positioning
+description: Walk all aisles with an empty cart and return to the depot.
+requirements:
+  layout:
+    type: [conventional]
+    features: [n_blocks, n_aisles, graph]
+implementation:
+  class_name: AislePatrolPositioning
+  component_name: AislePatrolPositioningNode
+  type: algorithm

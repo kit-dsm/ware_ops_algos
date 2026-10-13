@@ -1,0 +1,11 @@
+algo_name: CenterPositionAdmission
+problem_type: admission
+description: Admit feasible orders to an empty cart held at the center.
+requirements:
+  resources:
+    type: [human]
+    features: [n_boxes, capacities]
+implementation:
+  class_name: CenterPositionAdmission
+  component_name: CenterPositionAdmissionNode
+  type: algorithm

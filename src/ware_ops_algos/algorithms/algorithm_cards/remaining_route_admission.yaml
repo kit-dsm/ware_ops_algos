@@ -1,5 +1,7 @@
 algo_name: RemainingRouteAdmission
 problem_type: admission
+capabilities:
+  active_admission: add_only
 description: Consider visible orders by arrival time and tour ID; admit each to the first tour with all picks ahead and a free order bin.
 requirements:
   resources:

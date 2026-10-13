@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from ware_ops_algos.algorithms.algorithm_interfaces import (
-    Algorithm, Job, ScheduledJob, WaitingInput, WaitingSolution,
+    Algorithm, WaitingInput, WaitingSolution,
 )
-from ware_ops_algos.algorithms.routing.patrol import all_aisles_patrol_route
 from ware_ops_algos.domain_models import ExponentialSingleLineUniformLocationOrderStream
 
 from .analytic_progress.optimal_waiting import solve_optimal_wait
@@ -37,35 +36,6 @@ class OrderCountWaiting(Algorithm[WaitingInput, WaitingSolution]):
         if data.input_closed or count >= self.min_orders:
             return WaitingSolution(jobs=(first,))
         return WaitingSolution(action="wait")
-
-
-class StartImmediatelyWaiting(Algorithm[WaitingInput, WaitingSolution]):
-    """Release visible work, or start an empty aisle patrol while the stream is open."""
-
-    algo_name = "StartImmediatelyWaiting"
-
-    def _run(self, data: WaitingInput) -> WaitingSolution:
-        if data.candidates:
-            return WaitingSolution(jobs=(data.candidates[0],))
-        if data.input_closed:
-            return WaitingSolution(action="wait")
-        route = all_aisles_patrol_route(data.layout)
-        duration = route.distance / data.picker.speed
-        job = Job(
-            job_id=-1,
-            processing_time=duration,
-            release_time=data.current_time,
-            due_date=float("inf"),
-            n_picks=0,
-            route=route,
-            batch=route.batch,
-        )
-        return WaitingSolution(jobs=(ScheduledJob(
-            job=job,
-            picker_id=data.picker.id,
-            start_time=data.current_time,
-            end_time=data.current_time + duration,
-        ),))
 
 
 class HennWaiting(Algorithm[WaitingInput, WaitingSolution]):
@@ -110,9 +80,11 @@ class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
         if (data.input_closed or data.deadline_reached
                 or len(orders) >= self.target_batch_size_orders):
             return WaitingSolution(jobs=(job,))
+        if len(orders) < self.target_batch_size_orders - 1:
+            return WaitingSolution(action="wait")
         if len(orders) != self.target_batch_size_orders - 1:
             raise ValueError(
-                "Analytical waiting requires exactly q-1 known orders before the missing order"
+                "Analytical waiting received more than q-1 known orders"
             )
         if any(len(order.pick_positions) != 1 for order in orders):
             raise ValueError("Analytical waiting supports one line per order")

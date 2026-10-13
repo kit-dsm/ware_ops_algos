@@ -1,0 +1,11 @@
+algo_name: CenterRelocationPositioning
+problem_type: positioning
+description: Move to an accessible central node with an empty cart and hold.
+requirements:
+  layout:
+    type: [conventional]
+    features: [graph]
+implementation:
+  class_name: CenterRelocationPositioning
+  component_name: CenterRelocationPositioningNode
+  type: algorithm

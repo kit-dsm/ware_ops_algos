@@ -24,6 +24,7 @@ class ConstraintEvaluator:
         'less_than_or_equal': operator.le,
         'in': lambda x, y: x in y,
         'not_in': lambda x, y: x not in y,
+        'contains': lambda x, y: y in x,
     }
 
     def evaluate(self, actual_value: Any, constraint: Dict[str, Any]) -> bool:
@@ -90,7 +91,8 @@ class DomainAlgorithmMapper:
         self.evaluator = ConstraintEvaluator()
 
     def filter(self, algorithms: List['AlgorithmCard'], instance: BaseWarehouseDomain | DataCard,
-               verbose: bool = False) -> List['AlgorithmCard']:
+               verbose: bool = False,
+               required_capabilities: dict[str, Any] | None = None) -> List['AlgorithmCard']:
         """
         Filter algorithms to find those feasible for the given instance.
 
@@ -105,11 +107,60 @@ class DomainAlgorithmMapper:
         problem_compatible = self._filter_by_problem(algorithms, instance.problem_class, verbose)
 
         feasible_algorithms = self._filter_by_requirements(problem_compatible, instance, verbose)
+        if required_capabilities:
+            feasible_algorithms = [algorithm for algorithm in feasible_algorithms
+                                   if not self._capability_rejections(
+                                       algorithm, required_capabilities)]
 
         if verbose:
             print(f"\nFinal result: {len(feasible_algorithms)}/{len(algorithms)} algorithms are feasible")
 
         return feasible_algorithms
+
+    @staticmethod
+    def _capability_rejections(algorithm: AlgorithmCard,
+                               required: dict[str, Any]) -> list[str]:
+        return [f"capability {name} requires {expected!r}, has "
+                f"{algorithm.capabilities.get(name)!r}"
+                for name, expected in required.items()
+                if algorithm.capabilities.get(name) != expected]
+
+    def rejection_reasons(self, algorithm: AlgorithmCard,
+                          instance: BaseWarehouseDomain | DataCard,
+                          required_capabilities: dict[str, Any] | None = None) -> list[str]:
+        """Explain why a card cannot serve this prepared problem."""
+        valid = {instance.problem_class} | set(
+            self.subproblems.get(instance.problem_class, {}).get("variables", []))
+        reasons = []
+        if algorithm.problem_type not in valid:
+            reasons.append(f"problem type {algorithm.problem_type!r} not in {sorted(valid)}")
+        for domain_name, requirements in algorithm.requirements.items():
+            domain = getattr(instance, domain_name, None)
+            if domain is None:
+                reasons.append(f"missing domain {domain_name}")
+                continue
+            if isinstance(domain, dict):
+                domain_type = domain["type"]
+                features = {name: value for name, value in domain["features"].items()
+                            if value is not None}
+            else:
+                domain_type = domain.get_type_value()
+                features = domain.get_features()
+            required_types = requirements.get("type", [])
+            if "any" not in required_types and domain_type not in required_types:
+                reasons.append(f"{domain_name}.type {domain_type!r} not in {required_types}")
+            for feature in requirements.get("features") or []:
+                if feature not in features:
+                    reasons.append(f"missing {domain_name}.{feature}")
+            for feature, constraint in requirements.get("constraints", {}).items():
+                if feature not in features:
+                    reasons.append(f"missing {domain_name}.{feature}")
+                elif not self.evaluator.evaluate(features[feature], constraint):
+                    reasons.append(f"{domain_name}.{feature}={features[feature]!r} "
+                                   f"does not satisfy {constraint}")
+        reasons.extend(self._capability_rejections(
+            algorithm, required_capabilities or {}))
+        return reasons
 
     def _filter_by_problem(self, algorithms: List['AlgorithmCard'], problem_type: str,
                            verbose: bool = False) -> List['AlgorithmCard']:

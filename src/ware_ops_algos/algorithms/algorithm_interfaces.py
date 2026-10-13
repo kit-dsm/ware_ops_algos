@@ -196,6 +196,17 @@ class BatchingSolution(AlgorithmSolution):
     batches: list[BatchObject] = field(default_factory=list)
 
 
+@dataclass
+class ActiveTourBatch(BatchObject):
+    tour_id: int
+
+
+@dataclass
+class ActiveTourBatchingSolution(BatchingSolution):
+    assignments: tuple[tuple[int, int], ...] = ()
+    considered_pairs: tuple[tuple[int, int], ...] = ()
+
+
 @dataclass(frozen=True)
 class AdmissionTour:
     """One started tour as observed when admission is considered."""
@@ -239,8 +250,31 @@ class CombinedRoutingSolution(AlgorithmSolution):
 
 
 @dataclass
+class ActiveTourRoutingSolution(CombinedRoutingSolution):
+    assignments: tuple[tuple[int, int], ...] = ()
+    considered_pairs: tuple[tuple[int, int], ...] = ()
+
+
+@dataclass
 class SchedulingSolution(AlgorithmSolution):
     jobs: list[ScheduledJob] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class PositioningInput:
+    schedule: SchedulingSolution
+    resources: tuple[Resource, ...]
+    layout: LayoutData
+    current_time: float
+    input_closed: bool
+    occupied_picker_ids: frozenset[int] = frozenset()
+
+
+@dataclass
+class PositioningSolution(SchedulingSolution):
+    """A complete schedule, with the modes of its empty positioning jobs."""
+
+    modes: dict[int, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

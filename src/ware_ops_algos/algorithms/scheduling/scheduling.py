@@ -1,5 +1,6 @@
 import heapq
 from abc import abstractmethod
+from dataclasses import replace
 from typing import Callable
 
 from ware_ops_algos.algorithms import Algorithm
@@ -42,9 +43,11 @@ def build_jobs(
 def earliest_free_assignment(
     ordered_jobs: list[Job],
     resources: Resources,
+    available_from: dict[int, float] | None = None,
 ) -> list[ScheduledJob]:
     heap: list[tuple[float, int, Resource]] = [
-        (0.0, i, r) for i, r in enumerate(resources.resources)
+        ((available_from or {}).get(r.id, 0.0), i, r)
+        for i, r in enumerate(resources.resources)
     ]
     heapq.heapify(heap)
 
@@ -53,9 +56,10 @@ def earliest_free_assignment(
         avail, ridx, picker = heapq.heappop(heap)
         start = max(job.release_time, avail)
         start += picker.tour_setup_time
-        end = start + job.processing_time
+        actual_job = replace(job, processing_time=_processing_time(job.route, picker))
+        end = start + actual_job.processing_time
         scheduled.append(ScheduledJob(
-            job=job,
+            job=actual_job,
             picker_id=picker.id,
             start_time=start,
             end_time=end,
@@ -65,11 +69,13 @@ def earliest_free_assignment(
 
 
 class Scheduler(Algorithm[list[Job], SchedulingSolution]):
-    def __init__(self, resources: Resources, **kwargs):
+    def __init__(self, resources: Resources,
+                 available_from: dict[int, float] | None = None, **kwargs):
         super().__init__(**kwargs)
         if not resources.resources:
             raise ValueError("Scheduler requires at least one resource.")
         self.resources = resources
+        self.available_from = available_from or {}
 
     def _run(self, input_data: list[Job]) -> SchedulingSolution:
         scheduled = self._schedule(input_data)
@@ -83,7 +89,8 @@ class Scheduler(Algorithm[list[Job], SchedulingSolution]):
 class PriorityScheduler(Scheduler):
     def _schedule(self, jobs: list[Job]) -> list[ScheduledJob]:
         ordered = sorted(jobs, key=self._priority)
-        return earliest_free_assignment(ordered, self.resources)
+        return earliest_free_assignment(ordered, self.resources,
+                                        self.available_from)
 
     @abstractmethod
     def _priority(self, job: Job) -> float:

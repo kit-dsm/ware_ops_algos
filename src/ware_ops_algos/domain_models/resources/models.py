@@ -131,8 +131,15 @@ class Resources(BaseDomainObject):
         features["n_resources"] = len(self.resources)
 
         features["capacity"] = any(r.capacity is not None for r in self.resources)
-        features["capacities"] = True
-        features["dimensions_type"] = True
+        carts = [r.pick_cart for r in self.resources if r.pick_cart is not None]
+        uniform_cart = (carts[0] if carts and len(carts) == len(self.resources)
+                        and all(cart == carts[0] for cart in carts) else None)
+        features["capacities"] = list(uniform_cart.capacities) if uniform_cart else None
+        features["dimensions_type"] = ([d.value for d in uniform_cart.dimensions]
+                                        if uniform_cart else None)
+        features["n_boxes"] = uniform_cart.n_boxes if uniform_cart else None
+        features["box_can_mix_orders"] = (uniform_cart.box_can_mix_orders
+                                           if uniform_cart else None)
         features["speed"] = any(r.speed is not None for r in self.resources)
         features["time_per_pick"] = any(r.time_per_pick is not None for r in self.resources)
         features["current_location"] = any(r.current_location is not None for r in self.resources)
