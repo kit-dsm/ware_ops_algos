@@ -1,11 +1,12 @@
 """Original simulator's active-tour admission rule, independent of CASIM."""
 
 from ware_ops_algos.algorithms.algorithm_interfaces import (
-    AdmissionInput, AdmissionSolution, Algorithm,
+    AdmissionInput, AdmissionSolution,
 )
+from .admission import Admission
 
 
-class RemainingRouteAdmission(Algorithm[AdmissionInput, AdmissionSolution]):
+class RemainingRouteAdmission(Admission):
     """Greedily assign visible orders to tours that can still pick them."""
 
     algo_name = "RemainingRouteAdmission"

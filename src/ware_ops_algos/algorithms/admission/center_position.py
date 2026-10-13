@@ -1,10 +1,11 @@
 """Admit work to an empty cart waiting at a center node."""
 
-from ..algorithm_interfaces import AdmissionInput, AdmissionSolution, Algorithm
+from ..algorithm_interfaces import AdmissionInput, AdmissionSolution
 from ..batching.batching_utils import CapacityChecker
+from .admission import Admission
 
 
-class CenterPositionAdmission(Algorithm[AdmissionInput, AdmissionSolution]):
+class CenterPositionAdmission(Admission):
     algo_name = "CenterPositionAdmission"
 
     def __init__(self, articles):

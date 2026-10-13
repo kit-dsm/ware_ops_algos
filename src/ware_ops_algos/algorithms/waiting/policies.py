@@ -2,22 +2,21 @@
 
 from __future__ import annotations
 
-from ware_ops_algos.algorithms.algorithm_interfaces import (
-    Algorithm, WaitingInput, WaitingSolution,
-)
+from ware_ops_algos.algorithms.algorithm_interfaces import WaitingInput, WaitingSolution
 from ware_ops_algos.domain_models import ExponentialSingleLineUniformLocationOrderStream
 
 from .analytic_progress.optimal_waiting import solve_optimal_wait
+from .waiting import Waiting
 
 
-class NoWaiting(Algorithm[WaitingInput, WaitingSolution]):
+class NoWaiting(Waiting):
     algo_name = "NoWaiting"
 
     def _run(self, data: WaitingInput) -> WaitingSolution:
         return WaitingSolution(jobs=data.candidates)
 
 
-class OrderCountWaiting(Algorithm[WaitingInput, WaitingSolution]):
+class OrderCountWaiting(Waiting):
     """Release the first FCFS batch once ``min_orders`` are present (wait-k)."""
 
     algo_name = "OrderCountWaiting"
@@ -38,7 +37,7 @@ class OrderCountWaiting(Algorithm[WaitingInput, WaitingSolution]):
         return WaitingSolution(action="wait")
 
 
-class HennWaiting(Algorithm[WaitingInput, WaitingSolution]):
+class HennWaiting(Waiting):
     """Henn's release threshold, applied to the first scheduled batch."""
 
     algo_name = "HennWaiting"
@@ -61,7 +60,7 @@ class HennWaiting(Algorithm[WaitingInput, WaitingSolution]):
         return WaitingSolution(jobs=(job,))
 
 
-class AnalyticStochasticWaiting(Algorithm[WaitingInput, WaitingSolution]):
+class AnalyticStochasticWaiting(Waiting):
     """Causal single-line exponential-arrival policy; no realised future order."""
 
     algo_name = "AnalyticStochasticWaiting"
