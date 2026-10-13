@@ -1,7 +1,7 @@
 import math
 
 from ware_ops_algos.algorithms import WarehouseOrder
-from ware_ops_algos.domain_models import Order, DimensionType, Articles, PickCart
+from ware_ops_algos.domain_models import DimensionType, Articles, PickCart
 
 
 class CapacityChecker:

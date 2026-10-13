@@ -249,8 +249,6 @@ def _horizontal_phase_bounds(
 
     # Gassen nach Entry-Zeit sortieren (wie im continuous_code)
     seq = _ordered_aisles_by_entry(T_in)
-    k = g.k(data)
-
     if phase_label.startswith("phase_3"):
         eps = 1e-9
         for idx, j in enumerate(seq):

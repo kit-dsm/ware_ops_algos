@@ -1,7 +1,6 @@
 import heapq
 from abc import abstractmethod
 from dataclasses import replace
-from typing import Callable
 
 from ware_ops_algos.algorithms import Algorithm
 from ware_ops_algos.algorithms.algorithm_interfaces import (

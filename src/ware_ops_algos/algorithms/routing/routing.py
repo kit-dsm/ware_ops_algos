@@ -237,7 +237,6 @@ class HeuristicRouting(Routing, ABC):
             current_aisle_x = current_source[0]
             current_aisle_y = entry_points[current_aisle_x][1]
             end_node = (current_aisle_x, current_aisle_y)
-            node_idx = self.node_to_idx[end_node]
         self._walk_to_target(current_source, end_node, target_is_end_node=True)
 
 
@@ -602,7 +601,6 @@ class LargestGapRouting(HeuristicRouting):
 
         aisle_max = self._get_max_aisle()
         aisle_list = self._get_aisle_list()
-        aisle_min = self._get_min_aisle()
         max_postion_of_orders_to_list = max(pos.pick_node[1] for pos in self.current_order)
 
         if max_postion_of_orders_to_list <= self.max_aisle_position/2:
@@ -1567,9 +1565,6 @@ class RatliffRosenthalRouting(Routing):
 
             # Aisle transition — determine pick structure
             transition_type = aisle_mapping.get(action)
-            aisle_orders = self._get_aisle_orders(current_aisle)
-            pick_positions = sorted([pos.pick_node[1] for pos in aisle_orders])
-
             if transition_type == "one_pass":
                 T.add_edge((current_aisle, 0), (current_aisle, self.n_pick_locations + 1))
 

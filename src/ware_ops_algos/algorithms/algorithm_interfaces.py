@@ -1,15 +1,13 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from itertools import count
-from typing import Generic, TypeVar, Optional, Any, NamedTuple, Deque, Literal
+from typing import Generic, TypeVar, Optional, Any, NamedTuple, Literal
 import time
 import logging
 
 from ware_ops_algos.domain_models import (
-    LayoutData, Order, ResolvedOrderPosition, OrderPosition, PickCart,
+    LayoutData, PickCart,
     PlannerInformation, Resource,
 )
 

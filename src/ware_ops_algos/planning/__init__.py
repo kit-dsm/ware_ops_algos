@@ -1,5 +1,6 @@
 """Plan lifecycle and revision rules."""
 
+# ruff: noqa: F401
 from .lifecycle import (
     Accepts, OrderStates, PHYSICAL, ResourceStates, TOUR_ORDER,
     TOUR_TRANSITIONS, TimeAttribute, TourStates, accepts_at_least,

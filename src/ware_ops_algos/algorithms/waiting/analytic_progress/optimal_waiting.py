@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from math import exp, log
 
 from .interval_builder import IntervalData, build_interval_data
-from . import geometry as g
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

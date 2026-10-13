@@ -3,7 +3,6 @@ import hashlib
 import importlib
 import inspect
 import pkgutil
-import sys
 import textwrap
 
 

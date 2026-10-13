@@ -1,8 +1,7 @@
 from abc import abstractmethod
 from copy import deepcopy
-from typing import Type, Callable
+from typing import Type
 
-import numpy as np
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
@@ -33,12 +32,6 @@ class GreedyItemAssignment(ItemAssignment):
 
     def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
         orders = input_data
-
-        all_article_ids: set[int] = {
-            pos.article_id
-            for order in orders
-            for pos in order.order_positions
-        }
 
         warehouse_orders = []
         for order in orders:
