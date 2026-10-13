@@ -26,6 +26,7 @@ class TourView:
     end_time: float | None = None
     processing_time: float | None = None
     pick_cart: PickCart | None = None
+    active_order_ids: frozenset[int] = frozenset()
     cursor: int | None = None
     pinned_prefix: tuple[RouteNode, ...] = ()
     remaining_route: tuple[tuple[float, float], ...] = ()

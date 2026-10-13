@@ -51,25 +51,6 @@ class TourView:
     positioning_mode: str | None = None
     positioning_hold: bool = False
 
-    def as_admission_tour(self) -> AdmissionTour:
-        """Bridge the generic view to the unchanged admission algorithm input."""
-        from ware_ops_algos.algorithms.algorithm_interfaces import AdmissionTour
-
-        if self.picker_id is None or self.pick_cart is None:
-            raise ValueError("Admission needs a picker and cart")
-        return AdmissionTour(
-            tour_id=self.tour_id,
-            picker_id=self.picker_id,
-            route_version=self.route_version,
-            pick_cart=self.pick_cart,
-            active_order_ids=self.active_order_ids,
-            remaining_route=self.remaining_route,
-            occupied_bins=self.occupied_bins,
-            routing_origin=self.routing_origin,
-            picking_until=self.picking_until,
-        )
-
-
 @dataclass(frozen=True)
 class PlanView:
     orders: tuple[WarehouseOrder, ...] = ()

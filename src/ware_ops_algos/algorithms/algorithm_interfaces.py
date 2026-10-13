@@ -213,7 +213,6 @@ class AdmissionTour:
 
     tour_id: int
     picker_id: int
-    route_version: int
     pick_cart: PickCart
     active_order_ids: frozenset[int]
     remaining_route: tuple[tuple[float, float], ...]
