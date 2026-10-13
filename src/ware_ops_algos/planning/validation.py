@@ -102,12 +102,14 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
                 ViolationCode.MEMBERSHIP, "Replacement route has no batch", tour_id))
             continue
         old_ids = set(view.batch.order_numbers) if view.batch else set()
+        required_ids = (set(view.active_order_ids)
+                        if view.status is TourStates.STARTED else old_ids)
         new_ids = set(command.route.batch.order_numbers)
         added = set(command.added_order_ids)
-        if not old_ids <= new_ids or added != new_ids - old_ids:
+        if not required_ids <= new_ids or added != new_ids - old_ids:
             violations.append(_violation(
                 ViolationCode.MEMBERSHIP,
-                "Replacement must retain orders and name exactly the additions",
+                "Replacement must retain unpicked orders and name exactly the additions",
                 tour_id))
         exposed_ids = {order.order_id for order in plan.order_buffer}
         if not added <= exposed_ids:

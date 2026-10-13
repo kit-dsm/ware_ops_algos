@@ -45,3 +45,21 @@ def test_pick_list_uses_exposed_orders():
     assert check((CreatePickList(BatchObject(1, [_order(1)])),), plan) == ()
     assert check((CreatePickList(BatchObject(2, [_order(2)])),), plan)[0].code is (
         ViolationCode.STATE_INFORMATION)
+
+
+def test_started_replacement_keeps_unpicked_orders_without_rerouting_picked_orders():
+    origin = RoutingOrigin((2, 8))
+    tour = TourView(
+        1, 0, TourStates.STARTED, Accepts.INSERT,
+        batch=BatchObject(1, [_order(0), _order(1)]),
+        active_order_ids=frozenset({1}), routing_origin=origin,
+        occupied_bins=2,
+        pick_cart=PickCart(n_boxes=4, box_can_mix_orders=False),
+    )
+    plan = PlanView(12, order_buffer=(_order(3),), tours=(tour,))
+    route = Route(52, batch=BatchObject(1, [_order(1), _order(3)]),
+                  routing_origin=origin)
+    assert check((ReplaceSuffix(1, route, (3,)),), plan) == ()
+    route.batch = BatchObject(1, [_order(3)])
+    assert check((ReplaceSuffix(1, route, (3,)),), plan)[0].code is (
+        ViolationCode.MEMBERSHIP)

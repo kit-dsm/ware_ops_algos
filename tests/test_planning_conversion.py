@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 
-from ware_ops_algos.algorithms import BatchingSolution, SchedulingSolution
+from ware_ops_algos.algorithms import (
+    ActiveTourRoutingSolution, BatchingSolution, SchedulingSolution,
+)
 from ware_ops_algos.planning import (
     Accepts, PlanView, TourStates, TourView, to_commands,
 )
@@ -47,3 +49,9 @@ def test_schedule_reschedules_matched_tour():
     job = _job((1,), picker=2, start=30, end=40)
     assert to_commands(SchedulingSolution(jobs=[job]), plan) == (
         Reschedule(7, 2, 30, 40),)
+
+
+def test_admission_without_assignments_has_no_commands():
+    solution = ActiveTourRoutingSolution(
+        routes=[], assignments=(), considered_pairs=((1, 3),))
+    assert to_commands(solution, PlanView(time=12, tours=(_tour(1, (1,)),))) == ()
