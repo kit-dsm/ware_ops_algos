@@ -90,10 +90,6 @@ class AnalyticStochasticWaiting(Waiting):
 
     algo_name = "AnalyticStochasticWaiting"
 
-    def __init__(self, target_batch_size_orders: int = 4):
-        super().__init__()
-        self.target_batch_size_orders = target_batch_size_orders
-
     def _run(self, data: WaitingInput) -> WaitingSolution:
         if not data.candidates:
             return WaitingSolution(jobs=(), action="wait")
@@ -101,15 +97,17 @@ class AnalyticStochasticWaiting(Waiting):
                   (item.start_time, item.picker_id))
         if data.information is None:
             raise ValueError("Analytical waiting requires planner information")
+        cart = data.picker.pick_cart
+        if cart is None or cart.n_boxes is None:
+            raise ValueError("Analytical waiting requires a cart with n_boxes")
+        q = cart.n_boxes
         orders = job.job.route.batch.orders
         if (data.input_closed or data.deadline_reached
-                or len(orders) >= self.target_batch_size_orders):
+                or len(orders) >= q):
             return WaitingSolution(jobs=data.candidates)
-        if len(orders) < self.target_batch_size_orders - 1:
-            return WaitingSolution(jobs=data.candidates, action="wait")
-        if len(orders) != self.target_batch_size_orders - 1:
+        if len(orders) != q - 1:
             raise ValueError(
-                "Analytical waiting received more than q-1 known orders"
+                "Analytical waiting requires exactly q-1 known orders before the missing order"
             )
         if any(len(order.pick_positions) != 1 for order in orders):
             raise ValueError("Analytical waiting supports one line per order")
@@ -119,7 +117,7 @@ class AnalyticStochasticWaiting(Waiting):
         result = solve_optimal_wait(
             data,
             mean_interarrival_time=order_stream.mean_interarrival_time_s,
-            remaining_arrivals_after_miss=self.target_batch_size_orders - 1,
+            remaining_arrivals_after_miss=q - 1,
         )
         if result.wait_duration <= 1e-9:
             return WaitingSolution(jobs=data.candidates)
