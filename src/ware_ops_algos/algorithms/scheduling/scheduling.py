@@ -54,9 +54,8 @@ def earliest_free_assignment(
     for job in ordered_jobs:
         avail, ridx, picker = heapq.heappop(heap)
         start = max(job.release_time, avail)
-        start += picker.tour_setup_time
         actual_job = replace(job, processing_time=_processing_time(job.route, picker))
-        end = start + actual_job.processing_time
+        end = start + picker.tour_setup_time + actual_job.processing_time
         scheduled.append(ScheduledJob(
             job=actual_job,
             picker_id=picker.id,
