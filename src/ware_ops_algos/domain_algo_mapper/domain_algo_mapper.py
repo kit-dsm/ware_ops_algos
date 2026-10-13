@@ -103,9 +103,13 @@ class DomainAlgorithmMapper:
         Returns:
             List of algorithms that are feasible for this instance
         """
-        problem_compatible = self._filter_by_problem(algorithms, instance.problem_class, verbose)
-
-        feasible_algorithms = self._filter_by_requirements(problem_compatible, instance, verbose)
+        feasible_algorithms = []
+        for algorithm in algorithms:
+            reasons = self.rejection_reasons(algorithm, instance)
+            if verbose:
+                print(f"{algorithm.algo_name}: {', '.join(reasons) if reasons else 'feasible'}")
+            if not reasons:
+                feasible_algorithms.append(algorithm)
 
         if verbose:
             print(f"\nFinal result: {len(feasible_algorithms)}/{len(algorithms)} algorithms are feasible")
@@ -135,7 +139,9 @@ class DomainAlgorithmMapper:
             required_types = requirements.get("type", [])
             if "any" not in required_types and domain_type not in required_types:
                 reasons.append(f"{domain_name}.type {domain_type!r} not in {required_types}")
-            for feature in requirements.get("features") or []:
+            required_features = requirements.get("features", [])
+            required_features = [] if required_features in (None, [None]) else required_features
+            for feature in required_features:
                 if feature not in features:
                     reasons.append(f"missing {domain_name}.{feature}")
             for feature, constraint in requirements.get("constraints", {}).items():
@@ -145,160 +151,3 @@ class DomainAlgorithmMapper:
                     reasons.append(f"{domain_name}.{feature}={features[feature]!r} "
                                    f"does not satisfy {constraint}")
         return reasons
-
-    def _filter_by_problem(self, algorithms: List['AlgorithmCard'], problem_type: str,
-                           verbose: bool = False) -> List['AlgorithmCard']:
-        """
-        Filter algorithms by problem type compatibility.
-
-        An algorithm is compatible if it solves the main problem or any of its subproblems.
-        Example: For problem "routing", accept algorithms that solve "routing",
-                 "single_picker_routing", or "tsp".
-
-        Args:
-            algorithms: List of algorithms to filter
-            problem_type: The problem type (e.g., "routing", "batching")
-            verbose: If True, print filtering details
-
-        Returns:
-            Algorithms compatible with the problem type
-        """
-        valid_problem_types = {problem_type} | set(self.subproblems.get(problem_type, {}).get("variables", []))
-        compatible_algorithms = [algo for algo in algorithms if algo.problem_type in valid_problem_types]
-
-        if verbose:
-            print(f"Problem type filtering for '{problem_type}':")
-            print(f"  Accepted types: {valid_problem_types}")
-            print(f"  Result: {len(compatible_algorithms)}/{len(algorithms)} algorithms match")
-
-        return compatible_algorithms
-
-    def _filter_by_requirements(self, algorithms: List['AlgorithmCard'],
-                                instance: BaseWarehouseDomain | DataCard,
-                                verbose: bool = False) -> List['AlgorithmCard']:
-        """
-        Filter algorithms by domain requirements.
-
-        Checks for each algorithm:
-        1. Objective matches (e.g., minimize distance vs minimize time)
-        2. For each required domain (layout, resources, orders, storage):
-           - Domain type matches (e.g., conventional layout vs fishbone)
-           - Required features exist (e.g., start_node, n_aisles)
-           - Feature constraints are satisfied (e.g., n_blocks = 1)
-
-        Args:
-            algorithms: Algorithms to check
-            instance: The warehouse instance
-            verbose: If True, print detailed checks
-
-        Returns:
-            Algorithms that satisfy all requirements
-        """
-        feasible_algorithms = []
-
-        for algo in algorithms:
-            if self._is_feasible(algo, instance, verbose):
-                feasible_algorithms.append(algo)
-
-        if verbose:
-            print(f"\nRequirement filtering: {len(feasible_algorithms)}/{len(algorithms)} algorithms feasible")
-
-        return feasible_algorithms
-
-    def _is_feasible(self, algorithm: 'AlgorithmCard', instance: BaseWarehouseDomain | DataCard,
-                     verbose: bool = False) -> bool:
-        """
-        Check if an algorithm is feasible for the given instance.
-
-        Args:
-            algorithm: The algorithm to check
-            instance: The warehouse instance
-            verbose: If True, print check details
-
-        Returns:
-            True if algorithm can be executed on this instance
-        """
-        if verbose:
-            print(f"\n  Checking: {algorithm.algo_name}")
-
-        # Check objective compatibility
-        # if algorithm.objective != instance.objective:
-        # objectives = SUBPROBLEMS[instance.problem_class]["objectives"]
-        # if algorithm.objective not in objectives:
-        #     if verbose:
-        #         print(f"    Objective mismatch: algorithm needs '{algorithm.objective}', "
-        #               f"instance has '{objectives}'")
-        #     return False
-
-        # Check each domain requirement (layout, resources, orders, storage)
-        for domain_name, requirements in algorithm.requirements.items():
-            domain = getattr(instance, domain_name, None)
-
-            if not self._check_domain_requirements(domain_name, domain, requirements, verbose):
-                return False
-
-        if verbose:
-            print("    Algorithm is feasible")
-
-        return True
-
-    def _check_domain_requirements(self, domain_name: str, domain: Any,
-                                   requirements: Dict, verbose: bool = False) -> bool:
-        """
-        Check if a domain object satisfies the algorithm's requirements.
-
-        Args:
-            domain_name: Name of the domain (e.g., "layout", "resources")
-            domain: The actual domain object from the instance
-            requirements: Algorithm's requirements for this domain
-            verbose: If True, print check details
-
-        Returns:
-            True if all requirements are satisfied
-        """
-        if domain is None:
-            return False
-        # Data cards and domain objects expose the same type/features contract.
-        if isinstance(domain, dict):
-            domain_type = domain["type"]
-            domain_features = domain["features"]
-            domain_features = {name: value for name, value in domain_features.items()
-                               if value is not None}
-        else:
-            domain_type = domain.get_type_value()
-            domain_features = domain.get_features()
-
-        # Get algorithm requirements
-        required_types = requirements.get("type", [])
-        required_features = requirements.get("features", [])
-        required_features = [] if required_features in (None, [None]) else required_features
-        feature_constraints = requirements.get("constraints", {})
-
-        # Check 1: Domain type must match
-        if "any" not in required_types and domain_type not in required_types:
-            if verbose:
-                print(f"    {domain_name}: type '{domain_type}' not in required types {required_types}")
-            return False
-
-        # Check 2: All required features must exist
-        missing_features = [feat for feat in required_features if feat not in domain_features]
-        if missing_features:
-            if verbose:
-                print(f"    {domain_name}: missing required features {missing_features}")
-            return False
-
-        # Check 3: Feature constraints must be satisfied
-        for feature_name, constraint in feature_constraints.items():
-            if feature_name not in domain_features:
-                if verbose:
-                    print(f"    {domain_name}: feature '{feature_name}' needed for constraint not found")
-                return False
-
-            actual_value = domain_features[feature_name]
-            if not self.evaluator.evaluate(actual_value, constraint):
-                if verbose:
-                    print(f"    {domain_name}: constraint violated - {feature_name}={actual_value} "
-                          f"does not satisfy {constraint}")
-                return False
-
-        return True
