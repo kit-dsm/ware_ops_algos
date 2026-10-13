@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from ware_ops_algos.algorithms.algorithm_interfaces import (
     BatchObject, BatchingSolution, WarehouseOrder,
 )
 from ware_ops_algos.algorithms.batching.batching import Batching, FifoBatching
+from ware_ops_algos.algorithms.routing.routing import Routing
 
 
 class IncumbentStartBatching(Batching):
@@ -16,10 +15,14 @@ class IncumbentStartBatching(Batching):
     algo_name = "IncumbentStartBatching"
 
     def __init__(self, *args, incumbent_batches: tuple[BatchObject, ...],
-                 route_cost: Callable[[BatchObject], float], **kwargs):
+                 router: Routing, **kwargs):
         super().__init__(*args, **kwargs)
         self.incumbent_batches = incumbent_batches
-        self.route_cost = route_cost
+        self.router = router
+
+    def _route_cost(self, batch: BatchObject) -> float:
+        self.router.reset_parameters()
+        return self.router.solve(batch.pick_positions).route.distance
 
     def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
         if not self.incumbent_batches:
@@ -41,7 +44,7 @@ class IncumbentStartBatching(Batching):
                 if not self.capacity_checker.can_add_order(batch.orders, order):
                     continue
                 candidate = BatchObject(batch.batch_id, [*batch.orders, order])
-                choices.append((self.route_cost(candidate) - self.route_cost(batch),
+                choices.append((self._route_cost(candidate) - self._route_cost(batch),
                                 batch.batch_id, batch))
             if choices:
                 _, _, chosen = min(choices, key=lambda item: (item[0], item[1]))

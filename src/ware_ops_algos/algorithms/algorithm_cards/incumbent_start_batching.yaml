@@ -9,6 +9,9 @@ requirements:
   resources:
     type: [any]
     features: [capacities, dimensions_type]
+    constraints:
+      capacities: {not_equals: null}
+      dimensions_type: {not_equals: null}
   orders:
     type: [any]
     features: [order_date]
@@ -16,4 +19,5 @@ objective: Distance
 implementation:
   class_name: IncumbentStartBatching
   component_name: IncumbentBatchingNode
+  routing_class: SShapeRouting
   type: heuristic
