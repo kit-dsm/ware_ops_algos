@@ -1,0 +1,9 @@
+algo_name: OrderCountWaiting
+problem_type: waiting
+description: Release after a configured minimum number of buffered orders.
+requirements: {}
+objective: mean_order_completion_time
+implementation:
+  class_name: OrderCountWaiting
+  component_name: OrderCountWaitingNode
+  type: policy
