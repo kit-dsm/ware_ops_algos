@@ -8,4 +8,4 @@ from .item_assignment import *
 from .scheduling import *
 from .routing_and_batching import *
 from .waiting import Waiting, WaitingInput, NoWaiting, OrderCountWaiting, HennWaiting, AnalyticStochasticWaiting
-from .positioning import AislePatrolPositioning, CenterRelocationPositioning
+from .positioning import Positioning, AislePatrolPositioning, CenterRelocationPositioning
