@@ -1,8 +1,5 @@
 algo_name: ReroutableWalkOrWaitSShape
 problem_type: active_tour_routing
-capabilities:
-  active_origin: edge_aware
-  route_revision: remaining
 description: >
   Re-solve the unfinished paper-style S-shape tour from the picker's projected
   position, completing the current edge before choosing an aisle exit.
