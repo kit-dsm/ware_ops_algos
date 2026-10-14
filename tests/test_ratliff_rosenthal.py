@@ -1,10 +1,15 @@
 import pytest
+import networkx as nx
+import pandas as pd
+from scipy.sparse.csgraph import shortest_path
 
 from ware_ops_algos.algorithms import RatliffRosenthalRouting, GreedyItemAssignment
+from ware_ops_algos.algorithms.algorithm_interfaces import NodeType
 from ware_ops_algos.domain_models import (
     Resource, Location, StorageLocations, StorageType,
     OrderPosition, Order, OrdersDomain, OrderType,
 )
+from ware_ops_algos.domain_models.layout.graph_generators import ShelfStorageGraphGenerator
 
 # Synthetic instance from the original paper
 LOCATIONS = [
@@ -60,3 +65,40 @@ def test_rr_returns_solution(pick_list):
     sol = router.solve(pick_list)
     assert sol is not None
     assert sol.route.distance > 0
+
+
+def test_rr_reconstructed_tour_has_the_same_distance_and_all_picks(pick_list):
+    """The DP objective must be executable as a route through every picked node."""
+    graph = ShelfStorageGraphGenerator(
+        n_aisles=6, n_pick_locations=15, dist_aisle=2, dist_pick_locations=1,
+        dist_aisle_location=1, dist_start=1, dist_end=1,
+        start_location=(0, -1), end_location=(0, -2),
+        start_connection_point=(1, 0), end_connection_point=(1, 0),
+    )
+    graph.populate_graph()
+    nodes = list(graph.G.nodes)
+    distances, predecessors = shortest_path(
+        nx.to_scipy_sparse_array(graph.G, nodelist=nodes, weight="weight"),
+        directed=False, return_predecessors=True,
+    )
+    matrix = pd.DataFrame(distances, index=nodes, columns=nodes)
+    router = RatliffRosenthalRouting(
+        **{**RR_KWARGS, "start_node": (0, -1), "end_node": (0, -2),
+           "closest_node_to_start": (1, 0), "distance_matrix": matrix,
+           "predecessor_matrix": predecessors,
+           "node_to_idx": {node: index for index, node in enumerate(nodes)},
+           "idx_to_node": dict(enumerate(nodes)),
+           "gen_tour": True, "gen_item_sequence": True},
+    )
+    route = router.solve(pick_list).route
+    positions = [node.position for node in route.annotated_route]
+    picks = [node.position for node in route.annotated_route
+             if node.node_type == NodeType.PICK]
+
+    assert positions[0] == (0, -1)
+    assert positions[-1] == (0, -2)
+    assert sorted(picks) == sorted(position.pick_node for position in pick_list)
+    assert len(route.item_sequence) == len(pick_list)
+    assert all(a == b or graph.G.has_edge(a, b) for a, b in zip(positions, positions[1:]))
+    assert sum(matrix.at[a, b] for a, b in zip(positions, positions[1:])) == pytest.approx(
+        route.distance)

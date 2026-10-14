@@ -1379,12 +1379,36 @@ class RatliffRosenthalRouting(Routing):
         self.path = nx.shortest_path(self.state_graph, start_node, end_node, weight='weight', method="bellman-ford")
         self.distance = nx.path_weight(self.state_graph, self.path, weight='weight')
         self.T = self._construct_picker_tour()
+        if self.gen_tour:
+            self._reconstruct_route()
 
         route = Route(route=self.route,
                       item_sequence=self.item_sequence,
                       distance=self.distance,
+                      annotated_route=self.annotated_route if self.gen_tour else None,
                       )
         return RoutingSolution(algo_name=self.algo_name, route=route)
+
+    def _reconstruct_route(self) -> None:
+        """Expand an Euler tour of the DP edges into executable network nodes."""
+        self._get_route_for_tour(self.start_node, self.depot)
+        for source, target in nx.eulerian_circuit(self.T, source=self.depot):
+            self._get_route_for_tour(source, target)
+        self._get_route_for_tour(self.depot, self.end_node, with_last_element=True)
+
+        remaining = defaultdict(list)
+        for position in self.pick_list:
+            remaining[position.pick_node].append(position)
+        annotated = []
+        for node in self.annotated_route:
+            annotated.append(node)
+            for _ in remaining.pop(node.position, []):
+                annotated.append(RouteNode(node.position, NodeType.PICK))
+                if self.gen_item_sequence:
+                    self.item_sequence.append(node.position)
+        if remaining:
+            raise ValueError(f"RR route did not visit pick nodes: {list(remaining)}")
+        self.annotated_route = annotated
 
     def build_state_space(self):
         start_node = (1, ("0", "0", "0C"), "-")
