@@ -8,3 +8,4 @@ from .planner_information import *
 from .base_domain import *
 from .base_domain_object import *
 from .datacards import *
+from .dock import Dock
