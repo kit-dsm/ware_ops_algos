@@ -46,3 +46,20 @@ configurations:
   - name: ClosestDepotMaxSharedArticlesSeedBatching
     base: SeedBatching
     configuration: {seed_criterion: CLOSEST_TO_DEPOT, similarity_measure: SHARED_ARTICLES}
+
+  # ---- CASIM configured components ----
+  - name: IncumbentStartBatchingSShape
+    base: IncumbentStartBatching
+    configuration: {routing_class: SShape}
+  - name: OrderCountWaiting1
+    base: OrderCountWaiting
+    configuration: {min_orders: "1"}
+  - name: OrderCountWaiting2
+    base: OrderCountWaiting
+    configuration: {min_orders: "2"}
+  - name: OrderCountWaiting3
+    base: OrderCountWaiting
+    configuration: {min_orders: "3"}
+  - name: OrderCountWaiting4
+    base: OrderCountWaiting
+    configuration: {min_orders: "4"}

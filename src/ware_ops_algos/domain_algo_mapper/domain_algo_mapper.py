@@ -63,12 +63,13 @@ class ConstraintEvaluator:
 
 class DomainAlgorithmMapper:
     """
-    Maps which algorithm are feasible for a given warehouse problem instance.
+    Map algorithm cards to a warehouse instance or flattened data card.
 
-    The mapper checks whether algorithms can be executed on an instance by validating:
-    1. Problem type compatibility (e.g., routing, batching, storage)
-    2. Domain requirements (layout, resources, orders, storage features)
-    3. Feature constraints (e.g., n_blocks = 1, n_aisles > 2)
+    A card applies when its problem type occurs in the problem's taxonomy and
+    each required domain has a compatible type, all named features, and values
+    satisfying its constraints. ``rejection_reasons`` exposes every failed
+    check; ``filter`` returns cards with no reasons. In a flattened data card,
+    a feature whose value is ``None`` counts as absent.
 
     Example:
         subproblems = {
@@ -118,7 +119,18 @@ class DomainAlgorithmMapper:
 
     def rejection_reasons(self, algorithm: AlgorithmCard,
                           instance: BaseWarehouseDomain | DataCard) -> list[str]:
-        """Explain why a card cannot serve this prepared problem."""
+        """Explain every failed applicability check for one algorithm card.
+
+        Args:
+            algorithm: Resolved card whose problem type and requirements are checked.
+            instance: Warehouse instance or flattened data card. A dictionary
+                feature set to ``None`` is absent; missing object domains are
+                reported as reasons.
+
+        Returns:
+            Reasons for problem type, domain type, missing feature, or failed
+            constraint checks; an empty list means the card applies.
+        """
         valid = {instance.problem_class} | set(
             self.subproblems.get(instance.problem_class, {}).get("variables", []))
         reasons = []

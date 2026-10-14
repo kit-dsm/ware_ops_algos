@@ -1,5 +1,6 @@
 from typing import Optional
 from collections import defaultdict
+from dataclasses import replace
 
 import networkx as nx
 import numpy as np
@@ -304,56 +305,54 @@ class SShapeRouting(HeuristicRouting):
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
 
-class WalkOrWaitSShapeRouting(SShapeRouting):
-    """S-shape traversal used by the 2_Stochastic_Waiting simulator."""
+class ReroutableRouting(Routing):
+    """Route an active tour from the cheaper exit of its current aisle."""
 
-    algo_name = "WalkOrWaitSShapeRouting"
+    route_class: type[Routing]
 
-    def _walk_to_target_and_pick(self, source: tuple, target_y: list, walking_upwards: bool = None) -> tuple:
-        for next_position in target_y:
-            source = self._walk_to_target(source, (source[0], next_position), target_is_pick_node=True)
-
-        if walking_upwards is not None:
-            last_position = self.max_aisle_position if walking_upwards else 1
-            source = self._walk_to_target(source, (source[0], last_position))
-        return source
-
-    def _process_aisle(self, current_source: tuple, aisle_to_visit: int, walking_up: bool = None) -> tuple:
-        if current_source[0] == aisle_to_visit:
-            return super()._process_aisle(current_source, aisle_to_visit, walking_up)
-        return self._walk_to_target(current_source, (aisle_to_visit, current_source[1]))
-
-
-class _ActiveSShapeRerouting:
-    """Re-solve an active S-shape tour from either exit of the current aisle."""
+    def __init__(self, *args, fixed_depot: bool = True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fixed_depot = fixed_depot
 
     def _run(self, pick_list: list[PickPosition]) -> RoutingSolution:
         if self.routing_origin is None:
-            return super()._run(pick_list)
+            exits = (self.closest_node_to_start,)
+        else:
+            position = (self.routing_origin.edge_destination
+                        or self.routing_origin.position)
+            exits = tuple(dict.fromkeys((
+                (position[0], self.min_aisle_position),
+                (position[0], self.max_aisle_position),
+            )))
+        solutions = []
+        for aisle_exit in exits:
+            router = self.route_class(
+                start_node=self.start_node,
+                end_node=self.end_node,
+                closest_node_to_start=aisle_exit,
+                min_aisle_position=self.min_aisle_position,
+                max_aisle_position=self.max_aisle_position,
+                distance_matrix=self.distance_matrix,
+                predecessor_matrix=self.predecessor_matrix,
+                picker=self.picker,
+                gen_tour=self.gen_tour,
+                gen_item_sequence=self.gen_item_sequence,
+                node_list=self.node_list,
+                node_to_idx=self.node_to_idx,
+                idx_to_node=self.idx_to_node,
+                routing_origin=self.routing_origin,
+                fixed_depot=self.fixed_depot,
+            )
+            solutions.append(router.solve(pick_list))
+        best = min(solutions, key=lambda solution: solution.route.distance)
+        return replace(best, algo_name=self.algo_name)
 
-        position = self.routing_origin.edge_destination or self.routing_origin.position
-        exits = ((position[0], self.min_aisle_position),
-                 (position[0], self.max_aisle_position))
-        best = None
-        for aisle_exit in dict.fromkeys(exits):
-            self.reset_parameters()
-            self.closest_node_to_start = aisle_exit
-            solution = super()._run(pick_list)
-            if best is None or solution.route.distance < best.route.distance:
-                best = solution
-        return best
 
-
-class ReroutableSShapeRouting(_ActiveSShapeRerouting, SShapeRouting):
+class ReroutableSShapeRouting(ReroutableRouting):
     """S-shape variant that re-solves the residual tour after admission."""
 
     algo_name = "ReroutableSShapeRouting"
-
-
-class ReroutableWalkOrWaitSShapeRouting(_ActiveSShapeRerouting, WalkOrWaitSShapeRouting):
-    """Paper-style S-shape traversal with explicit active-tour rerouting."""
-
-    algo_name = "ReroutableWalkOrWaitSShapeRouting"
+    route_class = SShapeRouting
 
 
 class ReturnRouting(HeuristicRouting):
@@ -1329,7 +1328,7 @@ class RatliffRosenthalRouting(Routing):
     Dynamic Programming based approach to solve the picker routing problem in a single-block, parallel-aisle warehouse.
 
     Based on:
-        Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+        Katrin HeÃŸler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
         INFORMS Journal on Computing 36(6):1417-1435.
         https://doi.org/10.1287/ijoc.2023.0075
 
@@ -1563,7 +1562,7 @@ class RatliffRosenthalRouting(Routing):
                     T.add_edge((current_aisle, 0), (current_aisle + 1, 0))
                 continue  # done with this transition
 
-            # Aisle transition — determine pick structure
+            # Aisle transition â€” determine pick structure
             transition_type = aisle_mapping.get(action)
             if transition_type == "one_pass":
                 T.add_edge((current_aisle, 0), (current_aisle, self.n_pick_locations + 1))
@@ -1629,13 +1628,13 @@ class RatliffRosenthalRouting(Routing):
                 picked_items.extend(sorted_orders)
 
             elif transition_type == "top" and isinstance(action_node, int):
-                # Top-down: high y → low y
+                # Top-down: high y â†’ low y
                 picked_items.extend(sorted(
                     [o for o in aisle_orders if o.pick_node[1] >= action_node],
                     key=lambda o: o.pick_node[1], reverse=True))
 
             elif transition_type == "bottom" and isinstance(action_node, int):
-                # Bottom-up: low y → high y
+                # Bottom-up: low y â†’ high y
                 if aisle == 3:
                     print()
                 picked_items.extend(sorted(
@@ -1691,7 +1690,7 @@ class RatliffRosenthalScatteredRouting(RatliffRosenthalRouting):
     parallel-aisle warehouse with scattered storage.
 
     Based on:
-        Katrin Heßler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
+        Katrin HeÃŸler, Stefan Irnich (2024) Exact Solution of the Single-Picker Routing Problem with Scattered Storage.
         INFORMS Journal on Computing 36(6):1417-1435.
         https://doi.org/10.1287/ijoc.2023.0075
     """

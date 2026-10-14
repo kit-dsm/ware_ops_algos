@@ -8,9 +8,15 @@ from ware_ops_algos.domain_models.resources.models import DimensionType, Resourc
 
 def _data_card(resources: Resources) -> DataCard:
     empty = {"type": "any", "features": {}}
+    layout = {"type": "conventional", "features": {
+        feature: True for feature in (
+            "start_node", "end_node", "closest_node_to_start",
+            "min_aisle_position", "max_aisle_position",
+            "distance_matrix", "predecessor_matrix",
+        )}}
     return DataCard(
         name="incumbent", problem_class="OBRP", objective="Distance",
-        layout=empty, articles=empty,
+        layout=layout, articles=empty,
         orders={"type": "any", "features": {"order_date": True}},
         resources={"type": "human", "features": resources.get_features()},
         storage=empty, warehouse_info=empty,
@@ -20,7 +26,7 @@ def _data_card(resources: Resources) -> DataCard:
 
 def test_incumbent_card_rejects_heterogeneous_carts():
     card = next(card for card in load_packaged_algo_cards()
-                if card.algo_name == "IncumbentStartBatching")
+                if card.algo_name == "IncumbentStartBatchingSShape")
     mapper = DomainAlgorithmMapper({"OBRP": {"variables": ["batching"]}})
     cart = PickCart(capacities=[1], dimensions=[DimensionType.ORDERS], n_boxes=1)
     same = Resources(ResourceType.HUMAN, [
@@ -33,3 +39,4 @@ def test_incumbent_card_rejects_heterogeneous_carts():
     ])
     assert mapper.filter([card], _data_card(same)) == [card]
     assert mapper.filter([card], _data_card(different)) == []
+    assert "distance_matrix" in card.requirements["layout"]["features"]

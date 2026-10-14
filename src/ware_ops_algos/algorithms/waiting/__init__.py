@@ -1,6 +1,4 @@
-"""Waiting decisions share one input and output."""
+"""Warehouse waiting algorithms."""
 
-# ruff: noqa: F401
 from ..algorithm_interfaces import WaitingInput
-from .waiting import Waiting
-from .policies import NoWaiting, OrderCountWaiting, HennWaiting, AnalyticStochasticWaiting
+from .waiting import Waiting, NoWaiting, OrderCountWaiting, HennWaiting, AnalyticStochasticWaiting

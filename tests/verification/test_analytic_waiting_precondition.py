@@ -8,7 +8,7 @@ from ware_ops_algos.algorithms import (
     AnalyticStochasticWaiting, BatchObject, Job, PickPosition, Route,
     ScheduledJob, WaitingInput, WarehouseOrder,
 )
-from ware_ops_algos.algorithms.waiting import policies
+from ware_ops_algos.algorithms.waiting import waiting
 from ware_ops_algos.domain_models import DimensionType, PickCart, Resource
 
 
@@ -39,7 +39,7 @@ def test_q_comes_from_picker_cart(monkeypatch):
         seen.append(remaining_arrivals_after_miss)
         return SimpleNamespace(wait_duration=0.0)
 
-    monkeypatch.setattr(policies, "solve_optimal_wait", optimum)
+    monkeypatch.setattr(waiting, "solve_optimal_wait", optimum)
     result = AnalyticStochasticWaiting().solve(_input(3, 2))
     assert result.action == "release"
     assert seen == [2]

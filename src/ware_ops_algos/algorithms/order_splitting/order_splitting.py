@@ -3,18 +3,11 @@
 import math
 from abc import ABC, abstractmethod
 from copy import copy
-from dataclasses import dataclass, field
 
-from ..algorithm_interfaces import Algorithm
-from ware_ops_algos.algorithms.algorithm_interfaces import AlgorithmSolution
+from ..algorithm_interfaces import Algorithm, OrderSplittingSolution
 from ware_ops_algos.domain_models import (
     Articles, Order, OrderPosition, Pallet, PalletSpec,
 )
-
-
-@dataclass
-class OrderSplittingSolution(AlgorithmSolution):
-    orders: list[Order] = field(default_factory=list)
 
 
 class OrderSplitting(Algorithm[list[Order], OrderSplittingSolution], ABC):

@@ -6,6 +6,9 @@ description: >
   final aisle and constructs cross-aisle travel through the path matrix.
 
 requirements:
+  decision_features:
+    type: [decision]
+    features: [routing_origin]
   layout:
     type:
       - conventional

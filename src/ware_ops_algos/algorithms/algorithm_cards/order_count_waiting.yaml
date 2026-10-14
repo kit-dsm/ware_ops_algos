@@ -3,7 +3,13 @@ problem_type: waiting
 description: Release after a configured minimum number of buffered orders.
 requirements: {}
 objective: mean_order_completion_time
+configuration:
+  min_orders:
+    values:
+      "1": {}
+      "2": {}
+      "3": {}
+      "4": {}
 implementation:
   class_name: OrderCountWaiting
-  component_name: OrderCountWaitingNode
   type: policy

@@ -1,7 +1,10 @@
 algo_name: FIFOScheduler
 problem_type: scheduling
 description: Assign FCFS batches in creation order to the next free picker.
-requirements: {}
+requirements:
+  decision_features:
+    type: [decision]
+    features: [routing_origin]
 objective: mean_order_completion_time
 implementation:
   class_name: FIFOScheduling

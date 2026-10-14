@@ -4,6 +4,7 @@ description: Preserve selected draft batches and insert new orders at minimum in
 requirements:
   decision_features:
     type: [decision]
+    features: [incumbent]
     constraints:
       incumbent: {equals: true}
   resources:
@@ -16,8 +17,9 @@ requirements:
     type: [any]
     features: [order_date]
 objective: Distance
+configuration:
+  routing_class:
+    problem_type: routing
 implementation:
   class_name: IncumbentStartBatching
-  component_name: IncumbentBatchingNode
-  routing_class: SShapeRouting
   type: heuristic

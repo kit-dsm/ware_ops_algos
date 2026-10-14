@@ -7,7 +7,7 @@ import time
 import logging
 
 from ware_ops_algos.domain_models import (
-    LayoutData, PickCart,
+    LayoutData, Order, PickCart,
     PlannerInformation, Resource,
 )
 
@@ -20,6 +20,11 @@ class AlgorithmSolution:
     execution_time: float = 0.0
     objective_trajectory: list[tuple[float, float]] = field(default_factory=list)
     provenance: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class OrderSplittingSolution(AlgorithmSolution):
+    orders: list[Order] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
