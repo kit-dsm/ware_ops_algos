@@ -1,11 +1,20 @@
 algo_name: SAVScheduler
 problem_type: scheduling
-description: Select Henn's batch with the greatest single-order service saving.
+description: Henn's SAV batch selection; needs one picker and a routing class to compute single-order service times.
 requirements:
   decision_features:
     type: [decision]
     features: [routing_origin]
-objective: makespan
+  resources:
+    type: [any]
+    features: [speed, time_per_pick]
+  orders:
+    type: [any]
+    features: [order_date]
+objective: Distance
+configuration:
+  routing_class:
+    problem_type: routing
 implementation:
   class_name: SAVScheduling
   component_name: SAVScheduler

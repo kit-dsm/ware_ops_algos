@@ -51,6 +51,12 @@ configurations:
   - name: IncumbentStartBatchingSShape
     base: IncumbentStartBatching
     configuration: {routing_class: SShape}
+  - name: SAVSchedulerSShape
+    base: SAVScheduler
+    configuration: {routing_class: SShape}
+  - name: SAVSchedulerLargestGap
+    base: SAVScheduler
+    configuration: {routing_class: LargestGap}
   - name: OrderCountWaiting1
     base: OrderCountWaiting
     configuration: {min_orders: "1"}
