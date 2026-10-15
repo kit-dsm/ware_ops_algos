@@ -125,6 +125,42 @@ class FIFOScheduling(PriorityScheduler):
         return job.job_id
 
 
+class SAVScheduling(Scheduler):
+    """Henn's batch selection by sum of single-order services saved."""
+
+    algo_name = "SAVScheduler"
+
+    def __init__(self, resources: Resources, router,
+                 available_from: dict[int, float] | None = None):
+        super().__init__(resources, available_from=available_from)
+        if len(resources.resources) != 1:
+            raise ValueError("SAV selection is defined here for one picker")
+        self.router = router
+
+    def _schedule(self, jobs: list[Job]) -> list[ScheduledJob]:
+        picker = self.resources.resources[0]
+        services = {}
+        for job in jobs:
+            for order in job.route.batch.orders:
+                if order.order_id in services:
+                    continue
+                self.router.reset_parameters()
+                route = self.router.solve(order.pick_positions).route
+                services[order.order_id] = (
+                    picker.tour_setup_time + route.distance / picker.speed
+                    + sum(pick.in_store for pick in order.pick_positions)
+                    * picker.time_per_pick)
+
+        def priority(job: Job):
+            saved = (sum(services[order.order_id]
+                         for order in job.route.batch.orders)
+                     - job.processing_time - picker.tour_setup_time)
+            return (-saved, job.job_id)
+
+        return earliest_free_assignment(sorted(jobs, key=priority),
+                                        self.resources, self.available_from)
+
+
 class MSScheduling(PriorityScheduler):
     """Minimum Slack: due_date - processing_time. Urgency weighted by workload."""
     algo_name = "MSScheduler"

@@ -1,0 +1,12 @@
+algo_name: SAVScheduler
+problem_type: scheduling
+description: Select Henn's batch with the greatest single-order service saving.
+requirements:
+  decision_features:
+    type: [decision]
+    features: [routing_origin]
+objective: makespan
+implementation:
+  class_name: SAVScheduling
+  component_name: SAVScheduler
+  type: heuristic
