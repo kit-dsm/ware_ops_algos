@@ -1,4 +1,8 @@
-"""Forecasts available to algorithms, separate from realized simulation events."""
+"""Information available to algorithms, separate from realized simulation events.
+
+Forecasts of exogenous processes, and the decisions a WMS recorded, which a
+replay hands to the planner instead of computing them.
+"""
 
 from dataclasses import dataclass, fields
 from enum import Enum
@@ -25,6 +29,56 @@ class ExponentialSingleLineUniformLocationOrderStream:
             raise ValueError("mean_interarrival_time_s must be a finite positive number")
 
 
+@dataclass(frozen=True)
+class RecordedLine:
+    """One recorded order line: its order, article and pick node."""
+
+    order_id: int
+    article_id: int
+    pick_node: tuple[float, float]
+
+
+@dataclass(frozen=True)
+class RecordedTour:
+    """The lines one picker picked in one tour, in the recorded sequence."""
+
+    tour_id: int
+    picker_id: int
+    lines: tuple[RecordedLine, ...]
+
+    @property
+    def order_ids(self) -> tuple[int, ...]:
+        """The tour's orders in the order of their first recorded line."""
+        return tuple(dict.fromkeys(line.order_id for line in self.lines))
+
+
+@dataclass(frozen=True)
+class RecordedPickingPlan:
+    """The tours a WMS recorded, per picker in the order picked, with their lines.
+
+    Feature ``tours`` is the number of tours, so that a card can require a
+    recorded plan without its content.
+    """
+
+    representation: ClassVar[str] = "recorded_picking_plan"
+    tours: tuple[RecordedTour, ...]
+
+    def __post_init__(self) -> None:
+        if len({tour.tour_id for tour in self.tours}) != len(self.tours):
+            raise ValueError("recorded tour ids must be unique")
+        if any(not tour.lines for tour in self.tours):
+            raise ValueError("a recorded tour needs at least one line")
+        orders = [order for tour in self.tours for order in tour.order_ids]
+        if len(set(orders)) != len(orders):
+            raise ValueError("an order may belong to one recorded tour only")
+
+    def tour(self, tour_id: int) -> RecordedTour:
+        return next(tour for tour in self.tours if tour.tour_id == tour_id)
+
+    def tour_of_order(self, order_id: int) -> RecordedTour:
+        return next(tour for tour in self.tours if order_id in tour.order_ids)
+
+
 @dataclass
 class PlannerInformation(BaseDomainObject):
     """Named forecasts known to the decision maker at the current decision."""
@@ -44,6 +98,8 @@ class PlannerInformation(BaseDomainObject):
             features[f"{name}.type"] = description.representation
             for field in fields(description):
                 value = getattr(description, field.name)
+                if isinstance(value, tuple):
+                    value = len(value)
                 if value is not None:
                     features[f"{name}.{field.name}"] = value
         return features

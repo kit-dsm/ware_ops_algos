@@ -1,0 +1,37 @@
+algo_name: GivenSequence
+problem_type: routing
+description: >
+  Visits the pick positions in a given sequence over shortest paths, from the
+  start node to each position in turn and back to the end node. Applicable
+  only where the sequence is given, here by a recorded picking plan.
+
+requirements:
+  layout:
+    type:
+      - any
+    features:
+      - start_node
+      - end_node
+      - distance_matrix
+      - predecessor_matrix
+  information:
+    type: [process_information]
+    features: [recorded_plan.type]
+    constraints:
+      recorded_plan.type: {equals: recorded_picking_plan}
+  resources:
+    type:
+      - human
+  orders:
+    type:
+      - any
+  storage:
+    type:
+      - any
+
+objective: Distance
+
+implementation:
+  class_name: GivenSequenceRouting
+  component_name: GivenSequence
+  type: heuristic

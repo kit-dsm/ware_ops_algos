@@ -907,6 +907,54 @@ class UShapeRouting(HeuristicRouting):
         )
 
 
+class GivenSequenceRouting(Routing):
+    """Visit the pick positions in a given sequence, by shortest paths.
+
+    ``sequence`` lists (order number, article id, pick node) in the order the
+    positions are to be picked, for example a sequence a WMS recorded. The
+    route goes from the start node over the shortest path to each position in
+    turn, picks it, and returns over the shortest path to the end node. Each
+    position is picked at its own visit: two positions at one node with
+    others between them are two visits.
+    """
+
+    algo_name = "GivenSequenceRouting"
+
+    def __init__(self, *args, sequence: list[tuple[int, int, tuple[float, float]]], **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sequence = list(sequence)
+
+    def _ordered(self, pick_list: list[PickPosition]) -> list[PickPosition]:
+        pending: dict[tuple, list[PickPosition]] = defaultdict(list)
+        for position in pick_list:
+            pending[(position.order_number, position.article_id, position.pick_node)].append(position)
+        ordered = []
+        for key in self.sequence:
+            if not pending.get(key):
+                raise ValueError(f"sequence names {key}, which is not among the pick positions")
+            ordered.append(pending[key].pop(0))
+        leftover = [position for positions in pending.values() for position in positions]
+        if leftover:
+            raise ValueError(f"pick positions missing from the sequence: {leftover}")
+        return ordered
+
+    def _run(self, input_data: list[PickPosition]) -> RoutingSolution:
+        self.reset_parameters()
+        current = self.start_node
+        for position in self._ordered(list(input_data)):
+            target = position.pick_node
+            self._get_route_for_tour(current, target)
+            self.annotated_route.append(RouteNode(target, NodeType.PICK))
+            self.item_sequence.append(target)
+            self.distance += self._get_distance(current, target)
+            current = target
+        self._get_route_for_tour(current, self.end_node, with_last_element=True)
+        self.distance += self._get_distance(current, self.end_node)
+        route = Route(route=self.route, item_sequence=self.item_sequence,
+                      distance=self.distance, annotated_route=self.annotated_route)
+        return RoutingSolution(algo_name=self.algo_name, route=route)
+
+
 class PickListRouting(HeuristicRouting):
     algo_name = "PickListRouting"
 
