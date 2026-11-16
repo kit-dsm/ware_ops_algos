@@ -121,3 +121,21 @@ def test_recorded_scheduling_chains_each_pickers_tours_in_recorded_order():
     # picker 0: tour 3 from 10 -> 10 + 1 + 6 + 4 = 21
     assert [(j.job.route.batch.batch_id, j.picker_id, j.start_time, j.end_time) for j in scheduled] == [
         (7, 1, 12.0, 29.0), (3, 0, 10.0, 21.0), (5, 1, 29.0, 36.0)]
+
+
+def test_recorded_scheduling_starts_an_anchored_tour_at_its_recorded_start():
+    from dataclasses import replace
+    from ware_ops_algos.algorithms import BatchObject, Job, RecordedScheduling, Route
+    from ware_ops_algos.domain_models import Resource, Resources, ResourceType
+    pickers = Resources(ResourceType.HUMAN, [
+        Resource(id=0, speed=1.0, time_per_pick=2.0, tour_setup_time=1.0),
+        Resource(id=1, speed=1.0, time_per_pick=2.0, tour_setup_time=1.0)])
+    plan = _plan()
+    plan = RecordedPickingPlan(tours=(plan.tours[0], plan.tours[1],
+                                      replace(plan.tours[2], start_s=50.0)))
+    route = Route(route=[], item_sequence=[(1, 0)], distance=4.0)
+    route.batch = BatchObject(batch_id=5, orders=[])
+    job = Job(job_id=5, processing_time=0.0, release_time=10.0, due_date=0.0, n_picks=1, route=route)
+    scheduled = RecordedScheduling(pickers, plan=plan).solve([job]).jobs
+    # without tour 7, picker 1 is free at 10, but tour 5 is anchored at 50: 50 + 1 + 4 + 2
+    assert [(j.start_time, j.end_time) for j in scheduled] == [(50.0, 57.0)]

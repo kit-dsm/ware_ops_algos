@@ -129,8 +129,9 @@ class RecordedScheduling(Scheduler):
     """Each route goes to the picker of its recorded tour, in the recorded order.
 
     A route belongs to the recorded tour whose id is its batch id. A picker's
-    tours follow each other without waiting: each starts at the later of its
-    release and the end of the picker's previous tour (setup included).
+    tours follow each other: each starts at the latest of its release, the end
+    of the picker's previous tour (setup included) and the tour's recorded
+    start if the plan gives one (an anchored replay).
     """
 
     algo_name = "RecordedScheduling"
@@ -151,7 +152,8 @@ class RecordedScheduling(Scheduler):
                 continue
             picker = pickers[tour.picker_id]
             job = replace(job, processing_time=_processing_time(job.route, picker))
-            start = max(job.release_time, free.get(picker.id, 0.0))
+            start = max(job.release_time, free.get(picker.id, 0.0),
+                        tour.start_s if tour.start_s is not None else float("-inf"))
             end = start + (picker.tour_setup_time or 0.0) + job.processing_time
             scheduled.append(ScheduledJob(job=job, picker_id=picker.id,
                                           start_time=start, end_time=end))

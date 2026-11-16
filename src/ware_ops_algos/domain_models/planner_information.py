@@ -40,11 +40,16 @@ class RecordedLine:
 
 @dataclass(frozen=True)
 class RecordedTour:
-    """The lines one picker picked in one tour, in the recorded sequence."""
+    """The lines one picker picked in one tour, in the recorded sequence.
+
+    ``start_s``, if given, is the tour's recorded start: a plan anchored to the
+    record starts the tour no earlier.
+    """
 
     tour_id: int
     picker_id: int
     lines: tuple[RecordedLine, ...]
+    start_s: float | None = None
 
     @property
     def order_ids(self) -> tuple[int, ...]:
