@@ -60,6 +60,14 @@ class ViolationCode(str, Enum):
     PHYSICAL = "physical"
     EXECUTED_PREFIX = "executed_prefix"
     MEMBERSHIP = "membership"
+    # Codes of the plan invariants (planning.invariants).
+    SCHEDULE = "schedule"
+    ROUTE = "route"
+    CAPACITY = "capacity"
+    OVERLAP = "overlap"
+    TIME = "time"
+    STATUS = "status"
+    TERMINAL = "terminal"
 
 
 @dataclass(frozen=True)

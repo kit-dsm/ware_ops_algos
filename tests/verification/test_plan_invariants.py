@@ -4,6 +4,7 @@ from ware_ops_algos.algorithms import (
     BatchObject, PickPosition, Route, RouteNode, NodeType, WarehouseOrder,
 )
 from ware_ops_algos.domain_models import PickCart
+from ware_ops_algos.planning.commands import ViolationCode
 from ware_ops_algos.planning.invariants import check_plan, check_progress
 from ware_ops_algos.planning.lifecycle import Accepts, TourStates
 from ware_ops_algos.algorithms import RoutingOrigin
@@ -41,17 +42,17 @@ def test_plan_detects_duplicate_order_and_lost_pick():
     assert check_plan(PlanView(0, tours=(tour,))) == ()
 
     duplicate = PlanView(0, order_buffer=(_order(),), tours=(tour,))
-    assert any(v.code == "membership" for v in check_plan(duplicate))
+    assert any(v.code is ViolationCode.MEMBERSHIP for v in check_plan(duplicate))
 
     short_route = replace(tour, progress=replace(tour.progress, remaining_route=((0, 0),)))
-    assert any(v.code == "route" for v in check_plan(PlanView(0, tours=(short_route,))))
+    assert any(v.code is ViolationCode.ROUTE for v in check_plan(PlanView(0, tours=(short_route,))))
 
 
 def test_progress_detects_lost_order_and_backward_time():
     before = PlanView(10, order_buffer=(_order(),))
     after = PlanView(9)
     codes = {violation.code for violation in check_progress(before, after)}
-    assert codes == {"membership", "time"}
+    assert codes == {ViolationCode.MEMBERSHIP, ViolationCode.TIME}
 
 
 def test_progress_keeps_order_when_tour_completes():
