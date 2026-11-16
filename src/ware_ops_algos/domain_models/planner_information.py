@@ -75,9 +75,6 @@ class RecordedPickingPlan:
     def tour(self, tour_id: int) -> RecordedTour:
         return next(tour for tour in self.tours if tour.tour_id == tour_id)
 
-    def tour_of_order(self, order_id: int) -> RecordedTour:
-        return next(tour for tour in self.tours if order_id in tour.order_ids)
-
 
 @dataclass
 class PlannerInformation(BaseDomainObject):
