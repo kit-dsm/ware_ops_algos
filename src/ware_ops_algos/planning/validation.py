@@ -111,11 +111,10 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
                 ViolationCode.MEMBERSHIP,
                 "Replacement must retain unpicked orders and name exactly the additions",
                 tour_id))
-        exposed_ids = {order.order_id for order in plan.order_buffer}
-        if not added <= exposed_ids:
+        if not added <= free_ids:
             violations.append(_violation(
                 ViolationCode.STATE_INFORMATION,
-                "Added orders are not in the exposed order buffer", tour_id))
+                "Added orders are outside exposed or released work", tour_id))
         if view.status is TourStates.STARTED:
             if (command.route.routing_origin is None or
                     command.route.routing_origin != view.routing_origin):
