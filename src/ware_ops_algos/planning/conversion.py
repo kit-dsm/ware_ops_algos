@@ -97,11 +97,12 @@ def _(solution: ActiveTourRoutingSolution, plan: PlanView) -> tuple[Command, ...
     admitted: dict[int, set[int]] = {}
     for tour_id, order_id in solution.assignments:
         admitted.setdefault(tour_id, set()).add(order_id)
+    # An admitted route's batch carries the ID of the tour it replaces.
     return tuple(ReplaceSuffix(
-        route.batch.tour_id, route,
-        tuple(sorted(admitted.get(route.batch.tour_id, set())
+        route.batch.batch_id, route,
+        tuple(sorted(admitted.get(route.batch.batch_id, set())
                      | (route.batch.order_numbers
-                        - views[route.batch.tour_id].batch.order_numbers))),
+                        - views[route.batch.batch_id].batch.order_numbers))),
     ) for route in solution.routes)
 
 

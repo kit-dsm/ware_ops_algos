@@ -64,18 +64,21 @@ def check_plan(plan: PlanView) -> tuple[InvariantViolation, ...]:
             if tour.route is None or tour.route.annotated_route is None:
                 violations.append(InvariantViolation(
                     "route", "Started tour needs an annotated route", tour.tour_id))
+            elif tour.progress is None:
+                violations.append(InvariantViolation(
+                    "route", "Started tour needs its progress", tour.tour_id))
             elif tour.batch is not None:
                 picks = Counter(position.pick_node for position in tour.batch.pick_positions)
-                completed = Counter(node.position for node in tour.pinned_prefix
+                completed = Counter(node.position for node in tour.progress.pinned_prefix
                                     if node.node_type is NodeType.PICK)
                 remaining = picks - completed
-                route_picks = Counter(tour.remaining_route)
+                route_picks = Counter(tour.progress.remaining_route)
                 if not all(route_picks[node] >= count for node, count in remaining.items()):
                     violations.append(InvariantViolation(
                         "route", "Route omits an unpicked position", tour.tour_id))
-            if (tour.occupied_bins is not None and tour.pick_cart is not None
+            if (tour.progress is not None and tour.pick_cart is not None
                     and tour.pick_cart.n_boxes is not None
-                    and tour.occupied_bins > tour.pick_cart.n_boxes):
+                    and tour.progress.occupied_bins > tour.pick_cart.n_boxes):
                 violations.append(InvariantViolation(
                     "capacity", "Occupied boxes exceed cart capacity", tour.tour_id))
 
@@ -112,13 +115,16 @@ def check_progress(before: PlanView, after: PlanView) -> tuple[InvariantViolatio
         if old.status in (TourStates.DONE, TourStates.CANCELLED) and old != new:
             violations.append(InvariantViolation(
                 "terminal", "Terminal tour changed", tour_id))
-        if old.status is TourStates.STARTED and new.status in (TourStates.STARTED, TourStates.DONE):
-            if new.pinned_prefix[:len(old.pinned_prefix)] != old.pinned_prefix:
+        if (old.status is TourStates.STARTED
+                and new.status in (TourStates.STARTED, TourStates.DONE)
+                and old.progress is not None and new.progress is not None):
+            old_prefix, new_prefix = old.progress.pinned_prefix, new.progress.pinned_prefix
+            if new_prefix[:len(old_prefix)] != old_prefix:
                 violations.append(InvariantViolation(
                     "executed_prefix", "Executed route prefix changed", tour_id))
-            old_picks = Counter(node.position for node in old.pinned_prefix
+            old_picks = Counter(node.position for node in old_prefix
                                 if node.node_type is NodeType.PICK)
-            new_picks = Counter(node.position for node in new.pinned_prefix
+            new_picks = Counter(node.position for node in new_prefix
                                 if node.node_type is NodeType.PICK)
             if not all(new_picks[node] >= count for node, count in old_picks.items()):
                 violations.append(InvariantViolation(

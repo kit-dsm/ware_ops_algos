@@ -6,7 +6,8 @@ from ware_ops_algos.algorithms import (
 from ware_ops_algos.domain_models import PickCart
 from ware_ops_algos.planning.invariants import check_plan, check_progress
 from ware_ops_algos.planning.lifecycle import Accepts, TourStates
-from ware_ops_algos.planning.models import PlanView, TourView
+from ware_ops_algos.algorithms import RoutingOrigin
+from ware_ops_algos.planning.models import PlanView, TourProgress, TourView
 
 
 def _order(order_id=1, date=0):
@@ -26,9 +27,12 @@ def _tour(status=TourStates.STARTED):
     return TourView(
         tour_id=1, picker_id=0, status=status, accepts=Accepts.INSERT,
         batch=batch, route=route, start_time=0, end_time=10,
-        pick_cart=PickCart(n_boxes=1), occupied_bins=1,
-        pinned_prefix=(route.annotated_route[0],),
-        remaining_route=((1, 1), (0, 0)),
+        pick_cart=PickCart(n_boxes=1),
+        progress=TourProgress(
+            active_order_ids=frozenset({1}), cursor=0,
+            pinned_prefix=(route.annotated_route[0],),
+            remaining_route=((1, 1), (0, 0)),
+            routing_origin=RoutingOrigin((0, 0)), occupied_bins=1),
     )
 
 
@@ -39,7 +43,7 @@ def test_plan_detects_duplicate_order_and_lost_pick():
     duplicate = PlanView(0, order_buffer=(_order(),), tours=(tour,))
     assert any(v.code == "membership" for v in check_plan(duplicate))
 
-    short_route = replace(tour, remaining_route=((0, 0),))
+    short_route = replace(tour, progress=replace(tour.progress, remaining_route=((0, 0),)))
     assert any(v.code == "route" for v in check_plan(PlanView(0, tours=(short_route,))))
 
 

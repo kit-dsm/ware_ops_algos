@@ -102,7 +102,12 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
                 ViolationCode.MEMBERSHIP, "Replacement route has no batch", tour_id))
             continue
         old_ids = set(view.batch.order_numbers) if view.batch else set()
-        required_ids = (set(view.active_order_ids)
+        progress = view.progress
+        if view.status is TourStates.STARTED and progress is None:
+            violations.append(_violation(
+                ViolationCode.EXECUTED_PREFIX, "Started tour has no progress", tour_id))
+            continue
+        required_ids = (set(progress.active_order_ids)
                         if view.status is TourStates.STARTED else old_ids)
         new_ids = set(command.route.batch.order_numbers)
         added = set(command.added_order_ids)
@@ -117,15 +122,14 @@ def check(commands: tuple[Command, ...], plan: PlanView) -> tuple[Violation, ...
                 "Added orders are outside exposed or released work", tour_id))
         if view.status is TourStates.STARTED:
             if (command.route.routing_origin is None or
-                    command.route.routing_origin != view.routing_origin):
+                    command.route.routing_origin != progress.routing_origin):
                 violations.append(_violation(
                     ViolationCode.EXECUTED_PREFIX,
                     "Replacement changes the running tour's routing origin",
                     tour_id))
             if (view.pick_cart is not None and view.pick_cart.n_boxes is not None
                     and not view.pick_cart.box_can_mix_orders and
-                    view.occupied_bins is not None and
-                    view.occupied_bins + len(added) > view.pick_cart.n_boxes):
+                    progress.occupied_bins + len(added) > view.pick_cart.n_boxes):
                 violations.append(_violation(
                     ViolationCode.PHYSICAL,
                     "Added orders exceed free cart boxes", tour_id))

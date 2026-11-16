@@ -5,7 +5,7 @@ from .lifecycle import (
     Accepts, OrderStates, PHYSICAL, ResourceStates, TOUR_ORDER,
     TOUR_TRANSITIONS, TimeAttribute, TourStates, accepts_at_least,
 )
-from .models import PlanView, TourView
+from .models import PlanView, TourProgress, TourView
 from .scope import RevisionScope, StateInformation, Window
 from .validation import check, check_scope
 from .commands import (

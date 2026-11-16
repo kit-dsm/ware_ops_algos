@@ -7,7 +7,20 @@ from ..batching.batching_utils import CapacityChecker
 
 
 class Admission(Algorithm[AdmissionInput, AdmissionSolution], ABC):
-    """Assign newly visible orders to running tours."""
+    """Assign newly visible orders to running tours.
+
+    Once the input is closed, a holding tour without orders gets nothing more
+    to pick and is returned to the depot (``return_tour_ids``).
+    """
+
+    @staticmethod
+    def _returns(input_data: AdmissionInput, assignments) -> tuple[int, ...]:
+        assigned = {tour_id for tour_id, _ in assignments}
+        if not input_data.input_closed:
+            return ()
+        return tuple(tour.tour_id for tour in input_data.tours
+                     if tour.progress.holding and not tour.batch.order_numbers
+                     and tour.tour_id not in assigned)
 
 
 class CenterPositionAdmission(Admission):
@@ -25,7 +38,9 @@ class CenterPositionAdmission(Admission):
         considered = []
         reserved: set[int] = set()
         for tour in sorted(input_data.tours, key=lambda item: item.tour_id):
-            if tour.picking_until is not None or tour.active_order_ids:
+            # Only tours without orders (positioning tours) take new orders here.
+            if (tour.batch.order_numbers or tour.progress.picking_until is not None
+                    or tour.progress.active_order_ids):
                 continue
             checker = CapacityChecker(tour.pick_cart, self.articles)
             accepted = []
@@ -40,7 +55,8 @@ class CenterPositionAdmission(Admission):
                     accepted.append(order)
                     reserved.add(order_id)
         return AdmissionSolution(assignments=tuple(assignments),
-                                 considered_pairs=tuple(considered))
+                                 considered_pairs=tuple(considered),
+                                 return_tour_ids=self._returns(input_data, assignments))
 
 
 class RemainingRouteAdmission(Admission):
@@ -60,8 +76,8 @@ class RemainingRouteAdmission(Admission):
         remaining = {}
         for tour in tours:
             cart = tour.pick_cart
-            free_bins[tour.tour_id] = cart.n_boxes - tour.occupied_bins
-            remaining[tour.tour_id] = frozenset(tour.remaining_route)
+            free_bins[tour.tour_id] = cart.n_boxes - tour.progress.occupied_bins
+            remaining[tour.tour_id] = frozenset(tour.progress.remaining_route)
 
         candidates = sorted(
             (by_id[order_id] for order_id in input_data.candidate_order_ids),
@@ -74,9 +90,9 @@ class RemainingRouteAdmission(Admission):
                 raise ValueError(f"Candidate order {order.order_id} has no resolved picks")
             for tour in tours:
                 pair = (tour.tour_id, order.order_id)
-                if (tour.picking_until is not None or
+                if (tour.progress.picking_until is not None or
                         pair in input_data.considered_pairs or
-                        order.order_id in tour.active_order_ids):
+                        order.order_id in tour.progress.active_order_ids):
                     continue
                 considered.append(pair)
                 if (free_bins[tour.tour_id] > 0 and
@@ -88,4 +104,5 @@ class RemainingRouteAdmission(Admission):
         return AdmissionSolution(
             assignments=tuple(assignments),
             considered_pairs=tuple(considered),
+            return_tour_ids=self._returns(input_data, assignments),
         )
