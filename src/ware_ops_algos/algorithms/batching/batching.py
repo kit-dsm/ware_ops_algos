@@ -1,4 +1,5 @@
 import heapq
+import logging
 import random
 import time
 from abc import ABC, abstractmethod
@@ -10,6 +11,8 @@ from ware_ops_algos.algorithms.batching.batching_utils import CapacityChecker
 from ware_ops_algos.algorithms.routing.routing import Routing
 from ware_ops_algos.algorithms.algorithm_interfaces import BatchingSolution, BatchObject, WarehouseOrder
 from ware_ops_algos.domain_models import PickCart, Articles
+
+logger = logging.getLogger(__name__)
 
 
 class Batching(Algorithm[list[WarehouseOrder], BatchingSolution], ABC):
@@ -87,6 +90,30 @@ class FifoBatching(PriorityBatching):
 
     def _sorted_orders(self) -> list[WarehouseOrder]:
         return sorted(self.order_list, key=lambda o: o.order_date)
+
+
+class FirstFitFifoBatching(Batching):
+    """First-come-first-served batching with the first-fit rule.
+
+    Orders are taken in arrival order; each joins the first open batch with room
+    for it, and a new batch opens only when no open batch has room. FifoBatching
+    is the next-fit rule: it only ever fills the last batch.
+    """
+    algo_name = "FirstFitFiFoBatching"
+
+    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
+        batches: list[list[WarehouseOrder]] = []
+        for order in sorted(input_data, key=lambda o: o.order_date):
+            batch = next((batch for batch in batches
+                          if self.capacity_checker.can_add_order(batch, order)), None)
+            if batch is not None:
+                batch.append(order)
+            elif self.capacity_checker.can_add_order([], order):
+                batches.append([order])
+            else:
+                logger.warning("Order %s exceeds capacity, excluded", order.order_id)
+        return BatchingSolution(batches=[BatchObject(batch_id=index, orders=orders)
+                                         for index, orders in enumerate(batches)])
 
 
 class RandomBatching(PriorityBatching):
