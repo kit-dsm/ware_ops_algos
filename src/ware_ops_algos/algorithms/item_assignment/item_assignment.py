@@ -1,11 +1,12 @@
 from abc import abstractmethod
+from collections import defaultdict, deque
 from copy import deepcopy
 from typing import Type
 
 import pandas as pd
 
 from ware_ops_algos.algorithms import Algorithm, ItemAssignmentSolution, PickPosition, WarehouseOrder, Routing
-from ware_ops_algos.domain_models import Order, StorageLocations, Location
+from ware_ops_algos.domain_models import Order, StorageLocations, Location, RecordedPickingPlan
 # from ware_ops_algos.utils.visualization import plot_route, plot_route_with_directions
 
 
@@ -64,6 +65,48 @@ class GreedyItemAssignment(ItemAssignment):
             ))
 
         return ItemAssignmentSolution(resolved_orders=warehouse_orders)
+
+
+class RecordedItemAssignment(ItemAssignment):
+    """Assign every order position to its recorded pick node, including repeats."""
+
+    algo_name = "RecordedItemAssignment"
+
+    def __init__(self, storage_locations: StorageLocations, plan: RecordedPickingPlan, **kwargs):
+        super().__init__(storage_locations, **kwargs)
+        self.plan = plan
+
+    def _run(self, input_data: list[Order]) -> ItemAssignmentSolution:
+        nodes = defaultdict(deque)
+        for tour in self.plan.tours:
+            for line in tour.lines:
+                nodes[(line.order_id, line.article_id)].append(line.pick_node)
+        resolved = []
+        for order in input_data:
+            positions = []
+            for position in order.order_positions:
+                key = (order.order_id, position.article_id)
+                if not nodes[key]:
+                    raise ValueError(f"recorded plan has no pick node for order/article {key}")
+                positions.append(PickPosition(
+                    order_number=position.order_number,
+                    article_id=position.article_id,
+                    amount=position.amount,
+                    pick_node=nodes[key].popleft(),
+                    in_store=position.amount,
+                    article_name=position.article_name,
+                ))
+            resolved.append(WarehouseOrder(
+                order_id=order.order_id,
+                parent_order_id=order.parent_order_id,
+                due_date=order.due_date,
+                order_date=order.order_date,
+                pick_positions=positions,
+            ))
+        leftover = sum(map(len, nodes.values()))
+        if leftover:
+            raise ValueError(f"recorded plan has {leftover} unmatched pick nodes")
+        return ItemAssignmentSolution(resolved_orders=resolved, algo_name=self.algo_name)
 
 
 class NearestNeighborItemAssignment(ItemAssignment):
