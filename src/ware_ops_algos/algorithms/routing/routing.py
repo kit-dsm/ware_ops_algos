@@ -943,6 +943,11 @@ class GivenSequenceRouting(Routing):
         current = self.start_node
         for position in self._ordered(list(input_data)):
             target = position.pick_node
+            if not self.annotated_route and current == target:
+                # Execution starts at route cursor zero and advances to the
+                # first pick. Keep that origin even when the first leg is zero.
+                self.route.append(current)
+                self.annotated_route.append(RouteNode(current, NodeType.ROUTE))
             self._get_route_for_tour(current, target)
             self.annotated_route.append(RouteNode(target, NodeType.PICK))
             self.item_sequence.append(target)

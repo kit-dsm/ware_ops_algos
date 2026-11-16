@@ -43,13 +43,15 @@ class RecordedTour:
     """The lines one picker picked in one tour, in the recorded sequence.
 
     ``start_s``, if given, is the tour's recorded start: a plan anchored to the
-    record starts the tour no earlier.
+    record starts the tour no earlier. ``start_node`` is an explicit route
+    origin when known; otherwise the layout's start node is used.
     """
 
     tour_id: int
     picker_id: int
     lines: tuple[RecordedLine, ...]
     start_s: float | None = None
+    start_node: tuple[float, float] | None = None
 
     @property
     def order_ids(self) -> tuple[int, ...]:

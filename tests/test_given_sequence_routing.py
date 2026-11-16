@@ -15,12 +15,12 @@ from ware_ops_algos.domain_models import (
 NODES = [(0, 0), (1, 0), (2, 0)]
 
 
-def _router(sequence):
+def _router(sequence, start_node=(0, 0)):
     weights = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dtype=float)
     distances, predecessors = floyd_warshall(weights, return_predecessors=True)
     index = {node: i for i, node in enumerate(NODES)}
     return GivenSequenceRouting(
-        start_node=(0, 0), end_node=(0, 0), closest_node_to_start=(0, 0),
+        start_node=start_node, end_node=(0, 0), closest_node_to_start=(0, 0),
         min_aisle_position=0, max_aisle_position=0, picker=[],
         gen_tour=True, gen_item_sequence=True, node_list=NODES,
         node_to_idx=index, idx_to_node=dict(enumerate(NODES)),
@@ -50,6 +50,15 @@ def test_two_lines_at_one_node_in_a_row_are_two_picks_without_walking():
     route = _router([(1, 11, (1, 0)), (1, 10, (1, 0))]).solve([first, second]).route
     assert route.distance == 2
     assert [n.node_type for n in route.annotated_route].count(NodeType.PICK) == 2
+
+
+def test_zero_distance_first_leg_has_a_route_origin_before_the_pick():
+    # CASIM's execution cursor starts on a ROUTE node and advances to PICK.
+    route = _router([(1, 10, (1, 0))], start_node=(1, 0)).solve(
+        [_position(1, 10, (1, 0))]).route
+    assert route.distance == 1
+    assert [(n.position, n.node_type) for n in route.annotated_route[:2]] == [
+        ((1, 0), NodeType.ROUTE), ((1, 0), NodeType.PICK)]
 
 
 def test_a_sequence_that_does_not_match_the_positions_is_rejected():
