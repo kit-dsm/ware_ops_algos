@@ -78,3 +78,46 @@ def test_a_recorded_plan_exposes_its_type_and_size_as_features():
     with pytest.raises(ValueError, match="one recorded tour only"):
         RecordedPickingPlan(tours=(RecordedTour(0, 1, (RecordedLine(1, 10, (1, 0)),)),
                                    RecordedTour(1, 1, (RecordedLine(1, 11, (1, 0)),))))
+
+
+def _plan():
+    line = lambda order, article: RecordedLine(order, article, (1, 0))  # noqa: E731
+    return RecordedPickingPlan(tours=(
+        RecordedTour(tour_id=7, picker_id=1, lines=(line(2, 20), line(1, 10), line(2, 21))),
+        RecordedTour(tour_id=3, picker_id=0, lines=(line(3, 30),)),
+        RecordedTour(tour_id=5, picker_id=1, lines=(line(4, 40),)),
+    ))
+
+
+def test_recorded_batching_makes_one_batch_per_recorded_tour():
+    from ware_ops_algos.algorithms import RecordedBatching, WarehouseOrder
+    from ware_ops_algos.domain_models import ArticleType, Articles, DimensionType, PickCart
+    cart = PickCart(n_dimension=1, capacities=[1], dimensions=[DimensionType.ORDERS], n_boxes=1)
+    orders = [WarehouseOrder(order_id=i) for i in (1, 2, 3, 4)]
+    batches = RecordedBatching(pick_cart=cart, articles=Articles(ArticleType.STANDARD, []), plan=_plan()).solve(orders).batches
+    assert [(b.batch_id, [o.order_id for o in b.orders]) for b in batches] == [
+        (7, [2, 1]), (3, [3]), (5, [4])]
+    with pytest.raises(RuntimeError, match="not in the recorded plan"):
+        RecordedBatching(pick_cart=cart, articles=Articles(ArticleType.STANDARD, []), plan=_plan()).solve(
+            [*orders, WarehouseOrder(order_id=9)])
+
+
+def test_recorded_scheduling_chains_each_pickers_tours_in_recorded_order():
+    from ware_ops_algos.algorithms import BatchObject, Job, RecordedScheduling, Route
+    from ware_ops_algos.domain_models import Resource, Resources, ResourceType
+    pickers = Resources(ResourceType.HUMAN, [
+        Resource(id=0, speed=1.0, time_per_pick=2.0, tour_setup_time=1.0),
+        Resource(id=1, speed=1.0, time_per_pick=2.0, tour_setup_time=1.0)])
+
+    def job(batch_id, distance, picks):
+        route = Route(route=[], item_sequence=[(1, 0)] * picks, distance=distance)
+        route.batch = BatchObject(batch_id=batch_id, orders=[])
+        return Job(job_id=batch_id, processing_time=0.0, release_time=10.0,
+                   due_date=0.0, n_picks=picks, route=route)
+
+    jobs = [job(5, 4.0, 1), job(3, 6.0, 2), job(7, 10.0, 3)]
+    scheduled = RecordedScheduling(pickers, plan=_plan(), available_from={1: 12.0}).solve(jobs).jobs
+    # picker 1: tour 7 from max(10, 12) = 12, 1 setup + 10 walk + 3 x 2 picks -> 29; tour 5 at 29 -> 29 + 1 + 4 + 2 = 36
+    # picker 0: tour 3 from 10 -> 10 + 1 + 6 + 4 = 21
+    assert [(j.job.route.batch.batch_id, j.picker_id, j.start_time, j.end_time) for j in scheduled] == [
+        (7, 1, 12.0, 29.0), (3, 0, 10.0, 21.0), (5, 1, 29.0, 36.0)]

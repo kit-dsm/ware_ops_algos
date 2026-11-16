@@ -125,6 +125,42 @@ class FIFOScheduling(PriorityScheduler):
         return job.job_id
 
 
+class RecordedScheduling(Scheduler):
+    """Each route goes to the picker of its recorded tour, in the recorded order.
+
+    A route belongs to the recorded tour whose id is its batch id. A picker's
+    tours follow each other without waiting: each starts at the later of its
+    release and the end of the picker's previous tour (setup included).
+    """
+
+    algo_name = "RecordedScheduling"
+
+    def __init__(self, resources: Resources, plan,
+                 available_from: dict[int, float] | None = None, **kwargs):
+        super().__init__(resources, available_from=available_from, **kwargs)
+        self.plan = plan
+
+    def _schedule(self, jobs: list[Job]) -> list[ScheduledJob]:
+        pickers = {resource.id: resource for resource in self.resources.resources}
+        by_tour = {job.route.batch.batch_id: job for job in jobs}
+        free = dict(self.available_from)
+        scheduled = []
+        for tour in self.plan.tours:
+            job = by_tour.pop(tour.tour_id, None)
+            if job is None:
+                continue
+            picker = pickers[tour.picker_id]
+            job = replace(job, processing_time=_processing_time(job.route, picker))
+            start = max(job.release_time, free.get(picker.id, 0.0))
+            end = start + (picker.tour_setup_time or 0.0) + job.processing_time
+            scheduled.append(ScheduledJob(job=job, picker_id=picker.id,
+                                          start_time=start, end_time=end))
+            free[picker.id] = end
+        if by_tour:
+            raise ValueError(f"routes of batches not in the recorded plan: {sorted(by_tour)}")
+        return scheduled
+
+
 class SAVScheduling(Scheduler):
     """Henn's batch selection by sum of single-order services saved."""
 

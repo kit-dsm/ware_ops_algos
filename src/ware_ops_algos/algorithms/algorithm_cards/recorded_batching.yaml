@@ -1,0 +1,31 @@
+algo_name: RecordedTours
+problem_type: batching
+description: >
+  One batch per recorded tour, holding that tour's orders; applicable only where a recorded picking plan is given.
+
+requirements:
+  layout:
+    type:
+      - any
+    features: []
+  information:
+    type: [process_information]
+    features: [recorded_plan.type]
+    constraints:
+      recorded_plan.type: {equals: recorded_picking_plan}
+  resources:
+    type:
+      - human
+  orders:
+    type:
+      - any
+  storage:
+    type:
+      - any
+
+objective: Distance
+
+implementation:
+  class_name: RecordedBatching
+  component_name: RecordedTours
+  type: heuristic

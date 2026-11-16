@@ -89,6 +89,34 @@ class FifoBatching(PriorityBatching):
         return sorted(self.order_list, key=lambda o: o.order_date)
 
 
+class RecordedBatching(Batching):
+    """One batch per tour of a recorded picking plan, holding that tour's orders.
+
+    The batch id is the recorded tour id, and the orders keep the order of
+    their first recorded line. Every order to batch must be in the plan. The
+    cart is not checked: a recorded tour holds what the picker carried.
+    """
+
+    algo_name = "RecordedBatching"
+
+    def __init__(self, pick_cart: PickCart, articles: Articles, plan, **kwargs):
+        super().__init__(pick_cart, articles, **kwargs)
+        self.plan = plan
+
+    def _run(self, input_data: list[WarehouseOrder]) -> BatchingSolution:
+        by_id = {order.order_id: order for order in input_data}
+        planned = {order_id for tour in self.plan.tours for order_id in tour.order_ids}
+        missing = set(by_id) - planned
+        if missing:
+            raise ValueError(f"orders not in the recorded plan: {sorted(missing)}")
+        batches = [BatchObject(batch_id=tour.tour_id,
+                               orders=[by_id[order_id] for order_id in tour.order_ids
+                                       if order_id in by_id])
+                   for tour in self.plan.tours]
+        return BatchingSolution(batches=[batch for batch in batches if batch.orders],
+                                algo_name=self.algo_name)
+
+
 class RandomBatching(PriorityBatching):
     """
     First in First out batching class to batch orders
