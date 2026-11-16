@@ -941,7 +941,8 @@ class GivenSequenceRouting(Routing):
     def _run(self, input_data: list[PickPosition]) -> RoutingSolution:
         self.reset_parameters()
         current = self.start_node
-        for position in self._ordered(list(input_data)):
+        ordered = self._ordered(list(input_data))
+        for position in ordered:
             target = position.pick_node
             if not self.annotated_route and current == target:
                 # Execution starts at route cursor zero and advances to the
@@ -956,7 +957,8 @@ class GivenSequenceRouting(Routing):
         self._get_route_for_tour(current, self.end_node, with_last_element=True)
         self.distance += self._get_distance(current, self.end_node)
         route = Route(route=self.route, item_sequence=self.item_sequence,
-                      distance=self.distance, annotated_route=self.annotated_route)
+                      distance=self.distance, annotated_route=self.annotated_route,
+                      pick_sequence=ordered)
         return RoutingSolution(algo_name=self.algo_name, route=route)
 
 

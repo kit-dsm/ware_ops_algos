@@ -98,6 +98,8 @@ class Route:
     batch: Optional[BatchObject] = None
     annotated_route: Optional[list[RouteNode]] = None
     service_time: Optional[float] = None
+    # An exact recorded route can distinguish consecutive picks at one node.
+    pick_sequence: Optional[list[PickPosition]] = None
 
     @property
     def has_sequence(self) -> bool:

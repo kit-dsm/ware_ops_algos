@@ -50,6 +50,7 @@ def test_two_lines_at_one_node_in_a_row_are_two_picks_without_walking():
     route = _router([(1, 11, (1, 0)), (1, 10, (1, 0))]).solve([first, second]).route
     assert route.distance == 2
     assert [n.node_type for n in route.annotated_route].count(NodeType.PICK) == 2
+    assert route.pick_sequence == [second, first]
 
 
 def test_zero_distance_first_leg_has_a_route_origin_before_the_pick():
