@@ -139,3 +139,19 @@ def test_recorded_scheduling_starts_an_anchored_tour_at_its_recorded_start():
     scheduled = RecordedScheduling(pickers, plan=plan).solve([job]).jobs
     # without tour 7, picker 1 is free at 10, but tour 5 is anchored at 50: 50 + 1 + 4 + 2
     assert [(j.start_time, j.end_time) for j in scheduled] == [(50.0, 57.0)]
+
+
+def test_a_line_pick_time_model_enters_the_planned_processing_time():
+    from ware_ops_algos.algorithms import BatchObject, PickPosition, Route, WarehouseOrder
+    from ware_ops_algos.algorithms.scheduling.scheduling import _processing_time
+    from ware_ops_algos.domain_models import LinePickTime, Resource, pick_time
+    constant = Resource(id=0, speed=2.0, time_per_pick=19.0)
+    model = Resource(id=0, speed=2.0, time_per_pick=19.0,
+                     pick_time_model=LinePickTime(base_s=10.0, per_unit_s=0.5))
+    positions = (PickPosition(1, 10, 6, (1, 0), 1), PickPosition(1, 11, 24, (2, 0), 1))
+    route = Route(route=[], item_sequence=[(1, 0), (2, 0)], distance=8.0)
+    route.batch = BatchObject(batch_id=0, orders=[WarehouseOrder(order_id=1, pick_positions=positions)])
+    assert pick_time(constant, 6) == 19.0 and pick_time(model, 6) == 13.0
+    # walk 8 / 2 = 4; constant 2 x 19; model (10 + 3) + (10 + 12)
+    assert _processing_time(route, constant) == 42.0
+    assert _processing_time(route, model) == 39.0

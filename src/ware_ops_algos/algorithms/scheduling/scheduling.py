@@ -9,16 +9,19 @@ from ware_ops_algos.algorithms.algorithm_interfaces import (
     Job,
     ScheduledJob,
 )
-from ware_ops_algos.domain_models import Resource, Resources
+from ware_ops_algos.domain_models import Resource, Resources, pick_time
 
 
 def _processing_time(route: Route, picker: Resource) -> float:
     if picker.speed is None or picker.speed <= 0:
         raise ValueError(f"Resource {picker.id} needs a positive 'speed'.")
-    if picker.time_per_pick is None:
-        raise ValueError(f"Resource {picker.id} needs 'time_per_pick'.")
-    # setup = picker.tour_setup_time
-    return (route.distance / picker.speed) + picker.time_per_pick * len(route.item_sequence) #+ setup
+    if picker.time_per_pick is None and picker.pick_time_model is None:
+        raise ValueError(f"Resource {picker.id} needs 'time_per_pick' or 'pick_time_model'.")
+    walk = route.distance / picker.speed
+    if picker.pick_time_model is not None and getattr(route, "batch", None) is not None:
+        return walk + sum(pick_time(picker, position.amount)
+                          for position in route.batch.pick_positions)
+    return walk + picker.time_per_pick * len(route.item_sequence)
 
 def build_jobs(
     routes: list[Route],

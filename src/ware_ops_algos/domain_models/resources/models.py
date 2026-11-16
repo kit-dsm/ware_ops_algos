@@ -91,6 +91,17 @@ class PickCart:
     box_can_mix_orders: Optional[bool] = None
 
 
+@dataclass(frozen=True)
+class LinePickTime:
+    """Time to pick one order line: ``base_s + per_unit_s * amount`` (amount in packages)."""
+
+    base_s: float
+    per_unit_s: float = 0.0
+
+    def __call__(self, amount: float) -> float:
+        return self.base_s + self.per_unit_s * amount
+
+
 @dataclass
 class Resource:
     id: int
@@ -100,6 +111,8 @@ class Resource:
     pick_cart: Optional[PickCart] = None
     tpe: ResourceType = ResourceType.HUMAN
     tour_setup_time: float = None
+    # Replaces the constant time_per_pick where given; see pick_time.
+    pick_time_model: Optional[LinePickTime] = None
     # Dynamic Information
     available: Optional[bool] = None # "stronger" compared to occupied -> E.g a picker is not available for a shift
     occupied: Optional[bool] = None
@@ -144,3 +157,14 @@ class Resources(BaseDomainObject):
         features["time_per_pick"] = any(r.time_per_pick is not None for r in self.resources)
         features["current_location"] = any(r.current_location is not None for r in self.resources)
         return features
+
+
+def pick_time(resource: Resource, amount: float) -> float:
+    """The time ``resource`` takes to pick one line of ``amount`` packages.
+
+    The resource's ``pick_time_model`` if it has one, else ``time_per_pick``
+    per line. Execution and planning both compute a tour's duration with it.
+    """
+    if resource.pick_time_model is not None:
+        return resource.pick_time_model(amount)
+    return resource.time_per_pick
