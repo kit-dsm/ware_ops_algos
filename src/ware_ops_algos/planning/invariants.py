@@ -8,6 +8,23 @@ from ware_ops_algos.algorithms import NodeType
 
 from .commands import Violation, ViolationCode
 from .lifecycle import TOUR_TRANSITIONS, TourStates
+
+
+def _reachable(status: TourStates) -> frozenset[TourStates]:
+    """Every status reachable from ``status`` in one or more transitions."""
+    seen: set[TourStates] = set()
+    frontier = list(TOUR_TRANSITIONS[status])
+    while frontier:
+        target = frontier.pop()
+        if target not in seen:
+            seen.add(target)
+            frontier.extend(TOUR_TRANSITIONS[target])
+    return frozenset(seen)
+
+
+# check_progress may compare plans several transitions apart (an audit once
+# per timestamp); each single transition is enforced where it is made.
+REACHABLE = {status: _reachable(status) for status in TourStates}
 from .models import PlanView, TourView
 
 
@@ -105,7 +122,7 @@ def check_progress(before: PlanView, after: PlanView) -> tuple[Violation, ...]:
             violations.append(_violation(
                 ViolationCode.MEMBERSHIP, "Tour disappeared from the full plan", tour_id))
             continue
-        if new.status != old.status and new.status not in TOUR_TRANSITIONS[old.status]:
+        if new.status != old.status and new.status not in REACHABLE[old.status]:
             violations.append(_violation(
                 ViolationCode.STATUS, f"Illegal transition {old.status.value} to {new.status.value}",
                 tour_id))
