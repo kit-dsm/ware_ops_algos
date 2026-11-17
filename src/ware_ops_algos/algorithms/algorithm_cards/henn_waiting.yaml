@@ -2,6 +2,11 @@ algo_name: HennWaiting
 problem_type: waiting
 description: Henn release threshold using service times from the configured router.
 requirements:
+  resources:
+    type: [human]
+    features: [n_resources]
+    constraints:
+      n_resources: {equals: 1}
   orders:
     type: [standard]
     features: [order_date]
