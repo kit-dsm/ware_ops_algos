@@ -60,7 +60,7 @@ class TourView:
     pick_cart: PickCart | None = None
     progress: TourProgress | None = None
     earliest_start: float | None = None
-    picker: Resource | None = None
+    picker: Resource | None = field(default=None, compare=False, repr=False)
 
 
 @dataclass(frozen=True)
