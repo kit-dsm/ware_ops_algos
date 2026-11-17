@@ -17,7 +17,10 @@ class CreatePickList:
 
 @dataclass(frozen=True)
 class CreateTour:
+    """A new planned tour; ``earliest_start`` binds its start when committed."""
+
     job: ScheduledJob
+    earliest_start: float | None = None
 
 
 @dataclass(frozen=True)
@@ -34,10 +37,13 @@ class ReplaceSuffix:
 
 @dataclass(frozen=True)
 class Reschedule:
+    """New resource and planned times; ``earliest_start`` binds the start, if set."""
+
     tour_id: int
     picker_id: int
     start_time: float
     end_time: float
+    earliest_start: float | None = None
 
 
 @dataclass(frozen=True)

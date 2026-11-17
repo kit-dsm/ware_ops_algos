@@ -39,7 +39,12 @@ class TourProgress:
 
 @dataclass(frozen=True)
 class TourView:
-    """A tour as a decision sees it; ``progress`` is set once the tour has started."""
+    """A tour as a decision sees it; ``progress`` is set once the tour has started.
+
+    ``start_time`` and ``end_time`` are the planned times, projected by the
+    simulator from the resource's queue; ``earliest_start`` is the binding
+    earliest start, if any.
+    """
 
     tour_id: int
     picker_id: int | None
@@ -52,6 +57,7 @@ class TourView:
     processing_time: float | None = None
     pick_cart: PickCart | None = None
     progress: TourProgress | None = None
+    earliest_start: float | None = None
 
 
 @dataclass(frozen=True)
