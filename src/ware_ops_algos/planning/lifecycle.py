@@ -13,6 +13,8 @@ class TourStates(str, Enum):
 
 
 class OrderStates(str, Enum):
+    """Where an order is; a classification derived by the simulator, without transitions."""
+
     BUFFERED = "buffered"
     BATCHED = "batched"
     PLANNED = "planned"
@@ -21,6 +23,14 @@ class OrderStates(str, Enum):
 
 
 class ResourceStates(str, Enum):
+    """The vocabulary of ``state_information.resources``.
+
+    A classification the simulator derives from a resource's tours and
+    presence, never stored and without transitions (only ``TourStates`` has
+    them): busy with a pending or started tour, otherwise off shift if absent,
+    otherwise reserved if it has committed tours, otherwise idle.
+    """
+
     OFF_SHIFT = "off_shift"
     IDLE = "idle"
     RESERVED = "reserved"
