@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ware_ops_algos.algorithms.algorithm_interfaces import (
         BatchObject, Route, RouteNode, RoutingOrigin, WarehouseOrder,
     )
-    from ware_ops_algos.domain_models.resources.models import PickCart
+    from ware_ops_algos.domain_models.resources.models import PickCart, Resource
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,9 @@ class TourView:
 
     ``start_time`` and ``end_time`` are the planned times, projected by the
     simulator from the resource's queue; ``earliest_start`` is the binding
-    earliest start, if any.
+    earliest start, if any. ``picker`` is the assigned resource itself, so a
+    decision that revises a started tour reaches its picker without exposing
+    it among the decision's resources.
     """
 
     tour_id: int
@@ -58,6 +60,7 @@ class TourView:
     pick_cart: PickCart | None = None
     progress: TourProgress | None = None
     earliest_start: float | None = None
+    picker: Resource | None = None
 
 
 @dataclass(frozen=True)
