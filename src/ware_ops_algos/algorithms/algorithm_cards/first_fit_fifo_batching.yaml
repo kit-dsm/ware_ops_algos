@@ -1,0 +1,35 @@
+algo_name: FirstFitFiFo
+problem_type: batching
+description: >
+  First-In-First-Out batching with the first-fit rule: orders in arrival order,
+  each into the first open batch with remaining capacity, a new batch only when
+  none has room
+
+requirements:
+  layout:
+    type:
+      - any
+    features: []
+  resources:
+    type:
+      - any
+    features:
+      - capacities
+      - dimensions_type
+  orders:
+    type:
+      - any
+    features:
+      - order_date
+  storage:
+    type:
+      - any
+    features: []
+
+objective: Distance
+
+implementation:
+  class_name: FirstFitFifoBatching
+  component_name: FirstFitFiFo
+  solver:
+  type: heuristic

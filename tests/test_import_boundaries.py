@@ -12,7 +12,15 @@ def _imports(path: Path):
     module = "ware_ops_algos." + ".".join(path.relative_to(ROOT).with_suffix("").parts)
     package = module if path.name == "__init__.py" else module.rsplit(".", 1)[0]
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    # Imports under ``if TYPE_CHECKING:`` name types for annotations only and
+    # create no runtime dependency (AdmissionInput.tours is a planning TourView).
+    annotation_only = {id(inner) for node in ast.walk(tree)
+                       if isinstance(node, ast.If) and isinstance(node.test, ast.Name)
+                       and node.test.id == "TYPE_CHECKING"
+                       for inner in ast.walk(node)}
     for node in ast.walk(tree):
+        if id(node) in annotation_only:
+            continue
         if isinstance(node, ast.Import):
             yield from (alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom):

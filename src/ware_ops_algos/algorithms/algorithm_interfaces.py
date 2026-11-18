@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Generic, TypeVar, Optional, Any, NamedTuple, Literal
+from typing import TYPE_CHECKING, Generic, TypeVar, Optional, Any, NamedTuple, Literal
 import time
 import logging
 
@@ -10,6 +10,9 @@ from ware_ops_algos.domain_models import (
     LayoutData, Order, PickCart,
     PlannerInformation, Resource,
 )
+
+if TYPE_CHECKING:
+    from ware_ops_algos.planning.models import TourView
 
 I = TypeVar("I")  # input type
 O = TypeVar("O")  # output type
@@ -201,47 +204,38 @@ class BatchingSolution(AlgorithmSolution):
     batches: list[BatchObject] = field(default_factory=list)
 
 
-@dataclass
-class ActiveTourBatch(BatchObject):
-    tour_id: int
-
-
-@dataclass
-class ActiveTourBatchingSolution(BatchingSolution):
-    assignments: tuple[tuple[int, int], ...] = ()
-    considered_pairs: tuple[tuple[int, int], ...] = ()
-
-
-@dataclass(frozen=True)
-class AdmissionTour:
-    """One started tour as observed when admission is considered."""
-
-    tour_id: int
-    picker_id: int
-    pick_cart: PickCart
-    active_order_ids: frozenset[int]
-    remaining_route: tuple[tuple[float, float], ...]
-    occupied_bins: int
-    routing_origin: RoutingOrigin
-    picking_until: float | None = None
-
-
 @dataclass(frozen=True)
 class AdmissionInput:
-    """Visible orders and the started tours they may join."""
+    """Visible orders and the started tours they may join.
+
+    Every tour is a started ``TourView`` with its picker, cart and progress.
+    ``input_closed`` says that no further order will arrive.
+    """
 
     orders: tuple[WarehouseOrder, ...]
-    tours: tuple[AdmissionTour, ...]
+    tours: tuple[TourView, ...]
     candidate_order_ids: frozenset[int]
     considered_pairs: frozenset[tuple[int, int]] = frozenset()
+    input_closed: bool = False
+
+    def __post_init__(self) -> None:
+        for tour in self.tours:
+            if (tour.picker_id is None or tour.pick_cart is None
+                    or tour.progress is None):
+                raise ValueError(f"Tour {tour.tour_id} lacks admission execution facts")
 
 
 @dataclass
 class AdmissionSolution(AlgorithmSolution):
-    """Accepted (tour, order) pairs and the pairs evaluated by admission."""
+    """Accepted (tour, order) pairs, the pairs evaluated, and the tours sent back.
+
+    ``return_tour_ids`` are tours that receive no order and are routed back to
+    the depot: a holding tour without orders once the input is closed.
+    """
 
     assignments: tuple[tuple[int, int], ...] = ()
     considered_pairs: tuple[tuple[int, int], ...] = ()
+    return_tour_ids: tuple[int, ...] = ()
 
 @dataclass
 class RoutingSolution(AlgorithmSolution):

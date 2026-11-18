@@ -5,12 +5,18 @@ from ware_ops_algos.planning.commands import (
     CancelTour, CommitTour, CreatePickList, ReplaceSuffix, ViolationCode,
 )
 from ware_ops_algos.planning.lifecycle import Accepts, TourStates
-from ware_ops_algos.planning.models import PlanView, TourView
+from ware_ops_algos.planning.models import PlanView, TourProgress, TourView
 from ware_ops_algos.planning.validation import check
 
 
 def _order(order_id):
     return WarehouseOrder(order_id=order_id, order_date=0)
+
+
+def _progress(origin, occupied_bins, active=frozenset()):
+    return TourProgress(active_order_ids=active, cursor=0, pinned_prefix=(),
+                        remaining_route=(), routing_origin=origin,
+                        occupied_bins=occupied_bins)
 
 
 def test_validation_uses_visible_tours_and_revision_level():
@@ -27,7 +33,7 @@ def test_started_replacement_checks_membership_origin_and_boxes():
     origin = RoutingOrigin((0, 0))
     tour = TourView(
         1, 0, TourStates.STARTED, Accepts.INSERT, batch=old,
-        routing_origin=origin, occupied_bins=1,
+        progress=_progress(origin, 1),
         pick_cart=PickCart(n_boxes=1, box_can_mix_orders=False),
     )
     plan = PlanView(0, order_buffer=(_order(2),), tours=(tour,),
@@ -52,8 +58,7 @@ def test_started_replacement_keeps_unpicked_orders_without_rerouting_picked_orde
     tour = TourView(
         1, 0, TourStates.STARTED, Accepts.INSERT,
         batch=BatchObject(1, [_order(0), _order(1)]),
-        active_order_ids=frozenset({1}), routing_origin=origin,
-        occupied_bins=2,
+        progress=_progress(origin, 2, frozenset({1})),
         pick_cart=PickCart(n_boxes=4, box_can_mix_orders=False),
     )
     plan = PlanView(12, order_buffer=(_order(3),), tours=(tour,))

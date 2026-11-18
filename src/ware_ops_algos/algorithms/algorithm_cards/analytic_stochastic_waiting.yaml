@@ -16,8 +16,9 @@ requirements:
       incoming_orders.mean_interarrival_time_s: {greater_than: 0}
   resources:
     type: [human]
-    features: [speed, time_per_pick, capacities, dimensions_type, n_boxes, box_can_mix_orders]
+    features: [n_resources, speed, time_per_pick, capacities, dimensions_type, n_boxes, box_can_mix_orders]
     constraints:
+      n_resources: {equals: 1}
       capacities: {equals: [1]}
       dimensions_type: {equals: [orders]}
       box_can_mix_orders: {equals: false}

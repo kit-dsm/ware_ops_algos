@@ -29,19 +29,6 @@ wheels = [
 ]
 
 [[package]]
-name = "alns"
-version = "7.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "matplotlib" },
-    { name = "numpy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/50/99/4f0d39e25f0265f404e2506d2b0bc009b16ce8fa02549b2ba5d7398a49f1/alns-7.0.0.tar.gz", hash = "sha256:2ac2030537d6e76689b7330e7f399f3b3c9730302465e434cca8b2d44061757e", size = 41498, upload-time = "2024-10-21T21:14:10.744Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/5a/32b22e1a74547754b90c40213c79650826ac714173e02cd973eba0703552/alns-7.0.0-py3-none-any.whl", hash = "sha256:e7d019e0aff8f78c7734da29162a148926530d9b52e243e8641af853c12a0c1c", size = 63753, upload-time = "2024-10-21T21:14:09.023Z" },
-]
-
-[[package]]
 name = "anyio"
 version = "4.14.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1762,7 +1749,6 @@ name = "ware-ops-algos"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [
-    { name = "alns" },
     { name = "gurobipy" },
     { name = "matplotlib" },
     { name = "networkx" },
@@ -1792,7 +1778,6 @@ notebook = [
 
 [package.metadata]
 requires-dist = [
-    { name = "alns" },
     { name = "furo", marker = "extra == 'docs'" },
     { name = "gurobipy" },
     { name = "jupyterlab", marker = "extra == 'notebook'" },

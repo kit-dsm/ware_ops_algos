@@ -11,11 +11,43 @@ if TYPE_CHECKING:
     from ware_ops_algos.algorithms.algorithm_interfaces import (
         BatchObject, Route, RouteNode, RoutingOrigin, WarehouseOrder,
     )
-    from ware_ops_algos.domain_models.resources.models import PickCart
+    from ware_ops_algos.domain_models.resources.models import PickCart, Resource
+
+
+@dataclass(frozen=True)
+class TourProgress:
+    """Execution facts of a tour that has started (status started or done).
+
+    ``active_order_ids`` are the orders with an unpicked position; ``cursor``
+    indexes the route node last reached; ``pinned_prefix`` is the executed part
+    of the route, including an edge in progress; ``remaining_route`` the
+    positions still to visit; ``routing_origin`` where a new route must start;
+    ``occupied_bins`` the cart boxes in use; ``picking_until`` the end of a pick
+    in progress; ``holding`` that the tour has reached the end of its route
+    away from the depot and waits there.
+    """
+
+    active_order_ids: frozenset[int]
+    cursor: int
+    pinned_prefix: tuple[RouteNode, ...]
+    remaining_route: tuple[tuple[float, float], ...]
+    routing_origin: RoutingOrigin
+    occupied_bins: int
+    picking_until: float | None = None
+    holding: bool = False
 
 
 @dataclass(frozen=True)
 class TourView:
+    """A tour as a decision sees it; ``progress`` is set once the tour has started.
+
+    ``start_time`` and ``end_time`` are the planned times, projected by the
+    simulator from the resource's queue; ``earliest_start`` is the binding
+    earliest start, if any. ``picker`` is the assigned resource itself, so a
+    decision that revises a started tour reaches its picker without exposing
+    it among the decision's resources.
+    """
+
     tour_id: int
     picker_id: int | None
     status: TourStates
@@ -26,14 +58,9 @@ class TourView:
     end_time: float | None = None
     processing_time: float | None = None
     pick_cart: PickCart | None = None
-    active_order_ids: frozenset[int] = frozenset()
-    cursor: int | None = None
-    pinned_prefix: tuple[RouteNode, ...] = ()
-    remaining_route: tuple[tuple[float, float], ...] = ()
-    routing_origin: RoutingOrigin | None = None
-    occupied_bins: int | None = None
-    picking_until: float | None = None
-    holding: bool = False
+    progress: TourProgress | None = None
+    earliest_start: float | None = None
+    picker: Resource | None = field(default=None, compare=False, repr=False)
 
 
 @dataclass(frozen=True)
