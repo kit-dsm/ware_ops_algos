@@ -12,7 +12,7 @@ from ware_ops_algos.algorithms.algorithm_interfaces import (
 from .commands import (
     CancelTour, Command, CreatePickList, CreateTour, ReplaceSuffix, Reschedule,
 )
-from .lifecycle import Accepts, TourStates
+from .lifecycle import Accepts
 from .models import PlanView, TourView
 
 
@@ -24,16 +24,33 @@ def _same_route(view: TourView, route) -> bool:
 
 
 def _matching_candidates(jobs, drafts: tuple[TourView, ...]):
-    """Pair by largest overlap, then lowest incumbent ID and candidate index."""
+    """Pair each revisable tour with the candidate that revises it.
+
+    A candidate holding exactly a tour's orders revises that tour (a tour's
+    orders are unique, since an order is in one tour). Of the rest, a
+    candidate containing a tour's orders revises it, by largest overlap, then
+    lowest tour ID and candidate index; this is needed only when the
+    decision batches anew.
+    """
+    matched_indices = {}
+    matched_ids = set()
+    by_orders = {view.batch.order_numbers: view for view in drafts}
+    for index, job in enumerate(jobs):
+        view = by_orders.get(job.order_numbers)
+        if view is not None and view.tour_id not in matched_ids:
+            matched_indices[index] = view
+            matched_ids.add(view.tour_id)
     pairs = []
     for index, job in enumerate(jobs):
+        if index in matched_indices:
+            continue
         for view in drafts:
+            if view.tour_id in matched_ids:
+                continue
             overlap = len(view.batch.order_numbers & job.order_numbers)
             if overlap and view.batch.order_numbers <= job.order_numbers:
                 pairs.append((-overlap, view.tour_id, index, view))
     pairs.sort(key=lambda pair: pair[:3])
-    matched_indices = {}
-    matched_ids = set()
     for _, tour_id, index, view in pairs:
         if index not in matched_indices and tour_id not in matched_ids:
             matched_indices[index] = view
@@ -43,10 +60,10 @@ def _matching_candidates(jobs, drafts: tuple[TourView, ...]):
 
 def _schedule_commands(jobs, plan: PlanView) -> tuple[Command, ...]:
     jobs = tuple(jobs)
+    # The tours a decision may rebuild: the same set the pipelines receive
+    # (every tour whose scope gives REBUILD, planned or scheduled).
     drafts = tuple(tour for tour in plan.tours
-                   if tour.status is TourStates.PLANNED
-                   and tour.accepts is Accepts.REBUILD
-                   and tour.batch is not None)
+                   if tour.accepts is Accepts.REBUILD and tour.batch is not None)
     matches, matched_ids = _matching_candidates(jobs, drafts)
     commands: list[Command] = [CancelTour(tour.tour_id) for tour in drafts
                                if tour.tour_id not in matched_ids]
